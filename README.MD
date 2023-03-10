@@ -1,11 +1,6 @@
 # Sparkbooks
 ![logo](./flame.png)
 
-## About Sparkbooks
-## AI receipt and invoice scanner
-
-
-[add build status]
 
 Sparkbooks is a [Laravel](https://laravel.com) API powered backend and a [NextJS](https://nextjs.org) powered frontend and built using Docker
 
