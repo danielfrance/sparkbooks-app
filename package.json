@@ -1,0 +1,13 @@
+{
+  "name": "Sparkbooks-Global",
+  "private": true,
+  "version": "0.0.0",
+  "description": "",
+  "scripts": {
+    "up": "concurrently \"cd sparkbooks-server && sail up\" \"cd frontend && npm run dev\"",
+    "bootstrap:install": "concurrently \"cd sparkbooks-server && composer install \" \"cd frontend && npm install\""
+  },
+  "dependencies": {
+    "concurrently": "^7.6.0"
+  }
+}
