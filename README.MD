@@ -1,5 +1,5 @@
 # Sparkbooks
-(./flame.png)
+![logo](./flame.png)
 
 ## About Sparkbooks
 ## AI receipt and invoice scanner
