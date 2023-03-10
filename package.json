@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "description": "",
   "scripts": {
-    "up": "concurrently \"cd sparkbooks-server && sail up\" \"cd frontend && npm run dev\"",
+    "up": "concurrently \"cd sparkbooks-server && ./vendor/bin/sail up\" \"cd frontend && npm run dev\"",
     "bootstrap:install": "concurrently \"cd sparkbooks-server && composer install \" \"cd frontend && npm install\""
   },
   "dependencies": {
