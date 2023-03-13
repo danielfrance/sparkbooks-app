@@ -4,10 +4,16 @@ const Context = createContext()
 
 export function UIProvider({ children }) {
     const [isSidebarNavCollapsed, setIsSidebarNavCollapsed] = useState(false)
+    const [userContext, setUserContext] = useState()
 
     return (
         <Context.Provider
-            value={[isSidebarNavCollapsed, setIsSidebarNavCollapsed]}>
+            value={{
+                isSidebarNavCollapsed,
+                setIsSidebarNavCollapsed,
+                userContext,
+                setUserContext,
+            }}>
             {children}
         </Context.Provider>
     )

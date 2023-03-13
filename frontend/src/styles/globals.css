@@ -1,20 +1,91 @@
-body{
+/* 
+    10px = 0.625rem
+    12px = 0.75rem
+    14px = 0.875rem
+    16px = 1rem (base)
+    18px = 1.125rem
+    20px = 1.25rem
+    24px = 1.5rem
+    30px = 1.875rem
+    32px = 2rem 
+                    */
+:root {
+    /* colors */
+    --clr-dark: 209°, 88%, 57%;
+    --clr-light: 281°, 88%, 68%;
+    --clr-white: 0°, 0%, 100%;
+
+    /* font sizes */
+    --fs-700: 2.5rem;
+    --fs-500: 1.375rem;
+    --fs-400: 1rem;
+    --fs-300: 0.875rem;
+
+    /* font families */
+    --ff-serif: Inter, serif
+}
+
+/* Custom CSSS Reset */
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+* {
+    margin: 0;
+    font: inherit;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+img, picture, video, canvas, svg {
+    display: block;
+    max-width: 100%;
+}
+
+p, h1,h2,h3,h4,h5,h6 {
+    overflow-wrap: break-word;
+}
+
+#root, #__next {
+    isolation: isolate;
+}
+
+.btn {
+    margin-top: 0.625rem;
+    background-color: purple;
+    color: red;
+    padding: 0.625rem;
+    border-radius: 5px;
+  }
+.btn .btn-text {
+    margin-left: 5px;
+}
+
+/* body{
     margin:0;
     font-family: "Inter, sans-serif";
     background-color: "#EBF1F3";
     overflow-x: hidden;
     overflow-y: scroll;
-}
+} */
 
-table {
-    background: #FFFFFF;
+/* table { */
+    /* background: #FFFFFF; */
     /* shadow2 */
     /* box-shadow: 0px 5px 14px rgba(51, 150, 242, 0.22);
     border-radius: 7px; */
-}
+/* } */
 
 
-form {
+/* form {
     width: 100%;
 }
 
@@ -30,7 +101,7 @@ form {
 
 .sidebar{
     height: 100vh;
-}
+} */
 
 .main-container{
     height: 100%;

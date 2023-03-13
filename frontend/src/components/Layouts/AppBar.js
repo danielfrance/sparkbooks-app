@@ -3,7 +3,7 @@ import { Search, StatusInfo } from 'grommet-icons'
 import { useState } from 'react'
 import UploadFilesLayer from '@/components/Layouts/UploadFilesLayer'
 
-export const AppBar = ({user}) => {
+export const AppBar = ({ user }) => {
     const [isOpen, setIsOpen] = useState(false)
     const onOpen = () => {
         setIsOpen(true)
@@ -34,13 +34,15 @@ export const AppBar = ({user}) => {
                         <TextInput icon={<Search />} placeholder="search ..." />
                     </Box>
                     <Box gridArea="info" align="end">
-                        <Button
+                        {/* <Button
                             primary
                             label="Upload New Files"
                             onClick={onOpen}
                             margin={{ left: '1em', right: '1em' }}
                             background="primary"
-                        />
+                        /> */}
+
+                        <button className="btn">test</button>
                     </Box>
                 </Grid>
             </Header>
