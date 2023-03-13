@@ -87,7 +87,7 @@ const SidebarFooter = () => {
 
     return (
         <>
-            <Box direction="row" pad={{ bottom: 'large' }}>
+            <Box direction="row" pad={{ bottom: 'medium' }}>
                 <Box
                     direction="row"
                     pad={{ horizontal: 'medium' }}
@@ -111,9 +111,9 @@ const SidebarFooter = () => {
             {!isSidebarNavCollapsed && (
                 <Box
                     direction="column"
-                    pad={{ horizontal: 'xsmall' }}
+                    pad={{ horizontal: 'medium' }}
                     gap="xsmall">
-                    <Box direction="column" pad={{ top: 'small' }}>
+                    <Box direction="column">
                         <Text size="small" color="white">
                             Get in touch
                         </Text>

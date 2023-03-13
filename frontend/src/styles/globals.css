@@ -10,6 +10,7 @@
     32px = 2rem 
                     */
 :root {
+    --main-container-left: 6em;
     /* colors */
     --clr-dark: 209°, 88%, 57%;
     --clr-light: 281°, 88%, 68%;
@@ -58,34 +59,25 @@ p, h1,h2,h3,h4,h5,h6 {
     isolation: isolate;
 }
 
-.btn {
-    margin-top: 0.625rem;
-    background-color: purple;
-    color: red;
-    padding: 0.625rem;
-    border-radius: 5px;
-  }
-.btn .btn-text {
-    margin-left: 5px;
-}
 
-/* body{
+
+body{
     margin:0;
     font-family: "Inter, sans-serif";
     background-color: "#EBF1F3";
     overflow-x: hidden;
     overflow-y: scroll;
-} */
+}
 
-/* table { */
-    /* background: #FFFFFF; */
+table {
+    background: #FFFFFF;
     /* shadow2 */
-    /* box-shadow: 0px 5px 14px rgba(51, 150, 242, 0.22);
-    border-radius: 7px; */
-/* } */
+    box-shadow: 0px 5px 14px rgba(51, 150, 242, 0.22);
+    border-radius: 7px;
+}
 
 
-/* form {
+form {
     width: 100%;
 }
 
@@ -101,19 +93,28 @@ p, h1,h2,h3,h4,h5,h6 {
 
 .sidebar{
     height: 100vh;
-} */
+}
 
 .main-container{
     height: 100%;
     min-height: 100vh;
     position: absolute;
-    width: calc(100% - 195px);
+    
     position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
-    left: 12em;
     overflow-y: scroll;
+}
+
+.main-container-small {
+    width:  calc(100% - 12em);
+    left: 12em;
+}
+
+.main-container-big {
+    width:  calc(100% - 6em);
+    left: 6em;
 }
 
 .box_container {

@@ -10,7 +10,11 @@ import { useUIContext } from '@/contexts/ui'
 
 const AppLayout = ({ header, children }) => {
     const { user } = useAuth({ middleware: 'auth' })
-    const { userContext, setUserContext } = useUIContext()
+    const {
+        userContext,
+        setUserContext,
+        isSidebarNavCollapsed,
+    } = useUIContext()
     const [isWorkspacePromptOpen, setIsWorkspacePromptOpen] = useState(false)
 
     // const onClose = () => {
@@ -18,6 +22,8 @@ const AppLayout = ({ header, children }) => {
     //     setUserData(user)
     //     console.log('userData in onClose: ', userData)
     // }
+
+    // const cls = ([classes]) =
 
     useEffect(() => {
         setUserContext(user)
@@ -37,7 +43,13 @@ const AppLayout = ({ header, children }) => {
             )} */}
             <div className="pageWrapper">
                 <SideBarNav />
-                <Box className="main-container">
+                <Box
+                    className={[
+                        'main-container',
+                        isSidebarNavCollapsed
+                            ? 'main-container-big'
+                            : 'main-container-small',
+                    ].join(' ')}>
                     <Box
                         align="center"
                         className="main-content"
