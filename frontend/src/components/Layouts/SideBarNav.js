@@ -23,12 +23,15 @@ const SidebarHeader = () => {
         <Box
             direction="row"
             pad={{ top: 'medium', horizontal: 'medium' }}
-            gap="xsmall">
+            gap="none">
             <Avatar size="medium">
                 <ApplicationLogo />
             </Avatar>
             {!isSidebarNavCollapsed && (
-                <Text size="small" color="white" style={{ paddingTop: '16px' }}>
+                <Text
+                    size="medium"
+                    color="white"
+                    style={{ paddingTop: '16px' }}>
                     Sparkbooks
                 </Text>
             )}
@@ -43,15 +46,14 @@ const SidebarButton = ({ icon, label, color, path, ...rest }) => {
         <Link href={path}>
             <Button onClick={() => {}} hoverIndicator={{ color: '#466EC7' }}>
                 <Box
-                    pad={{ vertical: 'xxsmall', horizontal: 'small' }}
+                    margin={{ vertical: 'none', horizontal: 'small' }}
+                    pad={{ right: 'small', vertical: 'small' }}
                     direction="row"
                     align="center"
-                    gap="xsmall"
-                    //
-                >
+                    gap="small">
                     {icon}
                     {!isSidebarNavCollapsed && (
-                        <Text size="xsmall" color="white">
+                        <Text size="medium" color="white">
                             {label}
                         </Text>
                     )}
@@ -65,20 +67,34 @@ const TaggleButton = () => {
     const { isSidebarNavCollapsed, setIsSidebarNavCollapsed } = useUIContext()
 
     return (
-        <Box round="full" overflow="hidden">
-            <Button
-                icon={
-                    isSidebarNavCollapsed ? (
-                        <FormNext color="white" size={'small'} />
-                    ) : (
-                        <FormPrevious color="white" size={'medium'} />
-                    )
-                }
-                onClick={() => {
-                    setIsSidebarNavCollapsed(!isSidebarNavCollapsed)
-                }}
-            />
-        </Box>
+        <>
+            {!isSidebarNavCollapsed ? (
+                <Box
+                    alignSelf="end"
+                    pad={{ left: 'none' }}
+                    margin={{ right: 'none' }}>
+                    <Button
+                        margin={{ right: '-25px' }}
+                        alignSelf="end"
+                        icon={<FormPrevious color="#C767F5" size={'large'} />}
+                        onClick={() => {
+                            setIsSidebarNavCollapsed(!isSidebarNavCollapsed)
+                        }}
+                    />
+                </Box>
+            ) : (
+                <Box>
+                    <Button
+                        alignSelf="start"
+                        margin={{ left: '-16px' }}
+                        icon={<FormNext color="#C767F5" size={'large'} />}
+                        onClick={() => {
+                            setIsSidebarNavCollapsed(!isSidebarNavCollapsed)
+                        }}
+                    />
+                </Box>
+            )}
+        </>
     )
 }
 const SidebarFooter = () => {
@@ -147,28 +163,28 @@ const SidebarFooter = () => {
 }
 
 const MainNavigation = () => (
-    <Nav pad={{ left: 'medium' }}>
+    <Nav pad={{ left: 'medium', right: 'none' }} margin={{ right: 'none' }}>
         <SidebarButton
             color="white"
-            icon={<AppsRounded color="white" size="small" />}
+            icon={<AppsRounded color="white" size="medium" />}
             label="Dashboard"
             path="/dashboard"
         />
         <SidebarButton
             color="white"
-            icon={<Group color="white" size="small" />}
+            icon={<Group color="white" size="medium" />}
             label="Clients"
             path="/clients"
         />
         <SidebarButton
             color="white"
-            icon={<Upload color="white" size="small" />}
+            icon={<Upload color="white" size="medium" />}
             label="Uploads"
             path="/uploads"
         />
         <SidebarButton
             color="white"
-            icon={<Copy color="white" size="small" />}
+            icon={<Copy color="white" size="medium" />}
             label="Files"
             path="/files"
         />
@@ -187,11 +203,10 @@ export const SideBarNav = () => {
             footer={<SidebarFooter user={'Herve'} />}
             pad={
                 isSidebarNavCollapsed
-                    ? { left: 'xsmall', right: 'xsmall' }
-                    : { left: 'small', right: 'small' }
+                    ? { left: 'none', right: 'none' }
+                    : { left: 'none', right: 'none' }
             }
-            //
-        >
+            margin={{ right: 'none' }}>
             <MainNavigation />
         </Sidebar>
     )
