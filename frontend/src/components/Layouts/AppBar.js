@@ -24,7 +24,12 @@ export const AppBar = () => {
                 />
             </Box>
             <div className="info">
-                You have 100 files remaining for the month
+                <Folder
+                    color="#C767F5"
+                    style={{ paddingRight: '5px', paddingTop: '10px' }}
+                />
+                You have <span className="text-accent">100</span> files
+                remaining for the month
             </div>
             <button className="btn primary" onClick={() => {}}>
                 Click here to upgrade

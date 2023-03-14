@@ -72,7 +72,7 @@ p, h1,h2,h3,h4,h5,h6 {
 }
 
 .bg-accent {
-    background-color: hsl (var(--clr-light));
+    background-color: hsl(var(--clr-light));
 }
 
 .bg-white {
@@ -84,7 +84,7 @@ p, h1,h2,h3,h4,h5,h6 {
 }
 
 .text-accent {
-    color: hsl (var(--clr-light));
+    color: hsl(var(--clr-light));
 }
 
 .text-white {
@@ -93,7 +93,7 @@ p, h1,h2,h3,h4,h5,h6 {
 
 /* typography */
 .ff-sans-serif {
-    font-family: var(--ff-sans-serif) !important;
+    font-family: var(--ff-sans-serif);
 }
 
 .letter-spacing-1 { letter-spacing: 4.75px; }
@@ -239,9 +239,7 @@ form {
     font-family: (var(--ff-sans-serif));
     padding: 0px;
     margin: 41px 20px;
-    /* border: solid 1px red; */
     grid-template-columns: 2fr 2fr 1fr;
-    /* justify-content: flex-end; */
 }
 
 .appbar .search {
@@ -256,20 +254,10 @@ form {
      border: solid 3px hsl(var(--clr-light));
 }
 
-/* .search:active {
-     border: none;
-} */
-
 .appbar .info {
     height: 2.5rem;
-    padding: 0.7rem;
+    padding: 0.5rem;
     text-align: right;
-
     font-family: var(--ff-sans-serif);
     font-size: var(--fs-300);    
 }
-
-/* .appbar .upgrade {
-    width: 30%;
-    
-} */
