@@ -22,7 +22,7 @@ const SidebarHeader = () => {
     return (
         <Box
             direction="row"
-            pad={{ top: 'medium', horizontal: 'medium' }}
+            pad={{ top: 'medium', horizontal: 'small' }}
             gap="none">
             <Avatar size="medium">
                 <ApplicationLogo />
@@ -73,7 +73,7 @@ const TaggleButton = () => {
                     pad={{ left: 'none' }}
                     margin={{ right: 'none' }}>
                     <Button
-                        margin={{ right: '-25px' }}
+                        margin={{ right: '-2.8em' }}
                         alignSelf="end"
                         icon={<FormPrevious color="#C767F5" size={'large'} />}
                         onClick={() => {
@@ -105,7 +105,7 @@ const SidebarFooter = () => {
             <Box direction="row" pad={{ bottom: 'medium' }}>
                 <Box
                     direction="row"
-                    pad={{ horizontal: 'medium', bottom: 'medium' }}
+                    pad={{ horizontal: 'small', bottom: 'medium' }}
                     gap="xsmall">
                     <Avatar size="small" round="xsmall" src={src} />
                     {!isSidebarNavCollapsed && (
@@ -162,7 +162,7 @@ const SidebarFooter = () => {
 
 const MainNavigation = () => (
     <Nav
-        pad={{ left: 'medium', right: 'none', vertical: 'none' }}
+        pad={{ left: 'xsmall', right: 'none', vertical: 'none' }}
         margin={{ right: 'none' }}>
         <SidebarButton
             color="white"
@@ -198,13 +198,18 @@ export const SideBarNav = () => {
         <Sidebar
             background="linear-gradient(180deg, #3B86D8 0%, #9881EB 100%);"
             height="100vh"
-            width={isSidebarNavCollapsed ? 'xsmall' : 'small'}
+            // width={isSidebarNavCollapsed ? 'xsmall' : 'small'}
+            className={[
+                isSidebarNavCollapsed
+                    ? 'sidenav-container-small'
+                    : 'sidenav-container-big',
+            ]}
             header={<SidebarHeader />}
             footer={<SidebarFooter user={'Herve'} />}
             pad={
                 isSidebarNavCollapsed
-                    ? { left: 'small', right: 'none' }
-                    : { left: 'small', right: 'none' }
+                    ? { left: 'medium', right: 'none' }
+                    : { left: 'medium', right: 'large' }
             }
             margin={{ right: 'none' }}>
             <MainNavigation />

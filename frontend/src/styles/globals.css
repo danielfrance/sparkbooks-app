@@ -157,13 +157,21 @@ form {
 }
 
 .main-container-small {
-    width:  calc(100% - 12em);
-    left: 12em;
+    width:  calc(100% - 12.5rem);
+    left: 12.5rem;
 }
 
 .main-container-big {
-    width:  calc(100% - 6em);
-    left: 6em;
+    width:  calc(100% - 5.5rem);
+    left: 5.5rem;
+} 
+
+.sidenav-container-big {
+    width:  12rem;
+}
+
+.sidenav-container-small {
+    width:  5rem;
 } 
 
 /* .box_container {
@@ -182,14 +190,13 @@ form {
     color: hsl(var(--clr-white));
     font-family: var(--ff-sans-serif);
     border-radius: 7px;
-    padding: 5px 10px;
-    
+    padding: 5px 10px;  
     height: 40px;
 
 }
 
 .btn-nav.full {
-    width: 144px;
+    width: 160px;
 }
 
 .btn-nav:hover {
