@@ -51,9 +51,11 @@ const AppLayout = ({ header, children }) => {
                             : 'main-container-small',
                     ].join(' ')}>
                     <Box
-                        align="center"
+                        // align="center"
                         className="main-content"
-                        width={{ min: '95%', max: '95%' }}>
+                        // width={{ min: '95%', max: '95%' }}
+                        //
+                    >
                         <AppBar />
                         {children}
                     </Box>

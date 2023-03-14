@@ -73,7 +73,7 @@ const TaggleButton = () => {
                     pad={{ left: 'none' }}
                     margin={{ right: 'none' }}>
                     <Button
-                        margin={{ right: '-2.8em' }}
+                        margin={{ right: '-3.7rem' }}
                         alignSelf="end"
                         icon={<FormPrevious color="#C767F5" size={'large'} />}
                         onClick={() => {
@@ -200,10 +200,11 @@ export const SideBarNav = () => {
             height="100vh"
             // width={isSidebarNavCollapsed ? 'xsmall' : 'small'}
             className={[
+                'sidebar-nav',
                 isSidebarNavCollapsed
                     ? 'sidenav-container-small'
                     : 'sidenav-container-big',
-            ]}
+            ].join(' ')}
             header={<SidebarHeader />}
             footer={<SidebarFooter user={'Herve'} />}
             pad={

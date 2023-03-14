@@ -53,10 +53,15 @@ p, h1,h2,h3,h4,h5,h6 {
 /* utility classes */
 .flex { 
     display: flex;
+    flex-direction: row;
     gap: var(--gap, 1rem);
 }
 
 .grid {
+    display: grid;
+    gap: var(--gap, 1rem);
+}
+.inline-grid {
     display: grid;
     gap: var(--gap, 1rem);
 }
@@ -111,6 +116,18 @@ p, h1,h2,h3,h4,h5,h6 {
 }
 
 
+/* customize content scrollbar */
+body::-webkit-scrollbar {
+  width: 0.25rem;
+}
+
+body::-webkit-scrollbar-track {
+  background: hsl(var(--clr-light));
+}
+
+body::-webkit-scrollbar-thumb {
+  background: hsl(var(--clr-light));
+}
 
 /* body{
     margin:0;
@@ -136,24 +153,25 @@ form {
     height: 100%;
     min-height: 100vh;
     width: 100%;
-}
+}*/
 
 .sidebar-nav{
     position: fixed;
 }
-
+/*
 .sidebar{
     height: 100vh;
 } */
 
-.main-container{
-    /* height: 100%; */
-    /* min-height: 100vh; */
+.main-container {
+    margin: 0px auto;
+    padding-right: 10px;
     position: absolute;
     top: 0;
-    right: 0;
-    bottom: 0;
-    overflow-y: scroll;
+    
+    /* right: 0;
+    bottom: 0; */
+    /* overflow-y: scroll; */
 }
 
 .main-container-small {
@@ -164,6 +182,7 @@ form {
 .main-container-big {
     width:  calc(100% - 5.5rem);
     left: 5.5rem;
+    
 } 
 
 .sidenav-container-big {
@@ -203,3 +222,54 @@ form {
     background-color: hsl(var(--clr-dark));
     transition: 0.1s;
 }
+
+.btn.primary {
+    background-color: hsl(var(--clr-light));
+    color: hsl(var(--clr-white));
+    font-family: var(--ff-sans-serif);
+    font-size: var(--fs-300);
+    height: 2.5rem;
+    padding: 11px 21px;
+    border-radius: 6px;
+    border: none;
+}
+
+.appbar {    
+    font-size: var(--fs-300);
+    font-family: (var(--ff-sans-serif));
+    padding: 0px;
+    margin: 41px 20px;
+    /* border: solid 1px red; */
+    grid-template-columns: 2fr 2fr 1fr;
+    /* justify-content: flex-end; */
+}
+
+.appbar .search {
+    height: 2.5rem;
+    background-color: #DEDEDE;
+    border: none;
+    outline: none;
+    border-radius: 6px;
+}
+
+.search:focus {
+     border: solid 3px hsl(var(--clr-light));
+}
+
+/* .search:active {
+     border: none;
+} */
+
+.appbar .info {
+    height: 2.5rem;
+    padding: 0.7rem;
+    text-align: right;
+
+    font-family: var(--ff-sans-serif);
+    font-size: var(--fs-300);    
+}
+
+/* .appbar .upgrade {
+    width: 30%;
+    
+} */

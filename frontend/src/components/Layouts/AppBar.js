@@ -1,9 +1,10 @@
-import { Box, Button, Grid, Header, Text, TextInput } from 'grommet'
-import { Search, StatusInfo } from 'grommet-icons'
+import { Box, Grid, Header, Text, TextInput } from 'grommet'
+import { Search, StatusInfo, Upgrade, Folder } from 'grommet-icons'
 import { useState } from 'react'
 import UploadFilesLayer from '@/components/Layouts/UploadFilesLayer'
+import Button from '@/components/Button'
 
-export const AppBar = ({ user }) => {
+export const AppBar = () => {
     const [isOpen, setIsOpen] = useState(false)
     const onOpen = () => {
         setIsOpen(true)
@@ -12,41 +13,29 @@ export const AppBar = ({ user }) => {
     const onClose = () => {
         setIsOpen(false)
     }
-    return (
-        <>
-            <Header
-                className="AppBar"
-                as="header"
-                direction="row"
-                justify="between"
-                width="100%"
-                pad={{ vertical: 'small' }}>
-                <Grid
-                    rows={['auto', 'flex']}
-                    columns={['medium', 'flex']}
-                    fill="horizontal"
-                    gap="medium"
-                    areas={[
-                        { name: 'search', start: [0, 1], end: [0, 1] },
-                        { name: 'info', start: [1, 1], end: [1, 1] },
-                    ]}>
-                    <Box gridArea="search">
-                        <TextInput icon={<Search />} placeholder="search ..." />
-                    </Box>
-                    <Box gridArea="info" align="end">
-                        {/* <Button
-                            primary
-                            label="Upload New Files"
-                            onClick={onOpen}
-                            margin={{ left: '1em', right: '1em' }}
-                            background="primary"
-                        /> */}
 
-                        <button className="btn">test</button>
-                    </Box>
-                </Grid>
-            </Header>
-            {isOpen && <UploadFilesLayer onClose={onClose} isOpen />}
-        </>
+    return (
+        <div className="inline-grid appbar">
+            <Box>
+                <TextInput
+                    className="search"
+                    icon={<Search />}
+                    placeholder="search ..."
+                />
+            </Box>
+            <div className="info">
+                You have 100 files remaining for the month
+            </div>
+            <button className="btn primary" onClick={() => {}}>
+                Click here to upgrade
+            </button>
+            {/* <Button className="btn primary" onClick={() => {}} active>
+                <Box pad="small" direction="row" align="center" gap="small">
+                    <Text className="fs-300 ff-sans-serif">
+                        Click here to upgrade
+                    </Text>
+                </Box>
+            </Button> */}
+        </div>
     )
 }
