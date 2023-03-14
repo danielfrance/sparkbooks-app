@@ -29,8 +29,7 @@ const SidebarHeader = () => {
             </Avatar>
             {!isSidebarNavCollapsed && (
                 <Text
-                    size="medium"
-                    color="white"
+                    className="fs-400 text-white ff-sans-serif"
                     style={{ paddingTop: '16px' }}>
                     Sparkbooks
                 </Text>
@@ -44,18 +43,18 @@ const SidebarButton = ({ icon, label, color, path, ...rest }) => {
 
     return (
         <Link href={path}>
-            <Button onClick={() => {}} hoverIndicator={{ color: '#466EC7' }}>
+            <Button onClick={() => {}}>
                 <Box
-                    margin={{ vertical: 'none', horizontal: 'small' }}
-                    pad={{ right: 'small', vertical: 'small' }}
+                    className={[
+                        'btn-nav',
+                        isSidebarNavCollapsed ? '' : 'full',
+                    ].join(' ')}
                     direction="row"
                     align="center"
                     gap="small">
                     {icon}
                     {!isSidebarNavCollapsed && (
-                        <Text size="medium" color="white">
-                            {label}
-                        </Text>
+                        <Text className="fs-400 text-white">{label}</Text>
                     )}
                 </Box>
             </Button>
@@ -106,18 +105,17 @@ const SidebarFooter = () => {
             <Box direction="row" pad={{ bottom: 'medium' }}>
                 <Box
                     direction="row"
-                    pad={{ horizontal: 'medium' }}
+                    pad={{ horizontal: 'medium', bottom: 'medium' }}
                     gap="xsmall">
                     <Avatar size="small" round="xsmall" src={src} />
                     {!isSidebarNavCollapsed && (
                         <>
                             <Text
-                                size="xsmall"
-                                color="white"
+                                className="fs-300 text-white ff-sans-serif"
                                 style={{ paddingTop: '3px' }}>
                                 {userContext?.name}
                             </Text>
-                            <Box pad={{ top: 'xsmall', left: 'small' }}>
+                            <Box pad={{ top: '0.5em', left: 'small' }}>
                                 <Logout color="white" size="small" />
                             </Box>
                         </>
@@ -130,29 +128,29 @@ const SidebarFooter = () => {
                     pad={{ horizontal: 'medium' }}
                     gap="xsmall">
                     <Box direction="column">
-                        <Text size="small" color="white">
+                        <Text className="fs-200 text-white ff-sans-serif">
                             Get in touch
                         </Text>
                         <Text
-                            size="xsmall"
-                            color="white"
-                            style={{ fontSize: '0.375rem' }}>
+                            className="fs-100 text-white ff-sans-serif"
+                            style={{ marginTop: '-10px' }}>
                             info@sparkbooks.com
                         </Text>
                         <Text
-                            size="xsmall"
-                            color="white"
-                            style={{ fontSize: '0.375rem' }}>
-                            @ 2022. All rights reserved
+                            className="fs-100 text-white ff-sans-serif"
+                            style={{
+                                marginTop: '5px',
+                            }}>
+                            @ 2022.
                         </Text>
                         <Text
-                            size="xsmall"
-                            color="white"
+                            className="fs-100 text-white ff-sans-serif"
                             style={{
-                                fontSize: '0.313rem',
-                                marginTop: '0px',
-                                paddingTop: '0px',
-                            }}>
+                                marginTop: '-10px',
+                            }}
+
+                            //
+                        >
                             ver. 1.0
                         </Text>
                     </Box>
@@ -163,7 +161,9 @@ const SidebarFooter = () => {
 }
 
 const MainNavigation = () => (
-    <Nav pad={{ left: 'medium', right: 'none' }} margin={{ right: 'none' }}>
+    <Nav
+        pad={{ left: 'medium', right: 'none', vertical: 'none' }}
+        margin={{ right: 'none' }}>
         <SidebarButton
             color="white"
             icon={<AppsRounded color="white" size="medium" />}
@@ -203,8 +203,8 @@ export const SideBarNav = () => {
             footer={<SidebarFooter user={'Herve'} />}
             pad={
                 isSidebarNavCollapsed
-                    ? { left: 'none', right: 'none' }
-                    : { left: 'none', right: 'none' }
+                    ? { left: 'small', right: 'none' }
+                    : { left: 'small', right: 'none' }
             }
             margin={{ right: 'none' }}>
             <MainNavigation />

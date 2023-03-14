@@ -1,29 +1,20 @@
-/* 
-    10px = 0.625rem
-    12px = 0.75rem
-    14px = 0.875rem
-    16px = 1rem (base)
-    18px = 1.125rem
-    20px = 1.25rem
-    24px = 1.5rem
-    30px = 1.875rem
-    32px = 2rem 
-                    */
+
 :root {
-    --main-container-left: 6em;
     /* colors */
-    --clr-dark: 209°, 88%, 57%;
-    --clr-light: 281°, 88%, 68%;
-    --clr-white: 0°, 0%, 100%;
+    --clr-dark: 221, 54%, 53%;
+    --clr-light: 281 88% 68%;
+    --clr-white: 0 0% 100%;
 
     /* font sizes */
     --fs-700: 2.5rem;
     --fs-500: 1.375rem;
     --fs-400: 1rem;
     --fs-300: 0.875rem;
+    --fs-200: 0.75rem;
+    --fs-100: 0.5rem;
 
     /* font families */
-    --ff-serif: Inter, serif
+    --ff-sans-serif: Inter, sans-serif
 }
 
 /* Custom CSSS Reset */
@@ -59,23 +50,83 @@ p, h1,h2,h3,h4,h5,h6 {
     isolation: isolate;
 }
 
+/* utility classes */
+.flex { 
+    display: flex;
+    gap: var(--gap, 1rem);
+}
+
+.grid {
+    display: grid;
+    gap: var(--gap, 1rem);
+}
+
+/* colors */
+.bg-dark {
+    background-color: hsl(var(--clr-dark));
+}
+
+.bg-accent {
+    background-color: hsl (var(--clr-light));
+}
+
+.bg-white {
+    background-color: hsl( var(--clr-white));
+}
+
+.text-dark {
+    color: hsl( var(--clr-dark));
+}
+
+.text-accent {
+    color: hsl (var(--clr-light));
+}
+
+.text-white {
+    color: hsl( var(--clr-white)) ;
+}
+
+/* typography */
+.ff-sans-serif {
+    font-family: var(--ff-sans-serif) !important;
+}
+
+.letter-spacing-1 { letter-spacing: 4.75px; }
+.letter-spacing-2 { letter-spacing: 2.7px; }
+.letter-spacing-3 { letter-spacing: 2.35px; }
+
+.uppercase { text-transform: uppercase;}
+
+.fs-700 {font-size: var(--fs-700) !important;}
+.fs-500 {font-size: var(--fs-500) !important;}
+.fs-400 {font-size: var(--fs-400) !important;}
+.fs-300 {font-size: var(--fs-300) !important;}
+.fs-200 {font-size: var(--fs-200) !important;}
+.fs-100 {font-size: var(--fs-100) !important;}
 
 
-body{
+.fs-700,
+.fs-500 {
+    line-height: 1.1;
+}
+
+
+
+/* body{
     margin:0;
     font-family: "Inter, sans-serif";
     background-color: "#EBF1F3";
     overflow-x: hidden;
     overflow-y: scroll;
-}
+} */
 
-table {
+/* table {
     background: #FFFFFF;
-    /* shadow2 */
+    
     box-shadow: 0px 5px 14px rgba(51, 150, 242, 0.22);
     border-radius: 7px;
-}
-
+} */
+/* 
 
 form {
     width: 100%;
@@ -93,13 +144,11 @@ form {
 
 .sidebar{
     height: 100vh;
-}
+} */
 
 .main-container{
-    height: 100%;
-    min-height: 100vh;
-    position: absolute;
-    
+    /* height: 100%; */
+    /* min-height: 100vh; */
     position: absolute;
     top: 0;
     right: 0;
@@ -115,15 +164,35 @@ form {
 .main-container-big {
     width:  calc(100% - 6em);
     left: 6em;
-}
+} 
 
-.box_container {
+/* .box_container {
    background: #FFFFFF;
-/* shadow2 */
+
+
     padding: 2em;
     box-shadow: 5px 5px 14px rgba(51, 150, 242, 0.22);
     border-radius: 7px;
     height: 100% !important;
     min-height: auto !important;
     border: 1px solid rgba(51, 150, 242, 0.1);
+} */
+
+.btn-nav {
+    color: hsl(var(--clr-white));
+    font-family: var(--ff-sans-serif);
+    border-radius: 7px;
+    padding: 5px 10px;
+    
+    height: 40px;
+
+}
+
+.btn-nav.full {
+    width: 144px;
+}
+
+.btn-nav:hover {
+    background-color: hsl(var(--clr-dark));
+    transition: 0.1s;
 }
