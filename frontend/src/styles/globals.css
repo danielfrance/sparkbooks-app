@@ -165,7 +165,7 @@ form {
 
 .main-container {
     margin: 0px auto;
-    padding: 0px 1.875rem;
+    padding: 0.688rem 1.875rem;
     position: absolute;
     top: 0;
     
@@ -226,7 +226,7 @@ form {
 .btn {
     font-family: var(--ff-sans-serif);
     font-size: var(--fs-300);
-    font-weight: var(--fs-500);
+    font-weight: 500;
     height: 2.5rem;
     padding: 11px 21px;
     border-radius: 6px;
@@ -247,7 +247,7 @@ form {
     font-size: var(--fs-300);
     font-family: (var(--ff-sans-serif));
     padding: 0px;
-    margin-top: 41px;
+    margin: 1.875rem 0px;
     grid-template-columns: 2fr 2fr 1fr;
 }
 
@@ -269,4 +269,11 @@ form {
     text-align: right;
     font-family: var(--ff-sans-serif);
     font-size: var(--fs-300);    
+}
+
+.title {
+    color: hsl(var(--clr-dark));
+    font-family: var(--ff-sans-serif);
+    font-size: var(--fs-400);
+    font-weight: 700;
 }

@@ -1,163 +1,341 @@
+import { useState } from 'react'
 import AppLayout from '@/components/Layouts/AppLayout'
 import {
+    Grommet,
     Box,
+    Button,
     DataTable,
     Meter,
     Heading,
     Text,
     Grid,
     Card,
+    CardHeader,
     CardBody,
+    Avatar,
 } from 'grommet'
-import { DocumentStore, DocumentVerified } from 'grommet-icons'
+import { DocumentStore, DocumentVerified, Blank } from 'grommet-icons'
+
+const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
+
+const SortableIcon = () => (
+    <Blank color="text-xweak" opacity="0.3">
+        <g fill="none" stroke="#000" strokeWidth="2">
+            <path d="M 6 10 L 12 6 L 18 10" />
+            <path d="M 6 14 L 12 18 L 18 14" />
+        </g>
+    </Blank>
+)
+
+const customTheme = {
+    global: {
+        font: {
+            family: 'Inter',
+        },
+    },
+    dataTable: {
+        header: {
+            color: 'text-strong',
+            extend: ({ column, sort, sortable }) => `
+          ${
+              sortable &&
+              sort &&
+              sort.property !== column &&
+              `
+              :hover {
+                svg {
+                   opacity: 100%;
+                }
+               }
+            `
+          }
+         `,
+        },
+        icons: {
+            sortable: SortableIcon,
+        },
+    },
+}
+
+const clientRender = datum => (
+    <Box pad={{ vertical: 'xsmall' }} gap="small" direction="row">
+        <Avatar size="small" round="xsmall" src={src} />
+        <Text size="small">{datum.client}</Text>
+    </Box>
+)
+
+const processingDataRender = datum => (
+    <Box pad={{ vertical: 'xsmall' }} direction="row">
+        <Meter
+            values={[
+                {
+                    value: datum.percent,
+                    color: '#4112fb',
+                    background: '#ECECEC',
+                },
+            ]}
+            thickness="xsmall"
+            round
+        />
+        <Text className="text-dark" size="small" margin={{ left: '20px' }}>
+            {datum.percent}%
+        </Text>
+    </Box>
+)
 
 export default function Dashboard() {
+    const [sort, setSort] = useState({
+        property: 'name',
+        direction: 'desc',
+    })
     return (
         <AppLayout>
-            <Grid
-                alignSelf="stretch"
-                rows={['auto', 'flex']}
-                pad="medium"
-                columns={['medium', 'medium']}
-                justifyContent="between"
-                areas={[
-                    {
-                        name: 'totalFiles',
-                        start: [0, 1],
-                        end: [0, 1],
-                    },
-                    { name: 'remainingFiles', start: [1, 1], end: [1, 1] },
-                ]}>
-                <Card
-                    gridArea="totalFiles"
-                    pad="medium"
-                    background="brand"
-                    elevation="medium"
-                    gap="medium">
-                    <CardBody pad="medium">
-                        <Grid pad="none" columns={['xsmall', 'large']}>
-                            <Box pad="small">
-                                <DocumentVerified color="white" size="large" />
-                            </Box>
-                            <Box margin={{ left: '-1em' }}>
-                                <Text color="white" size="2xl" weight="bold">
-                                    120
-                                </Text>
-                                <Text color="white">Total Files Processed</Text>
-                            </Box>
-                        </Grid>
-                    </CardBody>
-                </Card>
-                <Card
-                    gridArea="remainingFiles"
-                    pad="medium"
-                    background="brand"
-                    elevation="medium"
-                    gap="medium">
-                    <CardBody pad="medium">
-                        <Grid pad="none" columns={['xsmall', 'large']}>
-                            <Box pad="small">
-                                <DocumentStore color="white" size="large" />
-                            </Box>
-                            <Box margin={{ left: '-1em' }}>
-                                <Text color="white" size="2xl" weight="bold">
-                                    880
-                                </Text>
-                                <Text color="white">Remaining Files</Text>
-                            </Box>
-                        </Grid>
-                    </CardBody>
-                </Card>
-            </Grid>
-            <Box className="box_container" fill>
-                <Box direction="row" justify="between">
-                    <Heading margin="none" level="3" color="brand">
-                        Recent Uploads
-                    </Heading>
-                </Box>
-                <DataTable
-                    sortable
-                    margin={{ top: '3em' }}
-                    paginate={{ step: 10 }}
-                    alignSelf="stretch"
-                    columns={[
-                        {
-                            property: 'id',
-                            header: <Text>ID</Text>,
-                            primary: true,
-                        },
-                        {
-                            property: 'client',
-                            header: <Text>Client</Text>,
-                        },
-                        {
-                            property: 'files',
-                            header: <Text>Files</Text>,
-                        },
-                        {
-                            property: 'percent',
-                            size: 'medium',
-                            header: 'Processing %',
-                            render: datum => (
-                                <Box
-                                    pad={{ vertical: 'xsmall' }}
-                                    direction="row">
-                                    <Meter
-                                        values={[
-                                            {
-                                                value: datum.percent,
-                                                color: 'brand',
-                                                background: 'primary',
-                                            },
-                                        ]}
-                                        thickness="small"
-                                        size="small"
-                                    />
-                                    <Text
-                                        size="small"
-                                        margin={{ left: '20px' }}>
-                                        {datum.percent}%
-                                    </Text>
-                                </Box>
-                            ),
-                        },
-                    ]}
-                    data={[
-                        { id: '1', client: 'Alan', files: 23, percent: 20 },
-                        { id: '2', client: 'Bryan', files: 3, percent: 30 },
-                        { id: '3', client: 'Chris', files: 11, percent: 40 },
-                        { id: '4', client: 'Eric', files: 13, percent: 100 },
-                        { id: '1', client: 'Alan', files: 23, percent: 20 },
-                        { id: '2', client: 'Bryan', files: 3, percent: 30 },
-                        { id: '3', client: 'Chris', files: 11, percent: 40 },
-                        { id: '4', client: 'Eric', files: 13, percent: 100 },
-                        { id: '1', client: 'Alan', files: 23, percent: 20 },
-                        { id: '2', client: 'Bryan', files: 3, percent: 30 },
-                        { id: '3', client: 'Chris', files: 11, percent: 40 },
-                        { id: '4', client: 'Eric', files: 13, percent: 100 },
-                        { id: '1', client: 'Alan', files: 23, percent: 20 },
-                        { id: '2', client: 'Bryan', files: 3, percent: 30 },
-                        { id: '3', client: 'Chris', files: 11, percent: 40 },
-                        { id: '4', client: 'Eric', files: 13, percent: 100 },
-                        { id: '1', client: 'Alan', files: 23, percent: 20 },
-                        { id: '2', client: 'Bryan', files: 3, percent: 30 },
-                        { id: '3', client: 'Chris', files: 11, percent: 40 },
-                        { id: '4', client: 'Eric', files: 13, percent: 100 },
-                        { id: '1', client: 'Alan', files: 23, percent: 20 },
-                        { id: '2', client: 'Bryan', files: 3, percent: 30 },
-                        { id: '3', client: 'Chris', files: 11, percent: 40 },
-                        { id: '4', client: 'Eric', files: 13, percent: 100 },
-                        { id: '1', client: 'Alan', files: 23, percent: 20 },
-                        { id: '2', client: 'Bryan', files: 3, percent: 30 },
-                        { id: '3', client: 'Chris', files: 11, percent: 40 },
-                        { id: '4', client: 'Eric', files: 13, percent: 100 },
-                        { id: '1', client: 'Alan', files: 23, percent: 20 },
-                        { id: '2', client: 'Bryan', files: 3, percent: 30 },
-                        { id: '3', client: 'Chris', files: 11, percent: 40 },
-                        { id: '4', client: 'Eric', files: 13, percent: 100 },
-                    ]}
-                />
-            </Box>
+            <Card pad="medium" gap="small">
+                <CardHeader className="title">Recent Uploads</CardHeader>
+                <CardBody>
+                    <Grommet theme={customTheme}>
+                        <Box>
+                            <DataTable
+                                className="ff-sans-serif fs-300"
+                                background={{
+                                    body: '#FBFBFB',
+                                }}
+                                border={{
+                                    header: {
+                                        color: '#FBFBFB',
+                                        side: 'bottom',
+                                    },
+                                }}
+                                step={10}
+                                paginate
+                                alignSelf="stretch"
+                                sort={sort}
+                                onSort={setSort}
+                                columns={[
+                                    {
+                                        property: 'id',
+                                        header: <Text>Uploads</Text>,
+                                        size: 'small',
+                                        sortable: true,
+                                        primary: true,
+                                    },
+                                    {
+                                        property: 'client',
+                                        size: 'medium',
+                                        header: <Text>Client</Text>,
+                                        render: clientRender,
+                                    },
+                                    {
+                                        property: 'files',
+                                        size: 'medium',
+                                        header: <Text>Files</Text>,
+                                    },
+                                    {
+                                        property: 'percent',
+                                        size: 'medium',
+                                        header: 'Processing %',
+                                        render: processingDataRender,
+                                    },
+                                ]}
+                                data={[
+                                    {
+                                        id: '1',
+                                        client: 'Alan',
+                                        files: 23,
+                                        percent: 20,
+                                    },
+                                    {
+                                        id: '2',
+                                        client: 'Bryan',
+                                        files: 3,
+                                        percent: 30,
+                                    },
+                                    {
+                                        id: '3',
+                                        client: 'Chris',
+                                        files: 11,
+                                        percent: 40,
+                                    },
+                                    {
+                                        id: '4',
+                                        client: 'Eric',
+                                        files: 13,
+                                        percent: 100,
+                                    },
+                                    {
+                                        id: '1',
+                                        client: 'Alan',
+                                        files: 23,
+                                        percent: 20,
+                                    },
+                                    {
+                                        id: '2',
+                                        client: 'Bryan',
+                                        files: 3,
+                                        percent: 30,
+                                    },
+                                    {
+                                        id: '3',
+                                        client: 'Chris',
+                                        files: 11,
+                                        percent: 40,
+                                    },
+                                    {
+                                        id: '4',
+                                        client: 'Eric',
+                                        files: 13,
+                                        percent: 100,
+                                    },
+                                    {
+                                        id: '1',
+                                        client: 'Alan',
+                                        files: 23,
+                                        percent: 20,
+                                    },
+                                    {
+                                        id: '2',
+                                        client: 'Bryan',
+                                        files: 3,
+                                        percent: 30,
+                                    },
+                                    {
+                                        id: '3',
+                                        client: 'Chris',
+                                        files: 11,
+                                        percent: 40,
+                                    },
+                                    {
+                                        id: '4',
+                                        client: 'Eric',
+                                        files: 13,
+                                        percent: 100,
+                                    },
+                                    {
+                                        id: '1',
+                                        client: 'Alan',
+                                        files: 23,
+                                        percent: 20,
+                                    },
+                                    {
+                                        id: '2',
+                                        client: 'Bryan',
+                                        files: 3,
+                                        percent: 30,
+                                    },
+                                    {
+                                        id: '3',
+                                        client: 'Chris',
+                                        files: 11,
+                                        percent: 40,
+                                    },
+                                    {
+                                        id: '4',
+                                        client: 'Eric',
+                                        files: 13,
+                                        percent: 100,
+                                    },
+                                    {
+                                        id: '1',
+                                        client: 'Alan',
+                                        files: 23,
+                                        percent: 20,
+                                    },
+                                    {
+                                        id: '2',
+                                        client: 'Bryan',
+                                        files: 3,
+                                        percent: 30,
+                                    },
+                                    {
+                                        id: '3',
+                                        client: 'Chris',
+                                        files: 11,
+                                        percent: 40,
+                                    },
+                                    {
+                                        id: '4',
+                                        client: 'Eric',
+                                        files: 13,
+                                        percent: 100,
+                                    },
+                                    {
+                                        id: '1',
+                                        client: 'Alan',
+                                        files: 23,
+                                        percent: 20,
+                                    },
+                                    {
+                                        id: '2',
+                                        client: 'Bryan',
+                                        files: 3,
+                                        percent: 30,
+                                    },
+                                    {
+                                        id: '3',
+                                        client: 'Chris',
+                                        files: 11,
+                                        percent: 40,
+                                    },
+                                    {
+                                        id: '4',
+                                        client: 'Eric',
+                                        files: 13,
+                                        percent: 100,
+                                    },
+                                    {
+                                        id: '1',
+                                        client: 'Alan',
+                                        files: 23,
+                                        percent: 20,
+                                    },
+                                    {
+                                        id: '2',
+                                        client: 'Bryan',
+                                        files: 3,
+                                        percent: 30,
+                                    },
+                                    {
+                                        id: '3',
+                                        client: 'Chris',
+                                        files: 11,
+                                        percent: 40,
+                                    },
+                                    {
+                                        id: '4',
+                                        client: 'Eric',
+                                        files: 13,
+                                        percent: 100,
+                                    },
+                                    {
+                                        id: '1',
+                                        client: 'Alan',
+                                        files: 23,
+                                        percent: 20,
+                                    },
+                                    {
+                                        id: '2',
+                                        client: 'Bryan',
+                                        files: 3,
+                                        percent: 30,
+                                    },
+                                    {
+                                        id: '3',
+                                        client: 'Chris',
+                                        files: 11,
+                                        percent: 40,
+                                    },
+                                    {
+                                        id: '4',
+                                        client: 'Eric',
+                                        files: 13,
+                                        percent: 100,
+                                    },
+                                ]}
+                            />
+                        </Box>
+                    </Grommet>
+                </CardBody>
+            </Card>
         </AppLayout>
     )
 }

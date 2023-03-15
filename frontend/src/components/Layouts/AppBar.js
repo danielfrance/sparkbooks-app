@@ -33,7 +33,7 @@ const AccountUpgrade = ({}) => {
     return (
         <>
             <button className="btn secondary" onClick={() => {}}>
-                Click here to upgrade
+                Upgrade
             </button>
             {/* <Button className="btn primary" onClick={() => {}} active>
                 <Box pad="small" direction="row" align="center" gap="small">
