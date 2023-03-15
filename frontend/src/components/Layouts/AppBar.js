@@ -9,8 +9,9 @@ const Filter = ({}) => {
         <Box>
             <TextInput
                 className="search"
-                icon={<Search />}
-                placeholder="search ..."
+                icon={<Search size="medium" color="#C767F5" />}
+                reverse
+                placeholder="Search"
             />
         </Box>
     )

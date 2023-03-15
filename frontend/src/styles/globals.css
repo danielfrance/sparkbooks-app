@@ -88,7 +88,7 @@ p, h1,h2,h3,h4,h5,h6 {
 }
 
 .text-white {
-    color: hsl( var(--clr-white)) ;
+    color: hsl(var(--clr-white)) ;
 }
 
 /* typography */
@@ -276,4 +276,29 @@ form {
     font-family: var(--ff-sans-serif);
     font-size: var(--fs-400);
     font-weight: 700;
+}
+
+.dashboard-header { 
+    --gap: 1.875rem;   
+    font-size: var(--fs-300);
+    font-family: (var(--ff-sans-serif));
+    height: 9.563rem;
+    padding: 0px;
+    margin-bottom: 1.875rem;
+    grid-template-columns: 1fr 1fr 2fr;
+}
+
+.dashboard-header .status {
+    border-radius: 7px;
+}
+
+.dashboard-header .plan-details {
+    border-radius: 7px;
+    box-shadow: 0px 5px 14px rgba(51, 150, 242, 0.22);
+}
+
+.card {
+    background: hsl( var(--clr-white));
+    box-shadow: 0px 5px 14px rgba(51, 150, 242, 0.22);
+    border-radius: 7px;
 }
