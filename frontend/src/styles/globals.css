@@ -165,7 +165,7 @@ form {
 
 .main-container {
     margin: 0px auto;
-    padding-right: 10px;
+    padding: 0px 1.875rem;
     position: absolute;
     top: 0;
     
@@ -223,22 +223,31 @@ form {
     transition: 0.1s;
 }
 
-.btn.primary {
-    background-color: hsl(var(--clr-light));
-    color: hsl(var(--clr-white));
+.btn {
     font-family: var(--ff-sans-serif);
     font-size: var(--fs-300);
+    font-weight: var(--fs-500);
     height: 2.5rem;
     padding: 11px 21px;
     border-radius: 6px;
     border: none;
 }
 
+.btn.primary {
+    background-color: hsl(var(--clr-dark));
+    color: hsl(var(--clr-white));
+}
+
+.btn.secondary {
+    background-color: hsl(var(--clr-light));
+    color: hsl(var(--clr-white));
+}
+
 .appbar {    
     font-size: var(--fs-300);
     font-family: (var(--ff-sans-serif));
     padding: 0px;
-    margin: 41px 20px;
+    margin-top: 41px;
     grid-template-columns: 2fr 2fr 1fr;
 }
 
