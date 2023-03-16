@@ -1,6 +1,7 @@
 import AppLayout from '@/components/Layouts/AppLayout'
 import { Box, Meter, Text, Avatar } from 'grommet'
 import DataTable from '@/components/Layouts/DataTable'
+import { useState } from 'react'
 
 const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
 
@@ -252,14 +253,25 @@ const data = [
 ]
 
 export default function Dashboard() {
+    const [selected, setSelected] = useState()
+    const actions = [
+        // { label: 'Add', onClick: e => console.log(e) },
+        // { label: 'Edit', onClick: e => console.log(e) },
+    ]
     return (
         <AppLayout>
             <div className="inline-grid dashboard-header">
-                <div className="status bg-dark text-dark">1</div>
-                <div className="status bg-dark text-dark">1</div>
+                <div className="status bg-dark text-white">1</div>
+                <div className="status bg-dark text-white">1</div>
                 <div className="plan-details bg-white">1</div>
             </div>
-            <DataTable title="Recent Uploads" columns={columns} data={data} />
+            <DataTable
+                title="Recent Uploads"
+                columns={columns}
+                data={data}
+                setSelected={setSelected}
+                actions={actions}
+            />
         </AppLayout>
     )
 }

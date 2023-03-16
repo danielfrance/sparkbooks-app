@@ -41,14 +41,32 @@ const customTheme = {
     },
 }
 
-export default function Table({ title, columns, data }) {
+export default function Table({
+    title,
+    columns,
+    data,
+    setSelected,
+    actions = [],
+}) {
     const [sort, setSort] = useState({
         property: 'name',
         direction: 'desc',
     })
     return (
         <Card pad="medium" gap="small" className="card">
-            <CardHeader className="title">{title}</CardHeader>
+            <CardHeader>
+                <span className="title">{title}</span>
+                <div className="actions">
+                    {actions.map(action => (
+                        <button
+                            className="btn inverse small"
+                            key={`${title}${action.label}`}
+                            onClick={e => action.onClick(e)}>
+                            {action.label}
+                        </button>
+                    ))}
+                </div>
+            </CardHeader>
             <CardBody>
                 <Grommet theme={customTheme}>
                     <Box>

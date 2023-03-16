@@ -238,11 +238,22 @@ form {
     color: hsl(var(--clr-white));
 }
 
+
+.btn.inverse {
+    background-color: hsl(var(--clr-white));
+    color: hsl(var(--clr-light));
+    border: solid 1px hsl(var(--clr-light));
+}
+
 .btn.secondary {
     background-color: hsl(var(--clr-light));
     color: hsl(var(--clr-white));
 }
-
+.btn.small {
+    height: 1.688rem;
+    padding: 5px 10px;
+    margin: auto 5px;
+}
 .appbar {    
     font-size: var(--fs-300);
     font-family: (var(--ff-sans-serif));
