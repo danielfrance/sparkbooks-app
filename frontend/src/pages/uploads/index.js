@@ -254,6 +254,7 @@ const data = [
 
 function Uploads() {
     const [selected, setSelected] = useState()
+    const onClickRow = datum => console.log(datum)
 
     return (
         <AppLayout>
@@ -262,6 +263,7 @@ function Uploads() {
                 columns={columns}
                 data={data}
                 setSelected={setSelected}
+                onClickRow={onClickRow}
             />
         </AppLayout>
     )

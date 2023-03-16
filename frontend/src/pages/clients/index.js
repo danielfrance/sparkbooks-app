@@ -78,7 +78,8 @@ const columns = [
 ]
 
 const onClickRow = ({ datum }) => {
-    router.push(`/clients/edit/${datum.id}`)
+    // router.push(`/clients/edit/${datum.id}`)
+    console.log(datum)
 }
 
 const clientEdit = id => {}
