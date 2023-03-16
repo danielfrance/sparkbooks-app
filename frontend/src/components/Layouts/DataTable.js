@@ -46,6 +46,7 @@ export default function Table({
     columns,
     data,
     setSelected,
+    onClickRow,
     actions = [],
 }) {
     const [sort, setSort] = useState({
@@ -93,6 +94,8 @@ export default function Table({
                             sort={sort}
                             onSort={setSort}
                             columns={columns}
+                            onClickRow={onClickRow}
+                            setSelected={setSelected}
                             data={data}
                         />
                     </Box>

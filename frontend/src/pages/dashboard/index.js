@@ -36,8 +36,8 @@ const columns = [
         property: 'id',
         header: <Text>Uploads</Text>,
         size: 'small',
-        sortable: true,
-        primary: true,
+        // sortable: true,
+        // primary: true,
     },
     {
         property: 'client',
@@ -254,6 +254,7 @@ const data = [
 
 export default function Dashboard() {
     const [selected, setSelected] = useState()
+    const onClickRow = datum => console.log(datum)
     const actions = [
         // { label: 'Add', onClick: e => console.log(e) },
         // { label: 'Edit', onClick: e => console.log(e) },
@@ -270,6 +271,7 @@ export default function Dashboard() {
                 columns={columns}
                 data={data}
                 setSelected={setSelected}
+                onClickRow={onClickRow}
                 actions={actions}
             />
         </AppLayout>
