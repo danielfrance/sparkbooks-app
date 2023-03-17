@@ -270,9 +270,29 @@ export default function Dashboard() {
     return (
         <AppLayout>
             <div className="inline-grid dashboard-header">
-                <div className="status bg-dark text-white">1</div>
-                <div className="status bg-dark text-white">1</div>
-                <div className="plan-details bg-white">1</div>
+                <div className="flex status bg-dark text-white">
+                    <img src="/processed.png" />
+                    <div>
+                        <span className="fs-700">120</span>
+                        <span className="fs-100">Files processed</span>
+                    </div>
+                </div>
+                <div className="flex status bg-dark text-white">
+                    <img src="/pending.png" />
+                    <div>
+                        <span className="fs-700">880</span>
+                        <span className="fs-100">Files remaining</span>
+                        <span
+                            className="fs-100"
+                            style={{
+                                marginTop: '-0.313rem',
+                                textDecoration: 'underline',
+                            }}>
+                            Upgrade
+                        </span>
+                    </div>
+                </div>
+                <div className="flex plan-details bg-white">1</div>
             </div>
             <DataTable
                 title="Recent Uploads"

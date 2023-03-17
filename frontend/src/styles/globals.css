@@ -299,9 +299,27 @@ form {
     grid-template-columns: 1fr 1fr 2fr;
 }
 
-.dashboard-header .status {
+.dashboard-header .flex.status {
+    --gap: 0.5rem;
     border-radius: 7px;
+    padding: 2.5rem;
+    width: 15.938rem;
+    height: 9.5rem;
 }
+
+.status span {
+    display: block;
+    font-family: var(--ff-sans-serif);
+    padding: 0px;
+    margin: 0px;
+}
+
+.status img {
+    padding: 0.313rem;
+    width: 3.813rem;
+    height: 3.813rem;
+}
+
 
 .dashboard-header .plan-details {
     border-radius: 7px;
