@@ -9,9 +9,9 @@ const Filter = ({}) => {
     const { filterQuery, setFilterQuery } = useUIContext()
     const handleKeyUp = e => {
         let timer
-        clearTimeout(timer)
 
-        timer = setTimeout(setFilterQuery(e.target.value), 1000)
+        clearTimeout(timer)
+        timer = setTimeout(() => setFilterQuery(e.target.value), 1000)
     }
     return (
         <Box>

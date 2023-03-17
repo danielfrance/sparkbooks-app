@@ -110,9 +110,7 @@ const SidebarFooter = () => {
                     <Avatar size="small" round="xsmall" src={src} />
                     {!isSidebarNavCollapsed && (
                         <>
-                            <Text
-                                className="fs-300 text-white ff-sans-serif"
-                                style={{ paddingTop: '0px' }}>
+                            <Text className="fs-300 text-white ff-sans-serif">
                                 {userContext?.name}
                             </Text>
                             <Box pad={{ top: '0.5em', left: 'small' }}>
