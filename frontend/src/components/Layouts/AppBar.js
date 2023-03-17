@@ -1,10 +1,18 @@
+import { useState } from 'react'
+import { useUIContext } from '@/contexts/ui'
 import { Box, Grid, Header, Text, TextInput } from 'grommet'
 import { Search, StatusInfo, Upgrade, Folder } from 'grommet-icons'
-import { useState } from 'react'
 import UploadFilesLayer from '@/components/Layouts/UploadFilesLayer'
 import Button from '@/components/Button'
 
 const Filter = ({}) => {
+    const { filterQuery, setFilterQuery } = useUIContext()
+    const handleKeyUp = e => {
+        let timer
+        clearTimeout(timer)
+
+        timer = setTimeout(setFilterQuery(e.target.value), 1000)
+    }
     return (
         <Box>
             <TextInput
@@ -12,6 +20,7 @@ const Filter = ({}) => {
                 icon={<Search size="medium" color="#C767F5" />}
                 reverse
                 placeholder="Search"
+                onKeyUp={e => handleKeyUp(e)}
             />
         </Box>
     )

@@ -1,7 +1,8 @@
+import { useState } from 'react'
+import { useUIContext } from '@/contexts/ui'
 import AppLayout from '@/components/Layouts/AppLayout'
 import { Box, Meter, Text, Avatar } from 'grommet'
 import DataTable from '@/components/Layouts/DataTable'
-import { useState } from 'react'
 
 const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
 
@@ -256,12 +257,18 @@ function Uploads() {
     const [selected, setSelected] = useState()
     const onClickRow = datum => console.log(datum)
 
+    const { filterQuery } = useUIContext()
+
+    const filtered = data.filter(datum =>
+        datum.client.toLocaleLowerCase().includes(filterQuery),
+    )
+
     return (
         <AppLayout>
             <DataTable
                 title="Uploads"
                 columns={columns}
-                data={data}
+                data={filtered}
                 setSelected={setSelected}
                 onClickRow={onClickRow}
             />

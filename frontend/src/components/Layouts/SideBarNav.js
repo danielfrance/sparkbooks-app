@@ -112,7 +112,7 @@ const SidebarFooter = () => {
                         <>
                             <Text
                                 className="fs-300 text-white ff-sans-serif"
-                                style={{ paddingTop: '3px' }}>
+                                style={{ paddingTop: '0px' }}>
                                 {userContext?.name}
                             </Text>
                             <Box pad={{ top: '0.5em', left: 'small' }}>

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useRouter } from 'next/router'
+import { useUIContext } from '@/contexts/ui'
 import { StatusGood, CircleAlert, FormEdit } from 'grommet-icons'
 import NewClientLayer from './NewClientLayer'
 import AppLayout from '@/components/Layouts/AppLayout'
@@ -101,12 +102,19 @@ export default function Clients() {
         { label: 'Add client', onClick: e => console.log(e) },
         // { label: 'Edit', onClick: e => console.log(e) },
     ]
+
+    const { filterQuery } = useUIContext()
+
+    const filtered = clientData.filter(datum =>
+        datum.name.toLocaleLowerCase().includes(filterQuery),
+    )
+
     return (
         <AppLayout>
             <DataTable
                 title="Clients"
                 columns={columns}
-                data={clientData}
+                data={filtered}
                 setSelected={setSelected}
                 onClickRow={onClickRow}
                 actions={actions}

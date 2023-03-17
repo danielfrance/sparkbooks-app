@@ -5,6 +5,7 @@ const Context = createContext()
 export function UIProvider({ children }) {
     const [isSidebarNavCollapsed, setIsSidebarNavCollapsed] = useState(false)
     const [userContext, setUserContext] = useState()
+    const [filterQuery, setFilterQuery] = useState('')
 
     return (
         <Context.Provider
@@ -13,6 +14,8 @@ export function UIProvider({ children }) {
                 setIsSidebarNavCollapsed,
                 userContext,
                 setUserContext,
+                filterQuery,
+                setFilterQuery,
             }}>
             {children}
         </Context.Provider>

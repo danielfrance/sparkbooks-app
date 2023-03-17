@@ -2,6 +2,7 @@ import AppLayout from '@/components/Layouts/AppLayout'
 import { Box, Meter, Text, Avatar } from 'grommet'
 import DataTable from '@/components/Layouts/DataTable'
 import { useState } from 'react'
+import { useUIContext } from '@/contexts/ui'
 
 const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
 
@@ -259,6 +260,13 @@ export default function Dashboard() {
         // { label: 'Add', onClick: e => console.log(e) },
         // { label: 'Edit', onClick: e => console.log(e) },
     ]
+
+    const { filterQuery } = useUIContext()
+
+    const filtered = data.filter(datum =>
+        datum.client.toLocaleLowerCase().includes(filterQuery),
+    )
+
     return (
         <AppLayout>
             <div className="inline-grid dashboard-header">
@@ -269,7 +277,7 @@ export default function Dashboard() {
             <DataTable
                 title="Recent Uploads"
                 columns={columns}
-                data={data}
+                data={filtered}
                 setSelected={setSelected}
                 onClickRow={onClickRow}
                 actions={actions}
