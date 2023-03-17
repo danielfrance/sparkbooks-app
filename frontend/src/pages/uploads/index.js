@@ -6,6 +6,10 @@ import DataTable from '@/components/Layouts/DataTable'
 
 const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
 
+const defaultRender = property => datum => (
+    <Text size="small">{datum[property]}</Text>
+)
+
 const clientRender = datum => (
     <Box pad={{ vertical: 'xsmall' }} gap="small" direction="row">
         <Avatar size="small" round="xsmall" src={src} />
@@ -35,26 +39,28 @@ const processingDataRender = datum => (
 const columns = [
     {
         property: 'id',
-        header: <Text>Uploads</Text>,
+        header: <Text size="small">Uploads</Text>,
         size: 'small',
         sortable: true,
         primary: true,
+        render: defaultRender('id'),
     },
     {
         property: 'client',
         size: 'medium',
-        header: <Text>Client</Text>,
+        header: <Text size="small">Client</Text>,
         render: clientRender,
     },
     {
         property: 'files',
         size: 'medium',
-        header: <Text>Files</Text>,
+        header: <Text size="small">Files</Text>,
+        render: defaultRender('files'),
     },
     {
         property: 'percent',
         size: 'medium',
-        header: 'Processing %',
+        header: <Text size="small">Processing %</Text>,
         render: processingDataRender,
     },
 ]

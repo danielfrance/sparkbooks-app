@@ -57,24 +57,24 @@ const columns = [
     {
         property: 'name',
         size: 'medium',
-        header: <Text>Client Name</Text>,
+        header: <Text size="small">Client Name</Text>,
         render: clientRender,
     },
     {
         property: 'uploads',
         size: 'small',
-        header: <Text>Total Uploads</Text>,
+        header: <Text size="small">Total Uploads</Text>,
     },
     {
         property: 'files',
         size: 'small',
-        header: <Text>Total Files</Text>,
+        header: <Text size="small">Total Files</Text>,
     },
     {
         property: 'connected',
         size: 'small',
         align: 'center',
-        header: <Text>Accounting Software</Text>,
+        header: <Text size="small">Accounting Software</Text>,
     },
 ]
 

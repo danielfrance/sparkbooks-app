@@ -35,7 +35,7 @@ const processingDataRender = datum => (
 const columns = [
     {
         property: 'id',
-        header: <Text>Uploads</Text>,
+        header: <Text size="small">Uploads</Text>,
         size: 'small',
         // sortable: true,
         // primary: true,
@@ -43,18 +43,18 @@ const columns = [
     {
         property: 'client',
         size: 'medium',
-        header: <Text>Client</Text>,
+        header: <Text size="small">Client</Text>,
         render: clientRender,
     },
     {
         property: 'files',
         size: 'medium',
-        header: <Text>Files</Text>,
+        header: <Text size="small">Files</Text>,
     },
     {
         property: 'percent',
         size: 'medium',
-        header: 'Processing %',
+        header: <Text size="small">Processing %</Text>,
         render: processingDataRender,
     },
 ]

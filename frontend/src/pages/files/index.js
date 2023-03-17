@@ -1,8 +1,10 @@
-import { Box, CheckBox, DataTable, Heading, Text, Avatar } from 'grommet'
+import { Box, CheckBox, Heading, Text, Avatar } from 'grommet'
+
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import getConfig from 'next/config'
 import AppLayout from '@/components/Layouts/AppLayout'
+import DataTable from '@/components/Layouts/DataTable'
 // const { publicRuntimeConfig } = getConfig()
 // const { apiURL } = publicRuntimeConfig
 
