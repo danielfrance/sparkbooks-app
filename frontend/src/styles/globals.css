@@ -315,9 +315,11 @@ form {
 }
 
 .status img {
-    padding: 0.313rem;
-    width: 3.813rem;
-    height: 3.813rem;
+    /* padding: 0.313rem; */
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 20px;
+    border: hsl(var(--clr-dark)) solid 3px;
 }
 
 
