@@ -6,9 +6,16 @@ import { theme } from '@/styles/theme'
 import { SideBarNav } from './SideBarNav'
 import { AppBar } from './AppBar'
 import WorkSpaceRegistrationLayer from '../WorkSpaceRegistrationLayer'
+import { useUIContext } from '@/contexts/ui'
 
 const AppLayout = ({ header, children }) => {
     const { user } = useAuth({ middleware: 'auth' })
+    const {
+        userContext,
+        setUserContext,
+        isSidebarNavCollapsed,
+    } = useUIContext()
+
     const [userData, setUserData] = useState(user)
     const [isWorkspacePromptOpen, setIsWorkspacePromptOpen] = useState(false)
 
@@ -19,8 +26,7 @@ const AppLayout = ({ header, children }) => {
     // }
 
     useEffect(() => {
-        console.log({ user })
-        console.log({ userData })
+        setUserContext(user)
     }, [])
 
     // TODO: this isn't working properly.  If the user does not have a workspace_id then the layer should be open to prompt them to create one. what's currently happening is the prompt to create a workspace is displaying randomly as if the data is not being loaded properly.
@@ -31,9 +37,26 @@ const AppLayout = ({ header, children }) => {
             {/* {isWorkspacePromptOpen && (
                 <WorkSpaceRegistrationLayer onClose={onClose} />
             )} */}
-            <div className="pageWrapper">
-                <SideBarNav user={userData} />
-                <Box className="main-container">
+
+            <SideBarNav />
+            <Box
+                className={[
+                    'main-container',
+                    isSidebarNavCollapsed
+                        ? 'main-container-big'
+                        : 'main-container-small',
+                ].join(' ')}>
+                <Box
+                    // align="center"
+                    className="main-content"
+                    // width={{ min: '95%', max: '95%' }}
+                    //
+                >
+                    <AppBar />
+                    {children}
+                </Box>
+            </Box>
+            {/* <Box className="main-container">
                     <Box
                         align="center"
                         className="main-content"
@@ -41,8 +64,7 @@ const AppLayout = ({ header, children }) => {
                         <AppBar />
                         {children}
                     </Box>
-                </Box>
-            </div>
+                </Box> */}
         </Grommet>
     )
 }
