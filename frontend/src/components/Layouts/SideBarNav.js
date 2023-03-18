@@ -108,7 +108,19 @@ const SidebarFooter = () => {
                         direction="row"
                         pad={{ horizontal: 'small', bottom: 'medium' }}
                         gap="xsmall">
-                        <Avatar size="small" round="xsmall" src={src} />
+                        {/* <Avatar size="small" round="xsmall" src="/user.png" /> */}
+                        <img
+                            src="/user.png"
+                            alt="user avatar"
+                            style={{
+                                width: '1.7rem',
+                                height: '1.7rem',
+                                // borderRadius: '7px',
+                                // overflow: 'hidden',
+                                marginTop: '-5px',
+                                padding: '0px',
+                            }}
+                        />
                         {!isSidebarNavCollapsed && (
                             <>
                                 <Text className="fs-300 text-white ff-sans-serif">
