@@ -24,7 +24,13 @@ const SidebarHeader = () => {
             direction="row"
             pad={{ top: 'medium', horizontal: 'small' }}
             gap="none">
-            <Avatar size="medium">
+            <Avatar
+                size="medium"
+                style={{
+                    minWidth: '51px',
+                    minHeight: '51px',
+                    marginLeft: '-5px',
+                }}>
                 <ApplicationLogo />
             </Avatar>
             {!isSidebarNavCollapsed && (
