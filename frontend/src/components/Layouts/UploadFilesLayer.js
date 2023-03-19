@@ -20,7 +20,7 @@ const UploadFilesLayer = ({ client, isOpen, onClose }) => {
     return (
         <>
             <Layer
-                className="modalLayer"
+                className="modalLayer ff-sans-serif fs-400"
                 position="right"
                 full="vertical"
                 modal
