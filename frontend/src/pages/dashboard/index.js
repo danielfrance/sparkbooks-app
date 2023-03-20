@@ -274,18 +274,18 @@ export default function Dashboard() {
                     <img src="/processed.png" />
                     <div>
                         <span className="fs-700">120</span>
-                        <span className="fs-100">Files processed</span>
+                        <span className="fs-300">Files processed</span>
                     </div>
                 </div>
                 <div className="flex status bg-dark text-white">
                     <img src="/pending.png" />
                     <div>
                         <span className="fs-700">880</span>
-                        <span className="fs-100">Files remaining</span>
+                        <span className="fs-300">Files remaining</span>
                         <span
-                            className="fs-100"
+                            className="fs-300"
                             style={{
-                                marginTop: '-0.313rem',
+                                marginTop: '-0.213rem',
                                 textDecoration: 'underline',
                             }}>
                             Upgrade
