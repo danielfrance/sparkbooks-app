@@ -1,4 +1,5 @@
 import AppLayout from '@/components/Layouts/AppLayout'
+import AppBar from '@/components/Layouts/AppBar'
 import { Box, Meter, Text, Avatar } from 'grommet'
 import DataTable from '@/components/Layouts/DataTable'
 import { useState } from 'react'
@@ -269,6 +270,7 @@ export default function Dashboard() {
 
     return (
         <AppLayout>
+            <AppBar />
             <div className="flex dashboard-header">
                 <div className="flex status bg-dark text-white">
                     <img src="/processed.png" />

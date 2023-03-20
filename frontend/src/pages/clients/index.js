@@ -4,6 +4,7 @@ import { useUIContext } from '@/contexts/ui'
 import { StatusGood, CircleAlert, FormEdit } from 'grommet-icons'
 import NewClientLayer from './NewClientLayer'
 import AppLayout from '@/components/Layouts/AppLayout'
+import AppBar from '@/components/Layouts/AppBar'
 import { Box, Meter, Text, Avatar } from 'grommet'
 import DataTable from '@/components/Layouts/DataTable'
 const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
@@ -83,7 +84,7 @@ const clientEdit = id => {}
 export default function Clients() {
     const router = useRouter()
 
-    const [isOpen, setIsOpen] = useState(false)
+    const [isOpen, setIsOpen] = useState(true)
     const onOpen = () => {
         setIsOpen(true)
     }
@@ -93,8 +94,7 @@ export default function Clients() {
     }
 
     const onClickRow = ({ datum }) => {
-        // router.push(`/clients/edit/${datum.id}`)
-        console.log(datum)
+        router.push(`/clients/edit/${datum.id}`)
     }
 
     const [selected, setSelected] = useState()
@@ -111,6 +111,7 @@ export default function Clients() {
 
     return (
         <AppLayout>
+            <AppBar />
             <DataTable
                 title="Clients"
                 columns={columns}

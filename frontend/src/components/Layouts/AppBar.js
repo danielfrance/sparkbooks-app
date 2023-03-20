@@ -25,7 +25,7 @@ const Filter = ({}) => {
     )
 }
 
-export const AppBar = () => {
+const AppBar = () => {
     const [isOpen, setIsOpen] = useState(false)
     const onOpen = () => {
         setIsOpen(true)
@@ -47,3 +47,5 @@ export const AppBar = () => {
         </>
     )
 }
+
+export default AppBar

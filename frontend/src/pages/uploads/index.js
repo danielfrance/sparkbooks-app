@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useUIContext } from '@/contexts/ui'
 import AppLayout from '@/components/Layouts/AppLayout'
+import AppBar from '@/components/Layouts/AppBar'
 import { Box, Meter, Text, Avatar } from 'grommet'
 import DataTable from '@/components/Layouts/DataTable'
 
@@ -82,6 +83,7 @@ function Uploads({ data }) {
 
     return (
         <AppLayout>
+            <AppBar />
             <DataTable
                 title="Uploads"
                 columns={columns}

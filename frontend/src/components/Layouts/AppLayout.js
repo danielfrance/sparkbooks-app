@@ -19,8 +19,6 @@ const AppLayout = ({ header, children }) => {
     const [userData, setUserData] = useState(user)
     const [isWorkspacePromptOpen, setIsWorkspacePromptOpen] = useState(false)
 
-    // if (user && !userContext) setUserContext(user)
-
     // const onClose = () => {
     //     setIsWorkspacePromptOpen(false)
     //     setUserData(user)
@@ -53,7 +51,6 @@ const AppLayout = ({ header, children }) => {
                     // width={{ min: '95%', max: '95%' }}
                     //
                 >
-                    <AppBar />
                     {children}
                 </Box>
             </Box>

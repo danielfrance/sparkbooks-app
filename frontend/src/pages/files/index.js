@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import getConfig from 'next/config'
 import AppLayout from '@/components/Layouts/AppLayout'
+import AppBar from '@/components/Layouts/AppBar'
 import DataTable from '@/components/Layouts/DataTable'
 // const { publicRuntimeConfig } = getConfig()
 // const { apiURL } = publicRuntimeConfig
@@ -11,27 +12,6 @@ import DataTable from '@/components/Layouts/DataTable'
 import { useUIContext } from '@/contexts/ui'
 
 const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
-
-const TipContent = ({ message }) => (
-    <Box direction="row" align="center">
-        <svg viewBox="0 0 22 22" version="1.1" width="22px" height="22px">
-            <polygon
-                fill="#C767F5;
-"
-                points="6 2 18 12 6 22"
-                transform="matrix(-1 0 0 1 30 0)"
-            />
-        </svg>
-        <Box
-            background="#C767F5;
-"
-            direction="row"
-            pad="small"
-            round="xsmall">
-            <Text>{message}</Text>
-        </Box>
-    </Box>
-)
 
 const clientRender = datum => (
     <Box pad={{ vertical: 'xsmall' }} gap="small" direction="row">
@@ -50,6 +30,10 @@ const fileNameRender = datum => (
 )
 
 const defaultRender = property => datum => <Text>{datum[property]}</Text>
+
+const lineItemsRender = property => datum => (
+    <Text>{datum[property].lenght}</Text>
+)
 
 const dateRender = datum => (
     <Text>{new Date(datum.date).toLocaleDateString('en-us')}</Text>
@@ -74,7 +58,7 @@ const columns = [
     {
         property: 'lineItems',
         header: <Text>Line Items</Text>,
-        render: defaultRender('lineItems'),
+        render: lineItemsRender('lineItems'),
     },
     {
         property: 'totalAmount',
@@ -114,8 +98,11 @@ function Files({ files }) {
             datum.supplierName.toLocaleLowerCase().includes(filterQuery),
     )
 
+    console.log({ filtered })
+
     return (
         <AppLayout>
+            <AppBar />
             <DataTable
                 title="Files"
                 columns={columns}
@@ -131,22 +118,8 @@ function Files({ files }) {
 export default Files
 
 export async function getServerSideProps() {
-    // const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/files`)
-    // console.log(res)
-    // const files = await res.json()
-
-    const files = [
-        {
-            id: 1,
-            fileName: 'document 1.doc',
-            clientName: 'Dupond Dupont',
-            supplierName: 'Joe Hamilton',
-            lineItems: 4,
-            totalAmount: 100,
-            uploadName: 'document',
-            date: new Date().toISOString(),
-        },
-    ]
+    const res = await fetch(`${process.env.JSON_SERVER_URL}/files`)
+    const files = await res.json()
 
     return {
         props: { files },
