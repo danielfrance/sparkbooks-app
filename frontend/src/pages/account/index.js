@@ -37,68 +37,70 @@ const columns = [
         header: <Text>Last Active</Text>,
     },
 ]
-const data = [
-    {
-        name: 'Daniel France',
-        email: 'dan@ittybam.com',
-        type: 'Admin',
-        joined: '12/12/2019',
-        active: '12/12/2019',
-        avatar: '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80',
-    },
-    {
-        name: 'Daniel France',
-        email: '',
-        type: 'Admin',
-        joined: '12/12/2019',
-        active: '12/12/2019',
-        avatar: '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80',
-    },
-    {
-        name: 'Daniel France',
-        email: '',
-        type: 'Admin',
-        joined: '12/12/2019',
-        active: '12/12/2019',
-        avatar: '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80',
-    },
-    {
-        name: 'Daniel France',
-        email: '',
-        type: 'Admin',
-        joined: '12/12/2019',
-        active: '12/12/2019',
-        avatar: '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80',
-    },
-    {
-        name: 'Daniel France',
-        email: '',
-        type: 'Admin',
-        joined: '12/12/2019',
-        active: '12/12/2019',
-        avatar: '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80',
-    },
-    {
-        name: 'Daniel France',
-        email: '',
-        type: 'Admin',
-        joined: '12/12/2019',
-        active: '12/12/2019',
-        avatar: '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80',
-    },
-]
+// const data = [
+//     {
+//         name: 'Daniel France',
+//         email: 'dan@ittybam.com',
+//         type: 'Admin',
+//         joined: '12/12/2019',
+//         active: '12/12/2019',
+//         avatar: '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80',
+//     },
+//     {
+//         name: 'Daniel France',
+//         email: '',
+//         type: 'Admin',
+//         joined: '12/12/2019',
+//         active: '12/12/2019',
+//         avatar: '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80',
+//     },
+//     {
+//         name: 'Daniel France',
+//         email: '',
+//         type: 'Admin',
+//         joined: '12/12/2019',
+//         active: '12/12/2019',
+//         avatar: '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80',
+//     },
+//     {
+//         name: 'Daniel France',
+//         email: '',
+//         type: 'Admin',
+//         joined: '12/12/2019',
+//         active: '12/12/2019',
+//         avatar: '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80',
+//     },
+//     {
+//         name: 'Daniel France',
+//         email: '',
+//         type: 'Admin',
+//         joined: '12/12/2019',
+//         active: '12/12/2019',
+//         avatar: '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80',
+//     },
+//     {
+//         name: 'Daniel France',
+//         email: '',
+//         type: 'Admin',
+//         joined: '12/12/2019',
+//         active: '12/12/2019',
+//         avatar: '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80',
+//     },
+// ]
 
-export default function Account() {
+export default function Account({ data }) {
     const [selected, setSelected] = useState()
-    const { filterQuery } = useUIContext()
+    const [users, setUsers] = useState(data)
+    const { filterQuery, userContext } = useUIContext()
 
     const onClickRow = ({ datum }) => {
-        router.push(`/clients/${datum.id}`)
+        // router.push(`/clients/${datum.id}`)
+        console.log(datum)
     }
 
     const actions = [{ label: 'Invite', onClick: e => console.log(e) }]
 
-    const filtered = data.filter(datum =>
+    const filtered = users.filter(datum =>
         datum.name.toLocaleLowerCase().includes(filterQuery),
     )
 
@@ -152,7 +154,9 @@ export default function Account() {
                                         color="brand"
                                         style={{ marginRight: '0.5em' }}
                                     />
-                                    <Text size="medium">Daniel France</Text>
+                                    <Text size="medium">
+                                        {userContext.name}
+                                    </Text>
                                 </Box>
                                 <Box
                                     direction="row"
@@ -163,7 +167,9 @@ export default function Account() {
                                         color="brand"
                                         style={{ marginRight: '0.5em' }}
                                     />
-                                    <Text size="medium">dan@sparkbooks.io</Text>
+                                    <Text size="medium">
+                                        {userContext.email}
+                                    </Text>
                                 </Box>
                             </Box>
                             <Box>
@@ -238,6 +244,15 @@ export default function Account() {
             />
         </AppLayout>
     )
+}
+
+export async function getServerSideProps(context) {
+    const res = await fetch(`${process.env.JSON_SERVER_URL}/users`)
+    const data = await res.json()
+
+    return {
+        props: { data },
+    }
 }
 
 // <Box
