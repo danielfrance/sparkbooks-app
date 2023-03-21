@@ -315,12 +315,12 @@ form {
 .grid.account-info {
     grid-template-columns: repeat(3, 1fr);
     margin: 20px;
+    font-family: var(--ff-sans-serif);
 }
 
 .grid.user-info {
     grid-column: 1/span 2;
     grid-template-columns: repeat(4, 1fr);
-    /* margin: 20px; */
 }
 
 .user-info .flex.contacts {
