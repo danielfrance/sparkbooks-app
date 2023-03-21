@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useRouter } from 'next/router'
 import { useUIContext } from '@/contexts/ui'
 import AppLayout from '@/components/Layouts/AppLayout'
 import AppBar from '@/components/Layouts/AppBar'
@@ -8,6 +9,8 @@ import DataTable from '@/components/Layouts/DataTable'
 const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
 
 const defaultRender = property => datum => <Text>{datum[property]}</Text>
+
+const fileRender = property => datum => <Text>{datum[property].length}</Text>
 
 const clientRender = datum => (
     <Box pad={{ vertical: 'xsmall' }} gap="small" direction="row">
@@ -54,7 +57,7 @@ const columns = [
         property: 'files',
         size: 'medium',
         header: <Text>Files</Text>,
-        render: defaultRender('files'),
+        render: fileRender('files'),
     },
     {
         property: 'percent',
@@ -68,16 +71,20 @@ const columns = [
 // const { apiURL } = publicRuntimeConfig;
 
 function Uploads({ data }) {
+    const router = useRouter()
+    const { filterQuery } = useUIContext()
     //   const [show, setShow] = useState(false);
     //   const [clicked, setClicked] = useState({});
-    //   const router = useRouter();
+
+    const [uploads, setUploads] = useState(data)
 
     const [selected, setSelected] = useState()
-    const onClickRow = datum => console.log(datum)
 
-    const { filterQuery } = useUIContext()
+    const onClickRow = ({ datum }) => {
+        router.push(`/uploads/${datum.id}`)
+    }
 
-    const filtered = data.filter(datum =>
+    const filtered = uploads.filter(datum =>
         datum.client.toLocaleLowerCase().includes(filterQuery),
     )
 
@@ -96,203 +103,8 @@ function Uploads({ data }) {
 }
 
 export async function getServerSideProps() {
-    //   const res = await fetch(`${process.env.JSON_SERVER_URL}/uploads`)
-    //   const data = await res.json();
-
-    const data = [
-        {
-            id: '1',
-            client: 'Alan',
-            files: 23,
-            percent: 20,
-        },
-        {
-            id: '2',
-            client: 'Bryan',
-            files: 3,
-            percent: 30,
-        },
-        {
-            id: '3',
-            client: 'Chris',
-            files: 11,
-            percent: 40,
-        },
-        {
-            id: '4',
-            client: 'Eric',
-            files: 13,
-            percent: 100,
-        },
-        {
-            id: '1',
-            client: 'Alan',
-            files: 23,
-            percent: 20,
-        },
-        {
-            id: '2',
-            client: 'Bryan',
-            files: 3,
-            percent: 30,
-        },
-        {
-            id: '3',
-            client: 'Chris',
-            files: 11,
-            percent: 40,
-        },
-        {
-            id: '4',
-            client: 'Eric',
-            files: 13,
-            percent: 100,
-        },
-        {
-            id: '1',
-            client: 'Alan',
-            files: 23,
-            percent: 20,
-        },
-        {
-            id: '2',
-            client: 'Bryan',
-            files: 3,
-            percent: 30,
-        },
-        {
-            id: '3',
-            client: 'Chris',
-            files: 11,
-            percent: 40,
-        },
-        {
-            id: '4',
-            client: 'Eric',
-            files: 13,
-            percent: 100,
-        },
-        {
-            id: '1',
-            client: 'Alan',
-            files: 23,
-            percent: 20,
-        },
-        {
-            id: '2',
-            client: 'Bryan',
-            files: 3,
-            percent: 30,
-        },
-        {
-            id: '3',
-            client: 'Chris',
-            files: 11,
-            percent: 40,
-        },
-        {
-            id: '4',
-            client: 'Eric',
-            files: 13,
-            percent: 100,
-        },
-        {
-            id: '1',
-            client: 'Alan',
-            files: 23,
-            percent: 20,
-        },
-        {
-            id: '2',
-            client: 'Bryan',
-            files: 3,
-            percent: 30,
-        },
-        {
-            id: '3',
-            client: 'Chris',
-            files: 11,
-            percent: 40,
-        },
-        {
-            id: '4',
-            client: 'Eric',
-            files: 13,
-            percent: 100,
-        },
-        {
-            id: '1',
-            client: 'Alan',
-            files: 23,
-            percent: 20,
-        },
-        {
-            id: '2',
-            client: 'Bryan',
-            files: 3,
-            percent: 30,
-        },
-        {
-            id: '3',
-            client: 'Chris',
-            files: 11,
-            percent: 40,
-        },
-        {
-            id: '4',
-            client: 'Eric',
-            files: 13,
-            percent: 100,
-        },
-        {
-            id: '1',
-            client: 'Alan',
-            files: 23,
-            percent: 20,
-        },
-        {
-            id: '2',
-            client: 'Bryan',
-            files: 3,
-            percent: 30,
-        },
-        {
-            id: '3',
-            client: 'Chris',
-            files: 11,
-            percent: 40,
-        },
-        {
-            id: '4',
-            client: 'Eric',
-            files: 13,
-            percent: 100,
-        },
-        {
-            id: '1',
-            client: 'Alan',
-            files: 23,
-            percent: 20,
-        },
-        {
-            id: '2',
-            client: 'Bryan',
-            files: 3,
-            percent: 30,
-        },
-        {
-            id: '3',
-            client: 'Chris',
-            files: 11,
-            percent: 40,
-        },
-        {
-            id: '4',
-            client: 'Eric',
-            files: 13,
-            percent: 100,
-        },
-    ]
+    const res = await fetch(`${process.env.JSON_SERVER_URL}/uploads`)
+    const data = await res.json()
 
     return {
         props: { data },

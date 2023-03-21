@@ -16,6 +16,14 @@ const clientRender = datum => (
     </Box>
 )
 
+const statusRender = datum => {
+    return datum.connected == 'status-ok' ? (
+        <StatusGood color="status-ok" />
+    ) : (
+        <CircleAlert color="status-error" />
+    )
+}
+
 const columns = [
     {
         property: 'name',
@@ -37,75 +45,27 @@ const columns = [
         property: 'connected',
         size: 'small',
         align: 'center',
-        header: <Text>Accounting Software</Text>,
+        header: <Text>Status</Text>,
+        render: statusRender,
     },
 ]
 
-const clientData = [
-    {
-        id: 1,
-        name: 'Random Client Name like this one',
-        uploads: 10,
-        files: 100,
-        connected: <StatusGood color="status-ok" />,
-    },
-    {
-        id: 2,
-        name: 'Client 2',
-        uploads: 10,
-        files: 100,
-        connected: <CircleAlert color="status-error" />,
-    },
-    {
-        id: 3,
-        name: 'Client 3',
-        uploads: 10,
-        files: 100,
-        connected: <StatusGood color="status-ok" />,
-    },
-    {
-        id: 4,
-        name: 'Client 4',
-        uploads: 10,
-        files: 100,
-        connected: <CircleAlert color="status-error" />,
-    },
-    {
-        id: 5,
-        name: 'Client 5',
-        uploads: 10,
-        files: 100,
-        connected: <StatusGood color="status-ok" />,
-    },
-]
-
-const clientEdit = id => {}
-
-export default function Clients() {
+export default function Clients({ data }) {
     const router = useRouter()
-
-    const [isOpen, setIsOpen] = useState(true)
-    const onOpen = () => {
-        setIsOpen(true)
-    }
-
-    const onClose = () => {
-        setIsOpen(false)
-    }
-
-    const onClickRow = ({ datum }) => {
-        router.push(`/clients/edit/${datum.id}`)
-    }
-
+    const [isOpen, setIsOpen] = useState(false)
+    const [clients, setClients] = useState(data)
     const [selected, setSelected] = useState()
-    const actions = [
-        { label: 'Add client', onClick: e => console.log(e) },
-        // { label: 'Edit', onClick: e => console.log(e) },
-    ]
-
     const { filterQuery } = useUIContext()
 
-    const filtered = clientData.filter(datum =>
+    const onClose = () => setIsOpen(false)
+
+    const onClickRow = ({ datum }) => {
+        router.push(`/clients/${datum.id}`)
+    }
+
+    const actions = [{ label: 'Add client', onClick: () => setIsOpen(true) }]
+
+    const filtered = clients.filter(datum =>
         datum.name.toLocaleLowerCase().includes(filterQuery),
     )
 
@@ -124,6 +84,15 @@ export default function Clients() {
             {isOpen && <NewClientLayer onClose={onClose} isOpen />}
         </AppLayout>
     )
+}
+
+export async function getServerSideProps() {
+    const res = await fetch(`${process.env.JSON_SERVER_URL}/clients`)
+    const data = await res.json()
+
+    return {
+        props: { data },
+    }
 }
 
 // <Box className="box_container" fill>

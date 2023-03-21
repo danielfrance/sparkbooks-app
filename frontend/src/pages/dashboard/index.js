@@ -4,6 +4,7 @@ import { Box, Meter, Text, Avatar } from 'grommet'
 import DataTable from '@/components/Layouts/DataTable'
 import { useState } from 'react'
 import { useUIContext } from '@/contexts/ui'
+import { useRouter } from 'next/router'
 
 const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
 
@@ -59,6 +60,7 @@ const columns = [
         render: processingDataRender,
     },
 ]
+
 const data = [
     {
         id: '1',
@@ -254,19 +256,25 @@ const data = [
     },
 ]
 
-export default function Dashboard() {
+export default function Dashboard({ data }) {
+    const router = useRouter()
+    const { filterQuery } = useUIContext()
+    const [uploads, setUploads] = useState(data)
+
     const [selected, setSelected] = useState()
-    const onClickRow = datum => console.log(datum)
+
+    const onClickRow = ({ datum }) => {
+        router.push(`/uploads/${datum.id}`)
+    }
+
+    const filtered = uploads
+        .filter(datum => datum.client.toLocaleLowerCase().includes(filterQuery))
+        .slice(-5)
+
     const actions = [
         // { label: 'Add', onClick: e => console.log(e) },
         // { label: 'Edit', onClick: e => console.log(e) },
     ]
-
-    const { filterQuery } = useUIContext()
-
-    const filtered = data.filter(datum =>
-        datum.client.toLocaleLowerCase().includes(filterQuery),
-    )
 
     return (
         <AppLayout>
@@ -306,6 +314,15 @@ export default function Dashboard() {
             />
         </AppLayout>
     )
+}
+
+export async function getServerSideProps() {
+    const res = await fetch(`${process.env.JSON_SERVER_URL}/uploads`)
+    const data = await res.json()
+
+    return {
+        props: { data },
+    }
 }
 
 {

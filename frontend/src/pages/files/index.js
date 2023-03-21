@@ -81,12 +81,13 @@ const columns = [
 // const { publicRuntimeConfig } = getConfig()
 // const { apiURL } = publicRuntimeConfig
 
-function Files({ files }) {
+function Files({ data }) {
+    const router = useRouter()
+    const [files, setFiles] = useState(data)
     const [selected, setSelected] = useState()
-    const onClickRow = datum => console.log(datum)
+
     const actions = [
         { label: 'Download selected', onClick: e => console.log(e) },
-        // { label: 'Edit', onClick: e => console.log(e) },
     ]
 
     const { filterQuery } = useUIContext()
@@ -98,7 +99,9 @@ function Files({ files }) {
             datum.supplierName.toLocaleLowerCase().includes(filterQuery),
     )
 
-    console.log({ filtered })
+    const onClickRow = row => {
+        router.push(`/files/${row.datum.id}`)
+    }
 
     return (
         <AppLayout>
@@ -119,10 +122,10 @@ export default Files
 
 export async function getServerSideProps() {
     const res = await fetch(`${process.env.JSON_SERVER_URL}/files`)
-    const files = await res.json()
+    const data = await res.json()
 
     return {
-        props: { files },
+        props: { data },
     }
 }
 
