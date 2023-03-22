@@ -100,8 +100,11 @@ export default function Account({ data }) {
 
     const actions = [{ label: 'Invite', onClick: e => console.log(e) }]
 
-    const filtered = users.filter(datum =>
-        datum.name.toLocaleLowerCase().includes(filterQuery),
+    const filtered = users.filter(
+        datum =>
+            datum.name?.toLocaleLowerCase().includes(filterQuery) ||
+            datum.type?.toLocaleLowerCase().includes(filterQuery) ||
+            datum.email?.toLocaleLowerCase().includes(filterQuery),
     )
 
     return (

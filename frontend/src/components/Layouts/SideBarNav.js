@@ -109,7 +109,7 @@ const SidebarFooter = () => {
     return (
         <>
             <Link href={'/account'} style={{ textDecoration: 'none' }}>
-                <Box direction="row" pad={{ bottom: 'medium' }}>
+                <Box direction="column" pad={{ bottom: 'medium' }}>
                     <Box
                         direction="row"
                         pad={{ horizontal: 'small', bottom: 'medium' }}
@@ -132,47 +132,58 @@ const SidebarFooter = () => {
                                 <Text className="fs-300 text-white ff-sans-serif">
                                     {userContext?.name}
                                 </Text>
-                                {/* <Box pad={{ top: '0.5em', left: 'small' }}>
-                                    <Logout color="white" size="small" />
-                                </Box> */}
                             </>
                         )}
                     </Box>
+                    {!isSidebarNavCollapsed && (
+                        <>
+                            <Box
+                                pad={{ horizontal: 'small' }}
+                                onClick={logout}
+                                style={{ cursor: 'pointer' }}>
+                                <Text className="fs-300 text-white ff-sans-serif">
+                                    Logout
+                                </Text>
+                            </Box>
+                        </>
+                    )}
                 </Box>
             </Link>
             {!isSidebarNavCollapsed && (
-                <Box
-                    direction="column"
-                    pad={{ horizontal: 'medium' }}
-                    gap="xsmall">
-                    <Box direction="column">
-                        <Text className="fs-200 text-white ff-sans-serif">
-                            Get in touch
-                        </Text>
-                        <Text
-                            className="fs-100 text-white ff-sans-serif"
-                            style={{ marginTop: '-10px' }}>
-                            info@sparkbooks.com
-                        </Text>
-                        <Text
-                            className="fs-100 text-white ff-sans-serif"
-                            style={{
-                                marginTop: '5px',
-                            }}>
-                            @ 2022.
-                        </Text>
-                        <Text
-                            className="fs-100 text-white ff-sans-serif"
-                            style={{
-                                marginTop: '-10px',
-                            }}
+                <>
+                    <Box
+                        direction="column"
+                        pad={{ horizontal: 'small' }}
+                        gap="xsmall">
+                        <Box direction="column">
+                            <Text className="fs-200 text-white ff-sans-serif">
+                                Get in touch
+                            </Text>
+                            <Text
+                                className="fs-100 text-white ff-sans-serif"
+                                style={{ marginTop: '-10px' }}>
+                                info@sparkbooks.com
+                            </Text>
+                            <Text
+                                className="fs-100 text-white ff-sans-serif"
+                                style={{
+                                    marginTop: '5px',
+                                }}>
+                                @ 2022.
+                            </Text>
+                            <Text
+                                className="fs-100 text-white ff-sans-serif"
+                                style={{
+                                    marginTop: '-10px',
+                                }}
 
-                            //
-                        >
-                            ver. 1.0
-                        </Text>
+                                //
+                            >
+                                ver. 1.0
+                            </Text>
+                        </Box>
                     </Box>
-                </Box>
+                </>
             )}
         </>
     )
