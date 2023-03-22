@@ -319,16 +319,29 @@ form {
 }
 
 .grid.user-info {
-    grid-column: 1/span 2;
+    grid-column: 1 / span 2;
     grid-template-columns: repeat(4, 1fr);
 }
 
 .user-info .flex.contacts {
-    grid-column: 2 /span 4;
+    grid-column: 2 / span 4;
     flex-wrap: wrap;
 }
 
+.grid.client-details {
+    --gap: 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(calc((100% - 5.5rem) /2), 1fr));
+    font-family: var(--ff-sans-serif);
+    
+}
 
+/* .client-details :last-child{
+
+} */
+
+.coa-container {
+    width: 5rem;
+}
 
 
 /* .box_container {
