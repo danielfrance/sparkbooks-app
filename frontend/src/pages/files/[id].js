@@ -24,7 +24,7 @@ export default function File({ data }) {
                     </Heading>
                 </Box>
             </Box>
-            <UploadResultContainer data={fileData} index />
+            <UploadResultContainer data={fileData} />
         </AppLayout>
     )
 }

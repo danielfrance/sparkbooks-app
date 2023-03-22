@@ -7,13 +7,14 @@ import {
     TableRow,
     TableCell,
     TableBody,
+    Select,
     FormField,
     TextInput,
     Button,
     Text,
 } from 'grommet'
 
-import { Add } from 'grommet-icons'
+import { Add, Close } from 'grommet-icons'
 
 import UploadResultItem from './UploadResultItem'
 
@@ -29,7 +30,30 @@ const styleButton = {
     border: '#c866f567 1px solid',
 }
 
-export default function UploadResultContainer({ data, index }) {
+const chartOfAccounts = [
+    { id: 1, name: '6110 Repairs and Maintenance' },
+    { id: 2, name: '63200 Gasoline, Fuel and Oil' },
+    { id: 3, name: '67800 Small Tools and Equipment' },
+    { id: 4, name: '5609 Inventory Grow Supplies' },
+    { id: 5, name: '8400 Ask My Accountant' },
+    { id: 6, name: '64900 Office Supplies' },
+    { id: 7, name: '5611 Rental Equipment' },
+    { id: 8, name: '61500 Chemicals Purchased' },
+    { id: 9, name: '61100 Car and Truck Expenses' },
+    { id: 10, name: '5614 Soil and Nutrients' },
+    { id: 11, name: '9000 Non Deductible Expenses' },
+    { id: 12, name: '63000 Fertilizers and Lime' },
+    { id: 13, name: '5612 Security' },
+    { id: 14, name: '6101 Garbage Expense' },
+    { id: 15, name: '68600 Utilities' },
+    { id: 16, name: '6440 Postage and Shipping' },
+    { id: 17, name: '6610 Parking and other' },
+    { id: 18, name: '6620 Uniforms' },
+]
+
+export default function UploadResultContainer({ data }) {
+    const [selectValue, setSelectValue] = useState()
+    const [isLineItemFormVisible, setIsLineItemFormVisible] = useState(false)
     const [uploadData, setuploadData] = useState(data)
     const [lineItems, setLineItems] = useState(
         Object.values(uploadData.lineItems),
@@ -58,7 +82,7 @@ export default function UploadResultContainer({ data, index }) {
                     style={styleButton}
                     icon={<Add color="#b01df4" />}
                     label="New Line Item"
-                    onClick={() => alert('add new line item')}
+                    onClick={() => setIsLineItemFormVisible(true)}
                 />
             </Box>
             <Grid
@@ -94,7 +118,55 @@ export default function UploadResultContainer({ data, index }) {
                             {lineItems.map((item, index) => (
                                 <UploadResultItem item={item} index={index} />
                             ))}
-                            <TableRow key={`${index}-subtotal`}>
+                            {isLineItemFormVisible && (
+                                <TableRow
+                                    style={{ border: '#CB5DFE solid 1px' }}
+                                    key={`${data.id}-new-line-item`}>
+                                    <TableCell scope="row">
+                                        <TextInput
+                                            name="description"
+                                            value={0}
+                                            onChange={e =>
+                                                handleInputChange(e, index)
+                                            }
+                                        />
+                                    </TableCell>
+                                    <TableCell scope="row">
+                                        <TextInput
+                                            name="sku"
+                                            value={0}
+                                            onChange={e =>
+                                                handleInputChange(e, index)
+                                            }
+                                        />
+                                    </TableCell>
+                                    <TableCell scope="row">
+                                        <Select
+                                            name="account"
+                                            labelKey="name"
+                                            value={selectValue}
+                                            valueKey={{ key: 'id' }}
+                                            options={chartOfAccounts}
+                                            onChange={({ option }) =>
+                                                setSelectValue(option)
+                                            }
+                                        />
+                                    </TableCell>
+                                    <TableCell scope="row">
+                                        <TextInput name="subTotal" value="0" />
+                                    </TableCell>
+                                    <TableCell scope="row">
+                                        <Close
+                                            color="status-error"
+                                            size="medium"
+                                            onClick={() =>
+                                                setIsLineItemFormVisible(false)
+                                            }
+                                        />
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                            <TableRow key={`${data.id}-subtotal`}>
                                 <TableCell scope="row"></TableCell>
                                 <TableCell scope="row"></TableCell>
                                 <TableCell scope="row">
@@ -109,7 +181,7 @@ export default function UploadResultContainer({ data, index }) {
                                     />
                                 </TableCell>
                             </TableRow>
-                            <TableRow key={`${index}-tax`}>
+                            <TableRow key={`${data.id}-tax`}>
                                 <TableCell scope="row"></TableCell>
                                 <TableCell scope="row"></TableCell>
                                 <TableCell scope="row">
@@ -124,7 +196,7 @@ export default function UploadResultContainer({ data, index }) {
                                     />
                                 </TableCell>
                             </TableRow>
-                            <TableRow key={`${index}-total`}>
+                            <TableRow key={`${data.id}-total`}>
                                 <TableCell scope="row"></TableCell>
                                 <TableCell scope="row"></TableCell>
                                 <TableCell scope="row">
