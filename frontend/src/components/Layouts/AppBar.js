@@ -2,8 +2,30 @@ import { Box, Button, Grid, Header, Text, TextInput } from 'grommet'
 import { Search, StatusInfo } from 'grommet-icons'
 import { useState } from 'react'
 import UploadFilesLayer from '@/components/Layouts/UploadFilesLayer'
+import { useUIContext } from '@/contexts/ui'
 
-export const AppBar = ({user}) => {
+const Filter = ({}) => {
+    const { filterQuery, setFilterQuery } = useUIContext()
+    const handleKeyUp = e => {
+        let timer
+
+        clearTimeout(timer)
+        timer = setTimeout(() => setFilterQuery(e.target.value), 1000)
+    }
+    return (
+        <Box style={{ minWidth: '40%' }}>
+            <TextInput
+                className="search"
+                icon={<Search size="medium" color="#C767F5" />}
+                reverse
+                placeholder="Search"
+                onKeyUp={e => handleKeyUp(e)}
+            />
+        </Box>
+    )
+}
+
+const AppBar = () => {
     const [isOpen, setIsOpen] = useState(false)
     const onOpen = () => {
         setIsOpen(true)
@@ -14,37 +36,16 @@ export const AppBar = ({user}) => {
     }
     return (
         <>
-            <Header
-                className="AppBar"
-                as="header"
-                direction="row"
-                justify="between"
-                width="100%"
-                pad={{ vertical: 'small' }}>
-                <Grid
-                    rows={['auto', 'flex']}
-                    columns={['medium', 'flex']}
-                    fill="horizontal"
-                    gap="medium"
-                    areas={[
-                        { name: 'search', start: [0, 1], end: [0, 1] },
-                        { name: 'info', start: [1, 1], end: [1, 1] },
-                    ]}>
-                    <Box gridArea="search">
-                        <TextInput icon={<Search />} placeholder="search ..." />
-                    </Box>
-                    <Box gridArea="info" align="end">
-                        <Button
-                            primary
-                            label="Upload New Files"
-                            onClick={onOpen}
-                            margin={{ left: '1em', right: '1em' }}
-                            background="primary"
-                        />
-                    </Box>
-                </Grid>
-            </Header>
+            <div className="flex appbar">
+                <Filter />
+                <button className="btn primary" onClick={onOpen}>
+                    Upload New Files
+                </button>
+            </div>
+
             {isOpen && <UploadFilesLayer onClose={onClose} isOpen />}
         </>
     )
 }
+
+export default AppBar

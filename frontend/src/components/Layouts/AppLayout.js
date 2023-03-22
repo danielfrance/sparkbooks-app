@@ -19,8 +19,6 @@ const AppLayout = ({ header, children }) => {
     const [userData, setUserData] = useState(user)
     const [isWorkspacePromptOpen, setIsWorkspacePromptOpen] = useState(false)
 
-    if (user && !userContext) setUserContext(user)
-
     // const onClose = () => {
     //     setIsWorkspacePromptOpen(false)
     //     setUserData(user)
@@ -29,10 +27,9 @@ const AppLayout = ({ header, children }) => {
 
     useEffect(() => {
         setUserContext(user)
-    }, [])
+    }, [userContext, user])
 
     // TODO: this isn't working properly.  If the user does not have a workspace_id then the layer should be open to prompt them to create one. what's currently happening is the prompt to create a workspace is displaying randomly as if the data is not being loaded properly.
-    // QUESTION: In which scenario/case user will have no workspace_id? I signed in using google and I was given workspace_id of 11!
 
     return (
         <Grommet theme={theme}>
@@ -54,7 +51,6 @@ const AppLayout = ({ header, children }) => {
                     // width={{ min: '95%', max: '95%' }}
                     //
                 >
-                    <AppBar />
                     {children}
                 </Box>
             </Box>
