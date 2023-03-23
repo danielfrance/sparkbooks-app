@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\Result;
 use App\Models\ResultDetail;
 use App\Models\ResultItem;
 use App\Models\Upload;
@@ -27,26 +28,26 @@ class ExtractResultsJob implements ShouldQueue
      */
     public function handle()
     {
-        $uploads = Upload::where('extracted', false)->take(5)->get();
+        $results = Result::where('extracted', false)->take(5)->get();
 
-        $uploads->each(function ($upload) {
-            $this->extractResults($upload);
+        $results->each(function ($result) {
+            $this->extractResults($result);
         });
     }
 
-    public function extractResults($upload)
+    public function extractResults($result)
     {
-        $clientID = $upload->client_id;
-        $workspaceID = $upload->client->workspace->id;
-        $results = $upload->results;
+        $clientID = $result->client_id;
+        $workspaceID = $result->upload->client->workspace->id;
 
 
-        $results->each(function ($result) use ($clientID, $workspaceID) {
-            $contents = json_decode($result->contents);
-            // TODO: search pages[0].formFields for the purchase type
 
-            $entities = $contents->entities;
+        $contents = json_decode($result->contents);
+        // TODO: search pages[0].formFields for the purchase type
 
+        $entities = $contents->entities;
+
+        try {
             $resultDetail = $this->saveResultDetails($entities, $result, $clientID, $workspaceID);
 
 
@@ -55,12 +56,13 @@ class ExtractResultsJob implements ShouldQueue
             });
 
             $this->saveResultLineItems($lineItems, $result, $clientID, $workspaceID);
+            $result->extracted = true;
+            $result->save();
+        } catch (\Throwable $th) {
+            throw $th;
 
-            return response()->json([
-                'message' => 'Results extracted successfully',
-                'data' => $resultDetail
-            ]);
-        });
+            // TODO: handle exception and throw Slack Message
+        }
     }
 
     public function saveResultDetails($entities, $result, $clientID, $workspaceID)
@@ -85,10 +87,15 @@ class ExtractResultsJob implements ShouldQueue
             return $entity->type == "total_tax_amount";
         });
 
-        $carbonDate = Carbon::parse($date->normalizedValue->text);
+        try {
+            $carbonDate = isset($date->normalizedValue->text) ? Carbon::parse($date->normalizedValue->text) : (!isset($date->mentionText) ? null : Carbon::parse($date->mentionText));
+        } catch (\Throwable $th) {
+            $carbonDate = null;
+        }
         $netAmount = isset($netAmount->mentionText) ? floatval($netAmount->mentionText) : null;
         $total = isset($total->mentionText) ? floatval($total->mentionText) : null;
         $totalTax = isset($totalTax->mentionText) ? floatval($totalTax->mentionText) : null;
+
 
         try {
 
@@ -127,6 +134,16 @@ class ExtractResultsJob implements ShouldQueue
                 $sku = ResultItem::where('sku', $itemArray['sku'])->where('client_id', $clientID)->first();
             }
 
+            $data = [
+                'result_id' => $result->id,
+                'upload_id' => $result->upload_id,
+                'item' => isset($itemArray['item']) ? $itemArray['item'] : null,
+                'amount' => isset($itemArray['amount']) ? $itemArray['amount'] : null,
+                'sku' => isset($itemArray['sku']) ? $itemArray['sku'] : null,
+                'client_id' => $clientID,
+                'workspace_id' => $workspaceID,
+                'category_id' => $sku->category_id ?? null,
+            ];
 
             $resultLineItem = ResultItem::create([
                 'result_id' => $result->id,

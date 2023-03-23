@@ -5,6 +5,7 @@ import DataTable from '@/components/Layouts/DataTable'
 import { useState } from 'react'
 import { useUIContext } from '@/contexts/ui'
 import { useRouter } from 'next/router'
+import axios from '@/lib/axios'
 
 const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
 
@@ -61,7 +62,7 @@ const columns = [
     },
 ]
 
-const data = [
+const fixedData = [
     {
         id: '1',
         client: 'Alan',
@@ -256,10 +257,16 @@ const data = [
     },
 ]
 
+async function getData() {
+    const res = await axios.get('dashboardData')
+    console.log(res.data)
+}
+
 export default function Dashboard({ data }) {
+    console.log(data)
     const router = useRouter()
     const { filterQuery } = useUIContext()
-    const [uploads, setUploads] = useState(data)
+    const [uploads, setUploads] = useState(fixedData)
 
     const [selected, setSelected] = useState()
 
@@ -316,161 +323,15 @@ export default function Dashboard({ data }) {
     )
 }
 
-export async function getServerSideProps() {
-    const res = await fetch(`${process.env.JSON_SERVER_URL}/uploads`)
-    const data = await res.json()
-
+export async function getServerSideProps(context) {
+    const cookies = context.req.headers.cookie || ''
+    const res = await axios.get('/dashboardData', {
+        headers: {
+            cookie: cookies,
+        },
+    })
+    const data = res.data
     return {
         props: { data },
     }
-}
-
-{
-    /* <Box className="box_container" fill>
-                <Box direction="row" justify="between">
-                    <Heading margin="none" level="3" color="brand">
-                        Recent Uploads
-                    </Heading>
-                </Box>
-                <DataTable
-                    sortable
-                    margin={{ top: '3em' }}
-                    paginate={{ step: 10 }}
-                    alignSelf="stretch"
-                    columns={[
-                        {
-                            property: 'id',
-                            header: <Text>ID</Text>,
-                            primary: true,
-                        },
-                        {
-                            property: 'client',
-                            header: <Text>Client</Text>,
-                        },
-                        {
-                            property: 'files',
-                            header: <Text>Files</Text>,
-                        },
-                        {
-                            property: 'percent',
-                            size: 'medium',
-                            header: 'Processing %',
-                            render: datum => (
-                                <Box
-                                    pad={{ vertical: 'xsmall' }}
-                                    direction="row">
-                                    <Meter
-                                        values={[
-                                            {
-                                                value: datum.percent,
-                                                color: 'brand',
-                                                background: 'primary',
-                                            },
-                                        ]}
-                                        thickness="small"
-                                        size="small"
-                                    />
-                                    <Text
-                                        size="small"
-                                        margin={{ left: '20px' }}>
-                                        {datum.percent}%
-                                    </Text>
-                                </Box>
-                            ),
-                        },
-                    ]}
-                    data={[
-                        { id: '1', client: 'Alan', files: 23, percent: 20 },
-                        { id: '2', client: 'Bryan', files: 3, percent: 30 },
-                        { id: '3', client: 'Chris', files: 11, percent: 40 },
-                        { id: '4', client: 'Eric', files: 13, percent: 100 },
-                        { id: '1', client: 'Alan', files: 23, percent: 20 },
-                        { id: '2', client: 'Bryan', files: 3, percent: 30 },
-                        { id: '3', client: 'Chris', files: 11, percent: 40 },
-                        { id: '4', client: 'Eric', files: 13, percent: 100 },
-                        { id: '1', client: 'Alan', files: 23, percent: 20 },
-                        { id: '2', client: 'Bryan', files: 3, percent: 30 },
-                        { id: '3', client: 'Chris', files: 11, percent: 40 },
-                        { id: '4', client: 'Eric', files: 13, percent: 100 },
-                        { id: '1', client: 'Alan', files: 23, percent: 20 },
-                        { id: '2', client: 'Bryan', files: 3, percent: 30 },
-                        { id: '3', client: 'Chris', files: 11, percent: 40 },
-                        { id: '4', client: 'Eric', files: 13, percent: 100 },
-                        { id: '1', client: 'Alan', files: 23, percent: 20 },
-                        { id: '2', client: 'Bryan', files: 3, percent: 30 },
-                        { id: '3', client: 'Chris', files: 11, percent: 40 },
-                        { id: '4', client: 'Eric', files: 13, percent: 100 },
-                        { id: '1', client: 'Alan', files: 23, percent: 20 },
-                        { id: '2', client: 'Bryan', files: 3, percent: 30 },
-                        { id: '3', client: 'Chris', files: 11, percent: 40 },
-                        { id: '4', client: 'Eric', files: 13, percent: 100 },
-                        { id: '1', client: 'Alan', files: 23, percent: 20 },
-                        { id: '2', client: 'Bryan', files: 3, percent: 30 },
-                        { id: '3', client: 'Chris', files: 11, percent: 40 },
-                        { id: '4', client: 'Eric', files: 13, percent: 100 },
-                        { id: '1', client: 'Alan', files: 23, percent: 20 },
-                        { id: '2', client: 'Bryan', files: 3, percent: 30 },
-                        { id: '3', client: 'Chris', files: 11, percent: 40 },
-                        { id: '4', client: 'Eric', files: 13, percent: 100 },
-                    ]}
-                />
-            </Box> */
-}
-
-{
-    /* <Grid
-              alignSelf="stretch"
-              rows={['auto', 'flex']}
-              pad="medium"
-              columns={['medium', 'medium']}
-              justifyContent="between"
-              areas={[
-                  {
-                      name: 'totalFiles',
-                      start: [0, 1],
-                      end: [0, 1],
-                  },
-                  { name: 'remainingFiles', start: [1, 1], end: [1, 1] },
-              ]}>
-              <Card
-                  gridArea="totalFiles"
-                  pad="medium"
-                  background="brand"
-                  elevation="medium"
-                  gap="medium">
-                  <CardBody pad="medium">
-                      <Grid pad="none" columns={['xsmall', 'large']}>
-                          <Box pad="small">
-                              <DocumentVerified color="white" size="large" />
-                          </Box>
-                          <Box margin={{ left: '-1em' }}>
-                              <Text color="white" size="2xl" weight="bold">
-                                  120
-                              </Text>
-                              <Text color="white">Total Files Processed</Text>
-                          </Box>
-                      </Grid>
-                  </CardBody>
-              </Card>
-              <Card
-                  gridArea="remainingFiles"
-                  pad="medium"
-                  background="brand"
-                  elevation="medium"
-                  gap="medium">
-                  <CardBody pad="medium">
-                      <Grid pad="none" columns={['xsmall', 'large']}>
-                          <Box pad="small">
-                              <DocumentStore color="white" size="large" />
-                          </Box>
-                          <Box margin={{ left: '-1em' }}>
-                              <Text color="white" size="2xl" weight="bold">
-                                  880
-                              </Text>
-                              <Text color="white">Remaining Files</Text>
-                          </Box>
-                      </Grid>
-                  </CardBody>
-              </Card>
-          </Grid> */
 }

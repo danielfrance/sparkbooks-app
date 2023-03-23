@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\UploadController;
 use App\Http\Controllers\WorkspaceController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +22,16 @@ Route::get('/', function () {
 
 Route::middleware(["auth:sanctum"])->post('/workspace', [WorkspaceController::class, 'store']);
 // Route::middleware(['auth:sanctum'])->post('/workspace', [WorkspaceController::class . 'store']);
+
+Route::middleware(["auth:sanctum"])->get('/dashboardData', [DashboardController::class, 'index']);
+
+Route::middleware(["auth:sanctum"])->post('/upload/new', [UploadController::class, 'store']);
+
+
+
+
+
+
 
 
 require __DIR__ . '/auth.php';
