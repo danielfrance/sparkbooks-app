@@ -13,11 +13,16 @@ class Result extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'upload_id', 'directory', 'contents', 'extracted'];
+    protected $fillable = ['name', 'upload_id', 'directory', 'contents', 'extracted', 'file_id'];
 
     public function upload()
     {
         return $this->belongsTo(Upload::class);
+    }
+
+    public function file()
+    {
+        return $this->belongsTo(File::class);
     }
 
     public function resultDetails()

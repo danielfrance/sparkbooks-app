@@ -22,4 +22,14 @@ class Workspace extends Model
     {
         return $this->hasMany(Client::class);
     }
+
+    public function uploads()
+    {
+        return $this->hasMany(Upload::class);
+    }
+
+    public function files()
+    {
+        return $this->hasMany(File::class);
+    }
 }
