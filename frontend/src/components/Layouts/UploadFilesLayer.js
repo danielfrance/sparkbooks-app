@@ -31,9 +31,9 @@ const UploadFilesLayer = ({ client, isOpen, onClose }) => {
 
     const submit = async event => {
         event.preventDefault()
-        setShow(true)
 
         if (selectedClient && selectedFiles.length) {
+            setShow(true)
             if (!cookie)
                 return {
                     redirect: {
@@ -113,17 +113,28 @@ const UploadFilesLayer = ({ client, isOpen, onClose }) => {
                                 }
                             />
                         </FormField>
-                        <Box flex={false} as="footer" align="start">
-                            <Button
-                                type="submit"
-                                label="submit"
-                                onClick={submit}
-                                primary
-                            />
+                        <Box
+                            fill="horizontal"
+                            align="center"
+                            gap="medium"
+                            margin="medium">
+                            {show && (
+                                <Spinner
+                                    border={[
+                                        {
+                                            side: 'all',
+                                            color: 'brand',
+                                            size: 'medium',
+                                            style: 'dotted',
+                                        },
+                                    ]}
+                                />
+                            )}
+
+                            <button className="btn primary" onClick={submit}>
+                                Submit
+                            </button>
                         </Box>
-                        {show && (
-                            <Spinner message="Start Built-in Spinner Announcement" />
-                        )}
                     </Form>
                 </Box>
             </Layer>
