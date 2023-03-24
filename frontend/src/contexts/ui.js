@@ -7,7 +7,6 @@ export function UIProvider({ children }) {
     const [userContext, setUserContext] = useState()
     const [filterQuery, setFilterQuery] = useState('')
     const [workSpace, setWorkSpace] = useState()
-    const [cookie, setCookie] = useState()
 
     return (
         <Context.Provider
@@ -20,8 +19,6 @@ export function UIProvider({ children }) {
                 setFilterQuery,
                 workSpace,
                 setWorkSpace,
-                cookie,
-                setCookie,
             }}>
             {children}
         </Context.Provider>

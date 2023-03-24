@@ -12,6 +12,7 @@ import {
     Select,
     TextInput,
     Spinner,
+    Notification,
 } from 'grommet'
 import { useUIContext } from '@/contexts/ui'
 
@@ -21,30 +22,34 @@ const UploadFilesLayer = ({ client, isOpen, onClose }) => {
     const [selectedClient, setSelectedClient] = useState([])
     const [selectedFiles, setSelectedFiles] = useState(null)
     const [show, setShow] = useState(false)
+    const [visible, setVisible] = useState(false)
+    const [error, setError] = useState()
     // const fileInputStyles = {}
 
-    const { workSpace, cookie } = useUIContext()
+    const { workSpace } = useUIContext()
 
     const clients = workSpace.clients.length
         ? workSpace.clients
-        : ['client 1', 'client 2', 'client 3']
+        : [
+              { id: 1, name: 'client 1' },
+              { id: 2, name: 'client 2' },
+          ]
+
+    const selectOptions = clients.map(client => client.name)
+
+    const findClient = name => {
+        return clients.find(client => client.name == name)
+    }
 
     const submit = async event => {
         event.preventDefault()
 
-        if (selectedClient && selectedFiles.length) {
+        if (selectedClient && selectedFiles?.length) {
             setShow(true)
-            if (!cookie)
-                return {
-                    redirect: {
-                        destination: '/login',
-                        permanent: false,
-                    },
-                }
 
             const formData = new FormData()
 
-            formData.append('client_id', selectedClient.id)
+            formData.append('client_id', findClient(selectedClient).id)
             selectedFiles.forEach(file => {
                 formData.append('files[]', file)
             })
@@ -55,17 +60,32 @@ const UploadFilesLayer = ({ client, isOpen, onClose }) => {
                         'Content-Type': 'multipart/form-data',
                     },
                 })
-                console.log(res.data)
+                // console.log(res.data)
+                setShow(false)
+                onClose()
             } catch (error) {
-                console.log(error)
+                // console.log(error)
+                setShow(false)
+                setError('Something went wrong, try again later.')
+                setVisible(true)
             }
-            setShow(false)
-            onClose()
+        } else {
+            setError('Please select both the client and files')
+            setVisible(true)
         }
     }
 
     return (
         <>
+            {visible && (
+                <Notification
+                    toast
+                    status="critical"
+                    title="Something went wrong"
+                    message={error}
+                    onClose={() => setVisible(false)}
+                />
+            )}
             <Layer
                 className="modalLayer ff-sans-serif fs-400"
                 position="right"
@@ -96,7 +116,7 @@ const UploadFilesLayer = ({ client, isOpen, onClose }) => {
                             <Select
                                 required
                                 value={selectedClient}
-                                options={clients}
+                                options={selectOptions}
                                 onChange={({ option }) =>
                                     setSelectedClient(option)
                                 }

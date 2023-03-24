@@ -264,13 +264,7 @@ const fixedData = [
 
 export default function Dashboard({ data }) {
     const router = useRouter()
-    const {
-        filterQuery,
-        workSpace,
-        setWorkSpace,
-        cookie,
-        setCookie,
-    } = useUIContext()
+    const { filterQuery, workSpace, setWorkSpace } = useUIContext()
     const [uploads, setUploads] = useState(fixedData)
 
     const [selected, setSelected] = useState()
@@ -290,8 +284,7 @@ export default function Dashboard({ data }) {
 
     useEffect(() => {
         setWorkSpace(data.workSpace)
-        setCookie(data.cookie)
-    }, [workSpace, data.workSpace, cookie, data.cookie])
+    }, [workSpace])
 
     return (
         <AppLayout>
@@ -352,6 +345,6 @@ export async function getServerSideProps(context) {
     const workSpace = res.data
 
     return {
-        props: { data: { workSpace, cookie } },
+        props: { data: { workSpace } },
     }
 }
