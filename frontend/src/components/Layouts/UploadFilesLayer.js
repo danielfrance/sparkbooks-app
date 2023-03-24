@@ -42,14 +42,15 @@ const UploadFilesLayer = ({ client, isOpen, onClose }) => {
                     },
                 }
 
-            const data = {
-                files: selectedFiles,
-                client_id: selectedClient,
-            }
+            const data = new FormData()
+
+            data.append('client_id', selectedClient)
+            data.append('files', selectedFiles)
 
             const res = await axios.post('/upload/new', data, {
                 headers: {
                     cookie: cookie,
+                    'Content-Type': 'multipart/form-data',
                 },
             })
             console.log(res.data)

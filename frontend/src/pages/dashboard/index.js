@@ -288,15 +288,10 @@ export default function Dashboard({ data }) {
         // { label: 'Edit', onClick: e => console.log(e) },
     ]
 
-    useEffect(
-        () => {
-            setWorkSpace(data.workSpace)
-            setCookie(data.cookie)
-        },
-        [workSpace, data.workSpace],
-        cookie,
-        data.cookie,
-    )
+    useEffect(() => {
+        setWorkSpace(data.workSpace)
+        setCookie(data.cookie)
+    }, [workSpace, data.workSpace, cookie, data.cookie])
 
     return (
         <AppLayout>
