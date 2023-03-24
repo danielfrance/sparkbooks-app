@@ -2,7 +2,7 @@ import AppLayout from '@/components/Layouts/AppLayout'
 import AppBar from '@/components/Layouts/AppBar'
 import { Box, Meter, Text, Avatar } from 'grommet'
 import DataTable from '@/components/Layouts/DataTable'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useUIContext } from '@/contexts/ui'
 import { useRouter } from 'next/router'
 import axios from '@/lib/axios'
@@ -257,15 +257,20 @@ const fixedData = [
     },
 ]
 
-async function getData() {
-    const res = await axios.get('dashboardData')
-    console.log(res.data)
-}
+// async function getData() {
+//     const res = await axios.get('dashboardData')
+//     console.log(res.data)
+// }
 
 export default function Dashboard({ data }) {
-    console.log(data)
     const router = useRouter()
-    const { filterQuery } = useUIContext()
+    const {
+        filterQuery,
+        workSpace,
+        setWorkSpace,
+        cookie,
+        setCookie,
+    } = useUIContext()
     const [uploads, setUploads] = useState(fixedData)
 
     const [selected, setSelected] = useState()
@@ -282,6 +287,16 @@ export default function Dashboard({ data }) {
         // { label: 'Add', onClick: e => console.log(e) },
         // { label: 'Edit', onClick: e => console.log(e) },
     ]
+
+    useEffect(
+        () => {
+            setWorkSpace(data.workSpace)
+            setCookie(data.cookie)
+        },
+        [workSpace, data.workSpace],
+        cookie,
+        data.cookie,
+    )
 
     return (
         <AppLayout>
@@ -324,14 +339,24 @@ export default function Dashboard({ data }) {
 }
 
 export async function getServerSideProps(context) {
-    const cookies = context.req.headers.cookie || ''
+    const cookie = context.req.headers.cookie
+
+    if (!cookie)
+        return {
+            redirect: {
+                destination: '/login',
+                permanent: false,
+            },
+        }
+
     const res = await axios.get('/dashboardData', {
         headers: {
-            cookie: cookies,
+            cookie: cookie,
         },
     })
-    const data = res.data
+    const workSpace = res.data
+
     return {
-        props: { data },
+        props: { data: { workSpace, cookie } },
     }
 }

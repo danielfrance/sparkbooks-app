@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 import { Close, StatusGood } from 'grommet-icons'
 import {
@@ -11,11 +11,52 @@ import {
     Layer,
     Select,
     TextInput,
+    Spinner,
 } from 'grommet'
+import { useUIContext } from '@/contexts/ui'
+
+import axios from '@/lib/axios'
 
 const UploadFilesLayer = ({ client, isOpen, onClose }) => {
-    const [value, setValue] = useState(undefined)
-    const fileInputStyles = {}
+    const [selectedClient, setSelectedClient] = useState()
+    const [selectedFiles, setSelectedFiles] = useState([])
+    const [show, setShow] = useState(false)
+    // const fileInputStyles = {}
+
+    const { workSpace, cookie } = useUIContext()
+
+    const clients = workSpace.clients.length
+        ? workSpace.clients
+        : ['client 1', 'client 2', 'client 3']
+
+    const submit = async event => {
+        event.preventDefault()
+        setShow(true)
+
+        if (selectedClient && selectedFiles.length) {
+            if (!cookie)
+                return {
+                    redirect: {
+                        destination: '/login',
+                        permanent: false,
+                    },
+                }
+
+            const data = {
+                files: selectedFiles,
+                client_id: selectedClient,
+            }
+
+            const res = await axios.post('/upload/new', data, {
+                headers: {
+                    cookie: cookie,
+                },
+            })
+            console.log(res.data)
+            setShow(false)
+            onClose()
+        }
+    }
 
     return (
         <>
@@ -44,13 +85,15 @@ const UploadFilesLayer = ({ client, isOpen, onClose }) => {
                         <FormField
                             name="name"
                             label="Client Name"
-                            required
+                            // required
                             margin={{ top: 'medium', bottom: 'medium' }}>
                             <Select
                                 required
-                                value={value}
-                                options={['client 1', 'client 2', 'client 3']}
-                                onChange={({ option }) => setValue(option)}
+                                value={selectedClient}
+                                options={clients}
+                                onChange={({ option }) =>
+                                    setSelectedClient(option)
+                                }
                                 onSearch={text => console.log(text)}
                             />
                         </FormField>
@@ -58,33 +101,29 @@ const UploadFilesLayer = ({ client, isOpen, onClose }) => {
                             htmlFor="uploadFilesContainer"
                             name="files"
                             label="Upload Files"
-                            required
+                            // required
                             margin={{ top: 'medium', bottom: 'medium' }}>
                             <FileInput
                                 id="uploadFilesContainer"
                                 multiple
                                 pad="large"
                                 name="files"
-                                onChange={event => {
-                                    const fileList = event.target.files
-                                    for (
-                                        let i = 0;
-                                        i < fileList.length;
-                                        i += 1
-                                    ) {
-                                        const file = fileList[i]
-                                    }
-                                }}
+                                onChange={(event, { files }) =>
+                                    setSelectedFiles(files)
+                                }
                             />
                         </FormField>
                         <Box flex={false} as="footer" align="start">
                             <Button
                                 type="submit"
                                 label="submit"
-                                onClick={onClose}
+                                onClick={submit}
                                 primary
                             />
                         </Box>
+                        {show && (
+                            <Spinner message="Start Built-in Spinner Announcement" />
+                        )}
                     </Form>
                 </Box>
             </Layer>
