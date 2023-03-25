@@ -263,27 +263,52 @@ const fixedData = [
 // }
 
 export default function Dashboard({ data }) {
+    console.log({ data })
     const router = useRouter()
     const { filterQuery, workSpace, setWorkSpace } = useUIContext()
-    const [uploads, setUploads] = useState(fixedData)
+    const [uploads, setUploads] = useState([])
 
     const [selected, setSelected] = useState()
+    const [processedFiles, setProcessedFiles] = useState(0)
+    const [remainingFiles, setRemainingFiles] = useState(0)
 
     const onClickRow = ({ datum }) => {
         router.push(`/uploads/${datum.id}`)
     }
 
-    const filtered = uploads
-        .filter(datum => datum.client.toLocaleLowerCase().includes(filterQuery))
-        .slice(-5)
+    const filtered = uploads.filter(datum =>
+        datum.client.toLocaleLowerCase().includes(filterQuery),
+    )
+    // .slice(-5)
 
     const actions = [
         // { label: 'Add', onClick: e => console.log(e) },
         // { label: 'Edit', onClick: e => console.log(e) },
     ]
 
+    const extractUploads = clients => {
+        clients.forEach(client => {
+            setUploads(currentUploads => [
+                ...currentUploads,
+                ...client.uploads.map(upload => {
+                    if (upload.percent === 100)
+                        setProcessedFiles(count => count + 1)
+                    if (upload.percent !== 100)
+                        setRemainingFiles(count => count + 1)
+                    return {
+                        id: client.id,
+                        client: client.name,
+                        files: upload.files.length,
+                        percent: Number.parseFloat(upload.processed) || 0.1,
+                    }
+                }),
+            ])
+        })
+    }
+
     useEffect(() => {
         setWorkSpace(data.workSpace)
+        extractUploads(data.workSpace.clients)
     }, [workSpace])
 
     return (
@@ -293,14 +318,14 @@ export default function Dashboard({ data }) {
                 <div className="flex status bg-dark text-white">
                     <img src="/processed.png" />
                     <div>
-                        <span className="fs-700">120</span>
+                        <span className="fs-700">{processedFiles}</span>
                         <span className="fs-300">Files processed</span>
                     </div>
                 </div>
                 <div className="flex status bg-dark text-white">
                     <img src="/pending.png" />
                     <div>
-                        <span className="fs-700">880</span>
+                        <span className="fs-700">{remainingFiles}</span>
                         <span className="fs-300">Files remaining</span>
                         <span
                             className="fs-300"

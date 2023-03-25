@@ -198,11 +198,12 @@ form {
     border-radius: 7px;
     padding: 5px 10px;  
     height: 40px;
-
+    
 }
 
 .btn-nav.full {
-    width: 160px;
+    margin-right: 20px;
+    width: 140px;
 }
 
 .btn-nav:hover {
