@@ -329,11 +329,24 @@ form {
     flex-wrap: wrap;
 }
 
-.grid.client-details {
-    --gap: 2rem;
-    grid-template-columns: repeat(auto-fill, minmax(calc((100% - 5.5rem) /2), 1fr));
+.flex.client-details {
+    /* --gap: 1rem; */
+    flex-wrap: wrap;
+    /* grid-template-columns: repeat(auto-fill, minmax(calc((100% - 5.5rem) /2), 1fr)); */
     font-family: var(--ff-sans-serif);
     
+}
+
+.client-details .panel {
+    /* width: 40%; */
+    padding: 20px;
+    margin: 20px;
+    border-radius: 7px;
+    border:hsl( var(--clr-dark)) solid 1px;
+}
+
+.panel.contact-form {
+    flex: 1 1 40%;
 }
 
 /* .client-details :last-child{
