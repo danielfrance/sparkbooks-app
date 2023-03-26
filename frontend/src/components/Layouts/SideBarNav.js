@@ -109,48 +109,40 @@ const SidebarFooter = () => {
     return (
         <>
             <Link href={'/account'} style={{ textDecoration: 'none' }}>
-                <Box direction="column" pad={{ bottom: 'medium' }}>
-                    <Box
-                        direction="row"
-                        pad={{ horizontal: 'small', bottom: 'medium' }}
-                        gap="xsmall">
-                        {/* <Avatar size="small" round="xsmall" src="/user.png" /> */}
-                        <img
-                            src="/user.png"
-                            alt="user avatar"
-                            style={{
-                                width: '1.7rem',
-                                height: '1.7rem',
-                                // borderRadius: '7px',
-                                // overflow: 'hidden',
-                                marginTop: '-5px',
-                                padding: '0px',
-                            }}
-                        />
-                        {!isSidebarNavCollapsed && (
-                            <>
-                                <Text className="fs-300 text-white ff-sans-serif">
-                                    {userContext?.name}
-                                </Text>
-                            </>
-                        )}
-                    </Box>
+                <Box
+                    direction="row"
+                    pad={{ horizontal: 'small', bottom: 'small' }}
+                    gap="xsmall">
+                    <img
+                        src="/user.png"
+                        alt="user avatar"
+                        style={{
+                            width: '1.7rem',
+                            height: '1.7rem',
+                            marginTop: '-5px',
+                            padding: '0px',
+                        }}
+                    />
                     {!isSidebarNavCollapsed && (
                         <>
-                            <Box
-                                pad={{ horizontal: 'small' }}
-                                onClick={logout}
-                                style={{ cursor: 'pointer' }}>
-                                <Text className="fs-300 text-white ff-sans-serif">
-                                    Logout
-                                </Text>
-                            </Box>
+                            <Text className="fs-300 text-white ff-sans-serif">
+                                {userContext?.name}
+                            </Text>
                         </>
                     )}
                 </Box>
             </Link>
+
             {!isSidebarNavCollapsed && (
                 <>
+                    <Box
+                        pad={{ horizontal: 'small', vertical: 'small' }}
+                        onClick={logout}
+                        style={{ cursor: 'pointer' }}>
+                        <Text className="fs-300 text-white ff-sans-serif">
+                            Logout
+                        </Text>
+                    </Box>
                     <Box
                         direction="column"
                         pad={{ horizontal: 'small' }}
