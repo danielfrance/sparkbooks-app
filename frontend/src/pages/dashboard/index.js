@@ -4,10 +4,53 @@ import { Box, Meter, Text, Avatar } from 'grommet'
 import DataTable from '@/components/Layouts/DataTable'
 import { useEffect, useState } from 'react'
 import { useUIContext } from '@/contexts/ui'
+import { useAuth } from '@/hooks/auth'
 import { useRouter } from 'next/router'
 import axios from '@/lib/axios'
 
 const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
+
+const ErrorMessage = ({ status }) => {
+    const { logout } = useAuth()
+
+    return (
+        <div
+            className="card"
+            style={{
+                font: 'ff-sans-serif',
+                margin: '10% auto',
+                padding: '2rem',
+                width: '50%',
+            }}>
+            {status == 500 && (
+                <>
+                    <span className="title">Account</span>
+                    <p>Please contact your manageer to activate your account</p>
+
+                    <button
+                        className="btn secondary"
+                        style={{ marginTop: '2rem' }}
+                        onClick={logout}>
+                        Logout
+                    </button>
+                </>
+            )}
+            {status != 500 && (
+                <>
+                    <span className="title">Login problem</span>
+                    <p>Something went wrong, try again later</p>
+
+                    <button
+                        className="btn secondary"
+                        style={{ marginTop: '2rem' }}
+                        onClick={logout}>
+                        Try in again
+                    </button>
+                </>
+            )}
+        </div>
+    )
+}
 
 const clientRender = datum => (
     <Box pad={{ vertical: 'xsmall' }} gap="small" direction="row">
@@ -62,208 +105,203 @@ const columns = [
     },
 ]
 
-const fixedData = [
-    {
-        id: '1',
-        client: 'Alan',
-        files: 23,
-        percent: 20,
-    },
-    {
-        id: '2',
-        client: 'Bryan',
-        files: 3,
-        percent: 30,
-    },
-    {
-        id: '3',
-        client: 'Chris',
-        files: 11,
-        percent: 40,
-    },
-    {
-        id: '4',
-        client: 'Eric',
-        files: 13,
-        percent: 100,
-    },
-    {
-        id: '1',
-        client: 'Alan',
-        files: 23,
-        percent: 20,
-    },
-    {
-        id: '2',
-        client: 'Bryan',
-        files: 3,
-        percent: 30,
-    },
-    {
-        id: '3',
-        client: 'Chris',
-        files: 11,
-        percent: 40,
-    },
-    {
-        id: '4',
-        client: 'Eric',
-        files: 13,
-        percent: 100,
-    },
-    {
-        id: '1',
-        client: 'Alan',
-        files: 23,
-        percent: 20,
-    },
-    {
-        id: '2',
-        client: 'Bryan',
-        files: 3,
-        percent: 30,
-    },
-    {
-        id: '3',
-        client: 'Chris',
-        files: 11,
-        percent: 40,
-    },
-    {
-        id: '4',
-        client: 'Eric',
-        files: 13,
-        percent: 100,
-    },
-    {
-        id: '1',
-        client: 'Alan',
-        files: 23,
-        percent: 20,
-    },
-    {
-        id: '2',
-        client: 'Bryan',
-        files: 3,
-        percent: 30,
-    },
-    {
-        id: '3',
-        client: 'Chris',
-        files: 11,
-        percent: 40,
-    },
-    {
-        id: '4',
-        client: 'Eric',
-        files: 13,
-        percent: 100,
-    },
-    {
-        id: '1',
-        client: 'Alan',
-        files: 23,
-        percent: 20,
-    },
-    {
-        id: '2',
-        client: 'Bryan',
-        files: 3,
-        percent: 30,
-    },
-    {
-        id: '3',
-        client: 'Chris',
-        files: 11,
-        percent: 40,
-    },
-    {
-        id: '4',
-        client: 'Eric',
-        files: 13,
-        percent: 100,
-    },
-    {
-        id: '1',
-        client: 'Alan',
-        files: 23,
-        percent: 20,
-    },
-    {
-        id: '2',
-        client: 'Bryan',
-        files: 3,
-        percent: 30,
-    },
-    {
-        id: '3',
-        client: 'Chris',
-        files: 11,
-        percent: 40,
-    },
-    {
-        id: '4',
-        client: 'Eric',
-        files: 13,
-        percent: 100,
-    },
-    {
-        id: '1',
-        client: 'Alan',
-        files: 23,
-        percent: 20,
-    },
-    {
-        id: '2',
-        client: 'Bryan',
-        files: 3,
-        percent: 30,
-    },
-    {
-        id: '3',
-        client: 'Chris',
-        files: 11,
-        percent: 40,
-    },
-    {
-        id: '4',
-        client: 'Eric',
-        files: 13,
-        percent: 100,
-    },
-    {
-        id: '1',
-        client: 'Alan',
-        files: 23,
-        percent: 20,
-    },
-    {
-        id: '2',
-        client: 'Bryan',
-        files: 3,
-        percent: 30,
-    },
-    {
-        id: '3',
-        client: 'Chris',
-        files: 11,
-        percent: 40,
-    },
-    {
-        id: '4',
-        client: 'Eric',
-        files: 13,
-        percent: 100,
-    },
-]
-
-// async function getData() {
-//     const res = await axios.get('dashboardData')
-//     console.log(res.data)
-// }
+// const fixedData = [
+//     {
+//         id: '1',
+//         client: 'Alan',
+//         files: 23,
+//         percent: 20,
+//     },
+//     {
+//         id: '2',
+//         client: 'Bryan',
+//         files: 3,
+//         percent: 30,
+//     },
+//     {
+//         id: '3',
+//         client: 'Chris',
+//         files: 11,
+//         percent: 40,
+//     },
+//     {
+//         id: '4',
+//         client: 'Eric',
+//         files: 13,
+//         percent: 100,
+//     },
+//     {
+//         id: '1',
+//         client: 'Alan',
+//         files: 23,
+//         percent: 20,
+//     },
+//     {
+//         id: '2',
+//         client: 'Bryan',
+//         files: 3,
+//         percent: 30,
+//     },
+//     {
+//         id: '3',
+//         client: 'Chris',
+//         files: 11,
+//         percent: 40,
+//     },
+//     {
+//         id: '4',
+//         client: 'Eric',
+//         files: 13,
+//         percent: 100,
+//     },
+//     {
+//         id: '1',
+//         client: 'Alan',
+//         files: 23,
+//         percent: 20,
+//     },
+//     {
+//         id: '2',
+//         client: 'Bryan',
+//         files: 3,
+//         percent: 30,
+//     },
+//     {
+//         id: '3',
+//         client: 'Chris',
+//         files: 11,
+//         percent: 40,
+//     },
+//     {
+//         id: '4',
+//         client: 'Eric',
+//         files: 13,
+//         percent: 100,
+//     },
+//     {
+//         id: '1',
+//         client: 'Alan',
+//         files: 23,
+//         percent: 20,
+//     },
+//     {
+//         id: '2',
+//         client: 'Bryan',
+//         files: 3,
+//         percent: 30,
+//     },
+//     {
+//         id: '3',
+//         client: 'Chris',
+//         files: 11,
+//         percent: 40,
+//     },
+//     {
+//         id: '4',
+//         client: 'Eric',
+//         files: 13,
+//         percent: 100,
+//     },
+//     {
+//         id: '1',
+//         client: 'Alan',
+//         files: 23,
+//         percent: 20,
+//     },
+//     {
+//         id: '2',
+//         client: 'Bryan',
+//         files: 3,
+//         percent: 30,
+//     },
+//     {
+//         id: '3',
+//         client: 'Chris',
+//         files: 11,
+//         percent: 40,
+//     },
+//     {
+//         id: '4',
+//         client: 'Eric',
+//         files: 13,
+//         percent: 100,
+//     },
+//     {
+//         id: '1',
+//         client: 'Alan',
+//         files: 23,
+//         percent: 20,
+//     },
+//     {
+//         id: '2',
+//         client: 'Bryan',
+//         files: 3,
+//         percent: 30,
+//     },
+//     {
+//         id: '3',
+//         client: 'Chris',
+//         files: 11,
+//         percent: 40,
+//     },
+//     {
+//         id: '4',
+//         client: 'Eric',
+//         files: 13,
+//         percent: 100,
+//     },
+//     {
+//         id: '1',
+//         client: 'Alan',
+//         files: 23,
+//         percent: 20,
+//     },
+//     {
+//         id: '2',
+//         client: 'Bryan',
+//         files: 3,
+//         percent: 30,
+//     },
+//     {
+//         id: '3',
+//         client: 'Chris',
+//         files: 11,
+//         percent: 40,
+//     },
+//     {
+//         id: '4',
+//         client: 'Eric',
+//         files: 13,
+//         percent: 100,
+//     },
+//     {
+//         id: '1',
+//         client: 'Alan',
+//         files: 23,
+//         percent: 20,
+//     },
+//     {
+//         id: '2',
+//         client: 'Bryan',
+//         files: 3,
+//         percent: 30,
+//     },
+//     {
+//         id: '3',
+//         client: 'Chris',
+//         files: 11,
+//         percent: 40,
+//     },
+//     {
+//         id: '4',
+//         client: 'Eric',
+//         files: 13,
+//         percent: 100,
+//     },
+// ]
 
 export default function Dashboard({ data }) {
-    console.log({ data })
+    const { status, hasWorkSpace } = data
     const router = useRouter()
     const { filterQuery, workSpace, setWorkSpace } = useUIContext()
     const [uploads, setUploads] = useState([])
@@ -274,6 +312,7 @@ export default function Dashboard({ data }) {
 
     const onClickRow = ({ datum }) => {
         router.push(`/uploads/${datum.id}`)
+        router.push(`/uploads/1`)
     }
 
     const filtered = uploads.filter(datum =>
@@ -307,47 +346,54 @@ export default function Dashboard({ data }) {
     }
 
     useEffect(() => {
-        setWorkSpace(data.workSpace)
-        extractUploads(data.workSpace.clients)
+        if (hasWorkSpace) {
+            setWorkSpace(data.workSpace)
+            extractUploads(data.workSpace.clients)
+        }
     }, [workSpace])
 
     return (
-        <AppLayout>
-            <AppBar />
-            <div className="flex dashboard-header">
-                <div className="flex status bg-dark text-white">
-                    <img src="/processed.png" />
-                    <div>
-                        <span className="fs-700">{processedFiles}</span>
-                        <span className="fs-300">Files processed</span>
+        <>
+            {hasWorkSpace && (
+                <AppLayout>
+                    <AppBar />
+                    <div className="flex dashboard-header">
+                        <div className="flex status bg-dark text-white">
+                            <img src="/processed.png" />
+                            <div>
+                                <span className="fs-700">{processedFiles}</span>
+                                <span className="fs-300">Files processed</span>
+                            </div>
+                        </div>
+                        <div className="flex status bg-dark text-white">
+                            <img src="/pending.png" />
+                            <div>
+                                <span className="fs-700">{remainingFiles}</span>
+                                <span className="fs-300">Files remaining</span>
+                                <span
+                                    className="fs-300"
+                                    style={{
+                                        marginTop: '-0.213rem',
+                                        textDecoration: 'underline',
+                                    }}>
+                                    Upgrade
+                                </span>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div className="flex status bg-dark text-white">
-                    <img src="/pending.png" />
-                    <div>
-                        <span className="fs-700">{remainingFiles}</span>
-                        <span className="fs-300">Files remaining</span>
-                        <span
-                            className="fs-300"
-                            style={{
-                                marginTop: '-0.213rem',
-                                textDecoration: 'underline',
-                            }}>
-                            Upgrade
-                        </span>
-                    </div>
-                </div>
-            </div>
 
-            <DataTable
-                title="Recent Uploads"
-                columns={columns}
-                data={filtered}
-                setSelected={setSelected}
-                onClickRow={onClickRow}
-                actions={actions}
-            />
-        </AppLayout>
+                    <DataTable
+                        title="Recent Uploads"
+                        columns={columns}
+                        data={filtered}
+                        setSelected={setSelected}
+                        onClickRow={onClickRow}
+                        actions={actions}
+                    />
+                </AppLayout>
+            )}
+            {!hasWorkSpace && <ErrorMessage status={status} />}
+        </>
     )
 }
 
@@ -362,14 +408,22 @@ export async function getServerSideProps(context) {
             },
         }
 
-    const res = await axios.get('/dashboardData', {
-        headers: {
-            cookie: cookie,
-        },
-    })
-    const workSpace = res.data
+    try {
+        const res = await axios.get('/dashboardData', {
+            headers: {
+                cookie: cookie,
+            },
+        })
+        const workSpace = res.data
 
-    return {
-        props: { data: { workSpace } },
+        return {
+            props: { data: { status: 200, workSpace, hasWorkSpace: true } },
+        }
+    } catch (error) {
+        const { status } = error.response
+
+        return {
+            props: { data: { status, hasWorkSpace: false } },
+        }
     }
 }
