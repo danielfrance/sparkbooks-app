@@ -94,7 +94,7 @@ function Files() {
             header: <Text>Date</Text>,
             render: dateRender,
         },
-        { header: <Text>Details</Text>, render: viewFileRender },
+        { property: 'x', header: <Text>Details</Text>, render: viewFileRender },
     ]
     const router = useRouter()
     const [files, setFiles] = useState([])
