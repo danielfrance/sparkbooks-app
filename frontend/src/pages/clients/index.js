@@ -7,6 +7,8 @@ import AppLayout from '@/components/Layouts/AppLayout'
 import AppBar from '@/components/Layouts/AppBar'
 import { Box, Meter, Text, Avatar } from 'grommet'
 import DataTable from '@/components/Layouts/DataTable'
+import axios from '@/lib/axios'
+
 const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
 
 const clientRender = datum => (
@@ -51,6 +53,7 @@ const columns = [
 ]
 
 export default function Clients({ data }) {
+    console.log('clients', data)
     const router = useRouter()
     const [isOpen, setIsOpen] = useState(false)
     const [clients, setClients] = useState([])
@@ -114,14 +117,20 @@ export default function Clients({ data }) {
     )
 }
 
-// export async function getServerSideProps() {
-//     const res = await fetch(`${process.env.JSON_SERVER_URL}/clients`)
-//     const data = await res.json()
 
-//     return {
-//         props: { data },
-//     }
-// }
+export async function getServerSideProps(context) {
+    const cookies = context.req.headers.cookie || ''
+    const res = await axios.get('/clients', {
+        headers: {
+            cookie: cookies,
+        },
+    })
+    const data = res.data
+
+     return {
+         props: { data },     
+     }
+ }
 
 // <Box className="box_container" fill>
 //               <Box direction="row" justify="between">

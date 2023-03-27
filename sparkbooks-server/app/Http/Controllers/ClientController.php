@@ -21,7 +21,9 @@ class ClientController extends Controller
         $user = Auth::user();
 
         $clients = Client::where('workspace_id', $user->workspace->id)->get();
-        return view('components.client.index')->with('clients', $clients);
+
+        return $clients;
+        // return view('components.client.index')->with('clients', $clients);
     }
 
     /**
@@ -64,8 +66,24 @@ class ClientController extends Controller
         $disk = Storage::disk('gcs');
         $disk->makeDirectory($client->gcs_directory);
 
+        return response()->json(['client' => $client, 'message' => 'Client created']);
+        // return redirect('clients')->with('status', 'Client created');
+    }
 
-        return redirect('clients')->with('status', 'Client created');
+    public function show($id)
+    {
+        $user = Auth::user();
+        $client = Client::find($id);
+
+        $check = $user->workspace->clients->contains($client->id);
+
+        if ($check) {
+            $uploads = Upload::where('client_id', $client->id)->get();
+
+            return ['client' => $client, 'uploads' => $uploads];
+
+            // return view('components.client.edit')->with(['client' => $client, 'uploads' => $uploads]);
+        }
     }
 
     /**
@@ -83,7 +101,10 @@ class ClientController extends Controller
 
         if ($check) {
             $uploads = Upload::where('client_id', $client->id)->get();
-            return view('components.client.edit')->with(['client' => $client, 'uploads' => $uploads]);
+
+            return ['client' => $client, 'uploads' => $uploads];
+
+            // return view('components.client.edit')->with(['client' => $client, 'uploads' => $uploads]);
         }
     }
 
@@ -106,7 +127,9 @@ class ClientController extends Controller
 
         $client->save();
 
-        return redirect('clients')->with('status', 'Client updated');
+        return response()->json(['message' => 'Client updated']);
+
+        // return redirect('clients')->with('status', 'Client updated');
     }
 
     /**
@@ -117,6 +140,6 @@ class ClientController extends Controller
      */
     public function destroy($id)
     {
-        //
+        //TODO: Destroy Client
     }
 }

@@ -5,6 +5,7 @@ import AppLayout from '@/components/Layouts/AppLayout'
 import AppBar from '@/components/Layouts/AppBar'
 import { Box, Meter, Text, Avatar } from 'grommet'
 import DataTable from '@/components/Layouts/DataTable'
+import axios from '@/lib/axios'
 
 const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
 
@@ -67,14 +68,15 @@ const columns = [
     },
 ]
 
-// const { publicRuntimeConfig } = getConfig();
-// const { apiURL } = publicRuntimeConfig;
 
-function Uploads() {
+
+function Uploads({ data }) {
+    console.log(data)
     const router = useRouter()
-    const { filterQuery, workSpace } = useUIContext()
-    //   const [show, setShow] = useState(false);
-    //   const [clicked, setClicked] = useState({});
+    const { filterQuery } = useUIContext()
+    const [show, setShow] = useState(false)
+    const [clicked, setClicked] = useState({})
+
 
     const [uploads, setUploads] = useState([])
 
@@ -127,28 +129,19 @@ function Uploads() {
     )
 }
 
-// export async function getServerSideProps(context) {
-//     const cookie = context.req.headers.cookie
+export async function getServerSideProps(context) {
+    const cookies = context.req.headers.cookie || ''
+    const res = await axios.get('/uploads', {
+        headers: {
+            cookie: cookies,
+        },
+    })
+    const data = res.data
 
-//     if (!cookie)
-//         return {
-//             redirect: {
-//                 destination: '/login',
-//                 permanent: false,
-//             },
-//         }
-
-//     const res = await axios.get('/dashboardData', {
-//         headers: {
-//             cookie: cookie,
-//         },
-//     })
-//     const workSpace = res.data
-
-//     return {
-//         props: { data: { workSpace } },
-//     }
-// }
+    return {
+        props: { data },
+    }
+}
 
 export default Uploads
 

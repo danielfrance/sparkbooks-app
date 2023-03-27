@@ -7,8 +7,7 @@ import getConfig from 'next/config'
 import AppLayout from '@/components/Layouts/AppLayout'
 import AppBar from '@/components/Layouts/AppBar'
 import DataTable from '@/components/Layouts/DataTable'
-// const { publicRuntimeConfig } = getConfig()
-// const { apiURL } = publicRuntimeConfig
+import axios from '@/lib/axios'
 
 import { useUIContext } from '@/contexts/ui'
 
@@ -17,7 +16,8 @@ const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
 // const { publicRuntimeConfig } = getConfig()
 // const { apiURL } = publicRuntimeConfig
 
-function Files() {
+function Files(data) {
+  console.log(data);
     const onClick = datum => {
         // TODO: Either we include all data in work space or we get data from dedicated API Route
         alert(
@@ -96,6 +96,7 @@ function Files() {
         },
         { property: 'x', header: <Text>Details</Text>, render: viewFileRender },
     ]
+
     const router = useRouter()
     const [files, setFiles] = useState([])
     const [selected, setSelected] = useState()
@@ -159,11 +160,17 @@ function Files() {
 
 export default Files
 
-// export async function getServerSideProps() {
-//     const res = await fetch(`${process.env.JSON_SERVER_URL}/files`)
-//     const data = await res.json()
 
-//     return {
-//         props: { data },
-//     }
-// }
+export async function getServerSideProps(context) {
+    const cookies = context.req.headers.cookie || ''
+    const res = await axios.get('/files', {
+        headers: {
+            cookie: cookies,
+        },
+    })
+    const data = res.data
+    return {
+        props: { data },
+    }
+}
+

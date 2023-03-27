@@ -3,11 +3,11 @@ import getConfig from 'next/config'
 import { Box, Heading, Button } from 'grommet'
 import UploadResultContainer from '@/components/UploadResults/UploadResultContainer'
 import AppLayout from '@/components/Layouts/AppLayout'
-
-// const { publicRuntimeConfig } = getConfig()
-// const { apiURL } = publicRuntimeConfig
+import axios from '@/lib/axios'
 
 export default function File() {
+      console.log(data)
+
     const [fileData, setFileData] = useState()
 
     const extractFileData = clients => {
@@ -17,6 +17,7 @@ export default function File() {
     useEffect(() => {
         extractFileData(workSpace.clients)
     }, [workSpace])
+
 
     return (
         <AppLayout>
@@ -37,13 +38,16 @@ export default function File() {
     )
 }
 
-// export async function getServerSideProps(context) {
-//     const { id } = context.params
+export async function getServerSideProps(context) {
+    const cookies = context.req.headers.cookie || ''
 
-//     const res = await fetch(`${process.env.JSON_SERVER_URL}/files/${id}`)
-//     const data = await res.json()
+    const data = await axios.get(`/files/${context.params.id}`, {
+        headers: {
+            cookie: cookies,
+        },
+    })
 
-//     return {
-//         props: { data },
-//     }
-// }
+    return {
+        props: { data: data.data },
+    }
+}
