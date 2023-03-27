@@ -33,7 +33,6 @@ class UploadController extends Controller
 
     public function store(Request $request)
     {
-
         $this->validate($request, [
             'files' => 'required',
             'client_id' => 'required'

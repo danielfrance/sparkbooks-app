@@ -139,11 +139,7 @@ const UploadFilesLayer = ({ client, isOpen, onClose }) => {
                                 }
                             />
                         </FormField>
-                        <Box
-                            fill="horizontal"
-                            align="center"
-                            gap="medium"
-                            margin="medium">
+                        <Box fill="horizontal" align="center" gap="medium">
                             {show && (
                                 <Spinner
                                     border={[
@@ -157,7 +153,10 @@ const UploadFilesLayer = ({ client, isOpen, onClose }) => {
                                 />
                             )}
 
-                            <button className="btn primary" onClick={submit}>
+                            <button
+                                className="btn primary"
+                                style={{ width: '100%' }}
+                                onClick={submit}>
                                 Submit
                             </button>
                         </Box>

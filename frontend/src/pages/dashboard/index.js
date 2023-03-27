@@ -263,6 +263,7 @@ const fixedData = [
 // }
 
 export default function Dashboard({ data }) {
+    console.log(data)
     const router = useRouter()
     const { filterQuery, workSpace, setWorkSpace } = useUIContext()
     const [uploads, setUploads] = useState(fixedData)
