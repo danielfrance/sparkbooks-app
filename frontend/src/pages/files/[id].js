@@ -3,11 +3,10 @@ import getConfig from 'next/config'
 import { Box, Heading, Button } from 'grommet'
 import UploadResultContainer from '@/components/UploadResults/UploadResultContainer'
 import AppLayout from '@/components/Layouts/AppLayout'
-
-// const { publicRuntimeConfig } = getConfig()
-// const { apiURL } = publicRuntimeConfig
+import axios from '@/lib/axios'
 
 export default function File({ data }) {
+    console.log(data)
     const [fileData, setFileData] = useState(data)
 
     return (
@@ -30,12 +29,15 @@ export default function File({ data }) {
 }
 
 export async function getServerSideProps(context) {
-    const { id } = context.params
+    const cookies = context.req.headers.cookie || ''
 
-    const res = await fetch(`${process.env.JSON_SERVER_URL}/files/${id}`)
-    const data = await res.json()
+    const data = await axios.get(`/files/${context.params.id}`, {
+        headers: {
+            cookie: cookies,
+        },
+    })
 
     return {
-        props: { data },
+        props: { data: data.data },
     }
 }

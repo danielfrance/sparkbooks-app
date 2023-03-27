@@ -27,6 +27,7 @@ import { useState } from 'react'
 import DataTable from '@/components/Layouts/DataTable'
 import { useUIContext } from '@/contexts/ui'
 import ChartOfAccountsImport from './chartOfAccountsModal'
+import axios from '@/lib/axios'
 
 const clientRender = datum => (
     <Box pad={{ vertical: 'xsmall' }} gap="small" direction="row">
@@ -268,13 +269,15 @@ export default function ClientEdit({ data }) {
 }
 
 export async function getServerSideProps(context) {
-    const clientRes = await fetch(
-        `${process.env.JSON_SERVER_URL}/clients/${context.params.id}`,
-    )
-    const client = await clientRes.json()
+    const cookies = context.req.headers.cookie || ''
 
-    const uploadsRes = await fetch(`${process.env.JSON_SERVER_URL}/uploads`)
-    const uploads = await uploadsRes.json()
+    const clientRes = await axios.get(`/clients/${context.params.id}`, {
+        headers: {
+            cookie: cookies,
+        },
+    })
+    const client = clientRes.data.client
+    const uploads = clientRes.data.uploads
 
     return {
         props: { data: { client, uploads } },

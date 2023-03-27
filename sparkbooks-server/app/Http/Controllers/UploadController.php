@@ -7,6 +7,7 @@ use App\Jobs\ProcessUploadedFiles;
 use App\Models\Client;
 use App\Models\File;
 use App\Models\Result;
+use App\Models\ResultDetail;
 use App\Models\Upload;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -26,6 +27,8 @@ class UploadController extends Controller
         $user = Auth::user();
 
         $uploads = Upload::whereIn('client_id', $user->getClientIDs())->get();
+
+        return $uploads;
 
 
         return view('components.uploads.index')->with(['uploads' => $uploads]);
@@ -81,6 +84,7 @@ class UploadController extends Controller
 
         $user = Auth::user();
         $upload = Upload::find($id);
+
         //TODO: categories will need to pull from workspace chart of accounts;
         $categories = config('global.qb_categories');
 
@@ -88,18 +92,21 @@ class UploadController extends Controller
         $check = $user->workspace->clients->contains($upload->client->id);
         // $this->getResults($upload);
         if ($check) {
+
+            // TODO: Need to get file unsignedURLs
+
             $results = $upload->results;
 
-            $normalizedResults = $results->map(function ($result) {
-                $items = $result->getNormalizedItems();
-                return $items;
-            });
 
-            dd($normalizedResults);
+            // TODO: !!! update this!!!
+            $results = Result::where('upload_id', 126)
+                ->with(['resultDetails', 'resultItems'])
+                ->get();
 
-            // return view('components.uploads.show')->with(["uploadID" => $upload->id, "results" => $normalizedResults, "categories" => Arr::sort($categories, 'name')]);
+            return $results;
+
         } else {
-            abort(403);
+            return response()->json(['error' => 'Unauthorized'], 401);
         }
     }
 
@@ -127,7 +134,6 @@ class UploadController extends Controller
                 'contents' => $contents
             ]);
         }
-        dd($files);
     }
 
     public function downloadResults(Request $request, $uploadID)

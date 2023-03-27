@@ -6,8 +6,7 @@ import getConfig from 'next/config'
 import AppLayout from '@/components/Layouts/AppLayout'
 import AppBar from '@/components/Layouts/AppBar'
 import DataTable from '@/components/Layouts/DataTable'
-// const { publicRuntimeConfig } = getConfig()
-// const { apiURL } = publicRuntimeConfig
+import axios from '@/lib/axios'
 
 import { useUIContext } from '@/contexts/ui'
 
@@ -82,6 +81,7 @@ const columns = [
 // const { apiURL } = publicRuntimeConfig
 
 function Files({ data }) {
+    console.log(data)
     const router = useRouter()
     const [files, setFiles] = useState(data)
     const [selected, setSelected] = useState()
@@ -120,10 +120,14 @@ function Files({ data }) {
 
 export default Files
 
-export async function getServerSideProps() {
-    const res = await fetch(`${process.env.JSON_SERVER_URL}/files`)
-    const data = await res.json()
-
+export async function getServerSideProps(context) {
+    const cookies = context.req.headers.cookie || ''
+    const res = await axios.get('/files', {
+        headers: {
+            cookie: cookies,
+        },
+    })
+    const data = res.data
     return {
         props: { data },
     }

@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\WorkspaceController;
 use Illuminate\Support\Facades\Route;
@@ -28,8 +30,23 @@ Route::middleware(["auth:sanctum"])->get('/dashboardData', [DashboardController:
 Route::middleware(["auth:sanctum"])->post('/upload/new', [UploadController::class, 'store']);
 
 
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('clients', [ClientController::class, 'index']);
+    Route::get('clients/{client}', [ClientController::class, 'show']);
+    Route::post('clients', [ClientController::class, 'store']);
+    Route::put('clients/{client}', [ClientController::class, 'update']);
+    Route::delete('clients/{client}', [ClientController::class, 'destroy']);
 
 
+    Route::get('uploads', [UploadController::class, 'index']);
+    Route::get('uploads/{upload}', [UploadController::class, 'show']);
+    Route::post('uploads', [UploadController::class, 'store']);
+    Route::put('uploads/{upload}', [UploadController::class, 'update']);
+    Route::delete('uploads/{upload}', [UploadController::class, 'destroy']);
+
+    Route::get('files', [FileController::class, 'index']);
+    Route::get('files/{file}', [FileController::class, 'show']);
+});
 
 
 

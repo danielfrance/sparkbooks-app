@@ -16,16 +16,16 @@ class ResultDetail extends Model
 
     public function result()
     {
-        $this->belongsTo(Result::class);
+        return $this->belongsTo(Result::class);
     }
 
     public function upload()
     {
-        $this->belongsTo(Upload::class);
+        return $this->belongsTo(Upload::class);
     }
 
     public function lineItems()
     {
-        $this->hasMany(ResultItem::class);
+        return $this->hasMany(ResultItem::class);
     }
 }

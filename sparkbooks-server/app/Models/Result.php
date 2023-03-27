@@ -27,12 +27,12 @@ class Result extends Model
 
     public function resultDetails()
     {
-        $this->hasOne(ResultDetail::class);
+        return $this->hasOne(ResultDetail::class);
     }
 
     public function resultItems()
     {
-        $this->hasMany(ResultItem::class);
+        return $this->hasMany(ResultItem::class);
     }
 
     public function getContentEntities()
@@ -59,7 +59,7 @@ class Result extends Model
         // dd($disk->exists($directory . "/" . $filename . ".pdf"));
 
 
-        $unsignedURL = ($disk->exists($path)) ? $disk->temporaryUrl($path, now()->addMinutes(60)) : null;
+        $unsignedURL = ($disk->exists($path)) ? $disk->temporaryUrl($path, now()->addMinutes(90)) : null;
 
         $results = $this->getContentEntities();
 
