@@ -26,14 +26,9 @@ const UploadFilesLayer = ({ client, isOpen, onClose }) => {
     const [error, setError] = useState()
     // const fileInputStyles = {}
 
-    const { workSpace } = useUIContext()
+    const { workSpace, setWorkSpace } = useUIContext()
 
-    const clients = workSpace.clients.length
-        ? workSpace.clients
-        : [
-              { id: 1, name: 'client 1' },
-              { id: 2, name: 'client 2' },
-          ]
+    const { clients } = workSpace
 
     const selectOptions = clients.map(client => client.name)
 
@@ -55,12 +50,16 @@ const UploadFilesLayer = ({ client, isOpen, onClose }) => {
             })
 
             try {
-                const res = await axios.post('/upload/new', formData, {
+                await axios.post('/upload/new', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
                 })
-                // console.log(res.data)
+
+                //  refresh work space data after upload
+                const res = await axios.get('/dashboardData')
+                setWorkSpace(res.data.workSpace)
+
                 setShow(false)
                 onClose()
             } catch (error) {
@@ -157,7 +156,7 @@ const UploadFilesLayer = ({ client, isOpen, onClose }) => {
                                 className="btn primary"
                                 style={{ width: '100%' }}
                                 onClick={submit}>
-                                Submit
+                                Upload
                             </button>
                         </Box>
                     </Form>

@@ -7,8 +7,16 @@ import AppLayout from '@/components/Layouts/AppLayout'
 // const { publicRuntimeConfig } = getConfig()
 // const { apiURL } = publicRuntimeConfig
 
-export default function File({ data }) {
-    const [fileData, setFileData] = useState(data)
+export default function File() {
+    const [fileData, setFileData] = useState()
+
+    const extractFileData = clients => {
+        return
+    }
+
+    useEffect(() => {
+        extractFileData(workSpace.clients)
+    }, [workSpace])
 
     return (
         <AppLayout>
@@ -29,13 +37,13 @@ export default function File({ data }) {
     )
 }
 
-export async function getServerSideProps(context) {
-    const { id } = context.params
+// export async function getServerSideProps(context) {
+//     const { id } = context.params
 
-    const res = await fetch(`${process.env.JSON_SERVER_URL}/files/${id}`)
-    const data = await res.json()
+//     const res = await fetch(`${process.env.JSON_SERVER_URL}/files/${id}`)
+//     const data = await res.json()
 
-    return {
-        props: { data },
-    }
-}
+//     return {
+//         props: { data },
+//     }
+// }

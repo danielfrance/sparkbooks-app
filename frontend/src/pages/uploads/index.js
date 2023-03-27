@@ -1,11 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useUIContext } from '@/contexts/ui'
 import AppLayout from '@/components/Layouts/AppLayout'
 import AppBar from '@/components/Layouts/AppBar'
 import { Box, Meter, Text, Avatar } from 'grommet'
 import DataTable from '@/components/Layouts/DataTable'
-import axios from '@/lib/axios'
 
 const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
 
@@ -71,23 +70,48 @@ const columns = [
 // const { publicRuntimeConfig } = getConfig();
 // const { apiURL } = publicRuntimeConfig;
 
-function Uploads({ data }) {
+function Uploads() {
     const router = useRouter()
-    const { filterQuery } = useUIContext()
+    const { filterQuery, workSpace } = useUIContext()
     //   const [show, setShow] = useState(false);
     //   const [clicked, setClicked] = useState({});
 
-    const [uploads, setUploads] = useState(data)
+    const [uploads, setUploads] = useState([])
 
     const [selected, setSelected] = useState()
 
     const onClickRow = ({ datum }) => {
-        router.push(`/uploads/${datum.id}`)
+        // TODO: Either we include all data in work space or we get data from dedicated API Route
+        alert(
+            'Either we include all data (client name, supplier name,...) in work space or we get data from dedicated API Route',
+        )
+
+        // router.push(`/uploads/${datum.id}`)
     }
 
     const filtered = uploads.filter(datum =>
         datum.client.toLocaleLowerCase().includes(filterQuery),
     )
+
+    const extractUploads = clients => {
+        clients.forEach(client => {
+            setUploads(currentUploads => [
+                ...currentUploads,
+                ...client.uploads.map(upload => {
+                    return {
+                        id: client.id,
+                        client: client.name,
+                        files: upload.files.length,
+                        percent: Number.parseFloat(upload.processed) || 0.1,
+                    }
+                }),
+            ])
+        })
+    }
+
+    useEffect(() => {
+        extractUploads(workSpace.clients)
+    }, [workSpace])
 
     return (
         <AppLayout>
@@ -103,31 +127,28 @@ function Uploads({ data }) {
     )
 }
 
-export async function getServerSideProps(context) {
-    const cookie = context.req.headers.cookie
+// export async function getServerSideProps(context) {
+//     const cookie = context.req.headers.cookie
 
-    if (!cookie)
-        return {
-            redirect: {
-                destination: '/login',
-                permanent: false,
-            },
-        }
+//     if (!cookie)
+//         return {
+//             redirect: {
+//                 destination: '/login',
+//                 permanent: false,
+//             },
+//         }
 
-    // const res = await axios.get('/dashboardData', {
-    //     headers: {
-    //         cookie: cookie,
-    //     },
-    // })
-    // const { data } = res
+//     const res = await axios.get('/dashboardData', {
+//         headers: {
+//             cookie: cookie,
+//         },
+//     })
+//     const workSpace = res.data
 
-    const res = await fetch(`${process.env.JSON_SERVER_URL}/uploads`)
-    const data = await res.json()
-
-    return {
-        props: { data },
-    }
-}
+//     return {
+//         props: { data: { workSpace } },
+//     }
+// }
 
 export default Uploads
 
