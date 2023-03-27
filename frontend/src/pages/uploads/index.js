@@ -5,6 +5,7 @@ import AppLayout from '@/components/Layouts/AppLayout'
 import AppBar from '@/components/Layouts/AppBar'
 import { Box, Meter, Text, Avatar } from 'grommet'
 import DataTable from '@/components/Layouts/DataTable'
+import axios from '@/lib/axios'
 
 const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
 
@@ -67,14 +68,13 @@ const columns = [
     },
 ]
 
-// const { publicRuntimeConfig } = getConfig();
-// const { apiURL } = publicRuntimeConfig;
 
 function Uploads({ data }) {
+    console.log(data)
     const router = useRouter()
     const { filterQuery } = useUIContext()
-    //   const [show, setShow] = useState(false);
-    //   const [clicked, setClicked] = useState({});
+    const [show, setShow] = useState(false)
+    const [clicked, setClicked] = useState({})
 
     const [uploads, setUploads] = useState(data)
 
@@ -102,9 +102,14 @@ function Uploads({ data }) {
     )
 }
 
-export async function getServerSideProps() {
-    const res = await fetch(`${process.env.JSON_SERVER_URL}/uploads`)
-    const data = await res.json()
+export async function getServerSideProps(context) {
+    const cookies = context.req.headers.cookie || ''
+    const res = await axios.get('/uploads', {
+        headers: {
+            cookie: cookies,
+        },
+    })
+    const data = res.data
 
     return {
         props: { data },

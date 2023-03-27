@@ -17,6 +17,20 @@ class Client extends Model
         return $this->hasMany(Upload::class);
     }
 
+    public function files()
+    {
+        return $this->hasManyThrough(File::class, Upload::class);
+    }
+
+    public function getUploadIDs()
+    {
+        $uploads = $this->uploads;
+
+        return $uploads->map(function ($upload) {
+            return $upload->id;
+        });
+    }
+
     public function categories()
     {
         $this->hasMany(Category::class);
