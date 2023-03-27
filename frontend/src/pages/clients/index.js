@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useUIContext } from '@/contexts/ui'
 import { StatusGood, CircleAlert, FormEdit } from 'grommet-icons'
@@ -56,9 +56,9 @@ export default function Clients({ data }) {
     console.log('clients', data)
     const router = useRouter()
     const [isOpen, setIsOpen] = useState(false)
-    const [clients, setClients] = useState(data)
+    const [clients, setClients] = useState([])
     const [selected, setSelected] = useState()
-    const { filterQuery } = useUIContext()
+    const { filterQuery, workSpace } = useUIContext()
 
     const onClose = () => setIsOpen(false)
 
@@ -71,6 +71,34 @@ export default function Clients({ data }) {
     const filtered = clients.filter(datum =>
         datum.name.toLocaleLowerCase().includes(filterQuery),
     )
+
+    const extractClients = clients => {
+        clients.forEach(client => {
+            const { id, name, uploads } = client
+            let uploadsCount = 0
+            let filesCount = 0
+
+            uploads.forEach(upload => {
+                uploadsCount++
+                filesCount = filesCount + upload.files.length
+            })
+
+            setClients(currentClients => [
+                ...currentClients,
+                {
+                    id,
+                    name,
+                    uploads: uploadsCount,
+                    files: filesCount,
+                    connected: 'status-ok',
+                },
+            ])
+        })
+    }
+
+    useEffect(() => {
+        extractClients(workSpace.clients)
+    }, [workSpace])
 
     return (
         <AppLayout>
@@ -89,6 +117,7 @@ export default function Clients({ data }) {
     )
 }
 
+
 export async function getServerSideProps(context) {
     const cookies = context.req.headers.cookie || ''
     const res = await axios.get('/clients', {
@@ -98,10 +127,10 @@ export async function getServerSideProps(context) {
     })
     const data = res.data
 
-    return {
-        props: { data },
-    }
-}
+     return {
+         props: { data },     
+     }
+ }
 
 // <Box className="box_container" fill>
 //               <Box direction="row" justify="between">

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 import { Close, StatusGood } from 'grommet-icons'
 import {
@@ -11,14 +11,80 @@ import {
     Layer,
     Select,
     TextInput,
+    Spinner,
+    Notification,
 } from 'grommet'
+import { useUIContext } from '@/contexts/ui'
+
+import axios from '@/lib/axios'
 
 const UploadFilesLayer = ({ client, isOpen, onClose }) => {
-    const [value, setValue] = useState(undefined)
-    const fileInputStyles = {}
+    const [selectedClient, setSelectedClient] = useState([])
+    const [selectedFiles, setSelectedFiles] = useState(null)
+    const [show, setShow] = useState(false)
+    const [visible, setVisible] = useState(false)
+    const [error, setError] = useState()
+    // const fileInputStyles = {}
+
+    const { workSpace, setWorkSpace } = useUIContext()
+
+    const { clients } = workSpace
+
+    const selectOptions = clients.map(client => client.name)
+
+    const findClient = name => {
+        return clients.find(client => client.name == name)
+    }
+
+    const submit = async event => {
+        event.preventDefault()
+
+        if (selectedClient && selectedFiles?.length) {
+            setShow(true)
+
+            const formData = new FormData()
+
+            formData.append('client_id', findClient(selectedClient).id)
+            selectedFiles.forEach(file => {
+                formData.append('files[]', file)
+            })
+
+            try {
+                await axios.post('/upload/new', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                })
+
+                //  refresh work space data after upload
+                const res = await axios.get('/dashboardData')
+                setWorkSpace(res.data.workSpace)
+
+                setShow(false)
+                onClose()
+            } catch (error) {
+                // console.log(error)
+                setShow(false)
+                setError('Something went wrong, try again later.')
+                setVisible(true)
+            }
+        } else {
+            setError('Please select both the client and files')
+            setVisible(true)
+        }
+    }
 
     return (
         <>
+            {visible && (
+                <Notification
+                    toast
+                    status="critical"
+                    title="Something went wrong"
+                    message={error}
+                    onClose={() => setVisible(false)}
+                />
+            )}
             <Layer
                 className="modalLayer ff-sans-serif fs-400"
                 position="right"
@@ -44,13 +110,15 @@ const UploadFilesLayer = ({ client, isOpen, onClose }) => {
                         <FormField
                             name="name"
                             label="Client Name"
-                            required
+                            // required
                             margin={{ top: 'medium', bottom: 'medium' }}>
                             <Select
                                 required
-                                value={value}
-                                options={['client 1', 'client 2', 'client 3']}
-                                onChange={({ option }) => setValue(option)}
+                                value={selectedClient}
+                                options={selectOptions}
+                                onChange={({ option }) =>
+                                    setSelectedClient(option)
+                                }
                                 onSearch={text => console.log(text)}
                             />
                         </FormField>
@@ -58,32 +126,38 @@ const UploadFilesLayer = ({ client, isOpen, onClose }) => {
                             htmlFor="uploadFilesContainer"
                             name="files"
                             label="Upload Files"
-                            required
+                            // required
                             margin={{ top: 'medium', bottom: 'medium' }}>
                             <FileInput
                                 id="uploadFilesContainer"
                                 multiple
                                 pad="large"
                                 name="files"
-                                onChange={event => {
-                                    const fileList = event.target.files
-                                    for (
-                                        let i = 0;
-                                        i < fileList.length;
-                                        i += 1
-                                    ) {
-                                        const file = fileList[i]
-                                    }
-                                }}
+                                onChange={(event, { files }) =>
+                                    setSelectedFiles(files)
+                                }
                             />
                         </FormField>
-                        <Box flex={false} as="footer" align="start">
-                            <Button
-                                type="submit"
-                                label="submit"
-                                onClick={onClose}
-                                primary
-                            />
+                        <Box fill="horizontal" align="center" gap="medium">
+                            {show && (
+                                <Spinner
+                                    border={[
+                                        {
+                                            side: 'all',
+                                            color: 'brand',
+                                            size: 'medium',
+                                            style: 'dotted',
+                                        },
+                                    ]}
+                                />
+                            )}
+
+                            <button
+                                className="btn primary"
+                                style={{ width: '100%' }}
+                                onClick={submit}>
+                                Upload
+                            </button>
                         </Box>
                     </Form>
                 </Box>

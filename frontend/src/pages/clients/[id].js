@@ -138,12 +138,15 @@ export default function ClientEdit({ data }) {
                         Edit Client NAME
                     </Heading>
                 </Box>
-                <div className="grid client-details">
-                    <Box direction="row" pad="small" fill>
+                <div className="flex client-details">
+                    <div className="panel contact-form">
                         <Form>
                             <Box margin={{ bottom: '1em' }}>
                                 <FormField name="name" label="Name">
-                                    <TextInput name="name" />
+                                    <TextInput
+                                        name="name"
+                                        value={client.name}
+                                    />
                                 </FormField>
                             </Box>
                             <Grid
@@ -199,8 +202,8 @@ export default function ClientEdit({ data }) {
                                 <Button type="submit" label="Save" secondary />
                             </Box>
                         </Form>
-                    </Box>
-                    <Box pad="small" fill>
+                    </div>
+                    <div className="panel">
                         <Box margin={{ bottom: 'small' }}>
                             <Text>Chart of Accounts</Text>
                         </Box>
@@ -225,7 +228,7 @@ export default function ClientEdit({ data }) {
                                 }}
                             />
                         </Data>
-                    </Box>
+                    </div>
                 </div>
             </Box>
             <DataTable

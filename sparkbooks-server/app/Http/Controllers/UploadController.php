@@ -36,12 +36,17 @@ class UploadController extends Controller
 
     public function store(Request $request)
     {
-
         $this->validate($request, [
             'files' => 'required',
             'client_id' => 'required'
         ]);
 
+        $files = $request->file('files');
+        return [
+            "filename" => $files[0]->getClientOriginalName(),
+            "filetype" => $files[0]->getMimeType(),
+            "client id" => $request->client_id
+        ];
 
         try {
             DB::transaction(function () use ($request) {
@@ -55,7 +60,7 @@ class UploadController extends Controller
                 // TODO: create better way of naming uploads
 
                 $upload = Upload::create([
-                    'name' => $client->name . '-' . Carbon::now()->timestamp,
+                    'name' => $client->name . '-' . Carbon::now()->format('Y-m-d'),
                     'client_id' => $client->id,
                 ]);
 

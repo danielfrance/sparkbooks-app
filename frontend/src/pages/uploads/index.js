@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useUIContext } from '@/contexts/ui'
 import AppLayout from '@/components/Layouts/AppLayout'
@@ -69,6 +69,7 @@ const columns = [
 ]
 
 
+
 function Uploads({ data }) {
     console.log(data)
     const router = useRouter()
@@ -76,17 +77,43 @@ function Uploads({ data }) {
     const [show, setShow] = useState(false)
     const [clicked, setClicked] = useState({})
 
-    const [uploads, setUploads] = useState(data)
+
+    const [uploads, setUploads] = useState([])
 
     const [selected, setSelected] = useState()
 
     const onClickRow = ({ datum }) => {
-        router.push(`/uploads/${datum.id}`)
+        // TODO: Either we include all data in work space or we get data from dedicated API Route
+        alert(
+            'Either we include all data (client name, supplier name,...) in work space or we get data from dedicated API Route',
+        )
+
+        // router.push(`/uploads/${datum.id}`)
     }
 
     const filtered = uploads.filter(datum =>
         datum.client.toLocaleLowerCase().includes(filterQuery),
     )
+
+    const extractUploads = clients => {
+        clients.forEach(client => {
+            setUploads(currentUploads => [
+                ...currentUploads,
+                ...client.uploads.map(upload => {
+                    return {
+                        id: client.id,
+                        client: client.name,
+                        files: upload.files.length,
+                        percent: Number.parseFloat(upload.processed) || 0.1,
+                    }
+                }),
+            ])
+        })
+    }
+
+    useEffect(() => {
+        extractUploads(workSpace.clients)
+    }, [workSpace])
 
     return (
         <AppLayout>

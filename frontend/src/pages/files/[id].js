@@ -5,9 +5,19 @@ import UploadResultContainer from '@/components/UploadResults/UploadResultContai
 import AppLayout from '@/components/Layouts/AppLayout'
 import axios from '@/lib/axios'
 
-export default function File({ data }) {
-    console.log(data)
-    const [fileData, setFileData] = useState(data)
+export default function File() {
+      console.log(data)
+
+    const [fileData, setFileData] = useState()
+
+    const extractFileData = clients => {
+        return
+    }
+
+    useEffect(() => {
+        extractFileData(workSpace.clients)
+    }, [workSpace])
+
 
     return (
         <AppLayout>
