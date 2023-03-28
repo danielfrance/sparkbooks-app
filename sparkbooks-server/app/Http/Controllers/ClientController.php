@@ -20,7 +20,7 @@ class ClientController extends Controller
     {
         $user = Auth::user();
 
-        $clients = Client::where('workspace_id', $user->workspace->id)->get();
+        $clients = Client::where('workspace_id', $user->workspace->id)->withCount(['files', 'uploads'])->get();
 
         return $clients;
         // return view('components.client.index')->with('clients', $clients);

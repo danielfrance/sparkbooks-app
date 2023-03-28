@@ -83,192 +83,192 @@ const columns = [
 ]
 
 export default function ClientEdit({ data }) {
-    const [value, setValue] = useState('OK')
-    const [isOpen, setIsOpen] = useState(false)
-    const onOpen = () => setIsOpen(true)
-    const onClose = () => setIsOpen(false)
+    console.log(data)
+    // const [value, setValue] = useState('OK')
+    // const [isOpen, setIsOpen] = useState(false)
+    // const onOpen = () => setIsOpen(true)
+    // const onClose = () => setIsOpen(false)
 
-    const chartData = [
-        { id: 1, name: 'Repairs and Maintenance', code: '6110' },
-        { id: 2, name: 'Gasoline, Fuel and Oil', code: '63200' },
-        { id: 3, name: 'Small Tools and Equipment', code: '67800' },
-        { id: 4, name: 'Inventory Grow Supplies', code: '5609' },
-        { id: 5, name: 'Ask My Accountant', code: '8400' },
-        { id: 6, name: 'Office Supplies', code: '64900' },
-        { id: 7, name: 'Rental Equipment', code: '5611' },
-        { id: 8, name: 'Chemicals Purchased', code: '61500' },
-        { id: 9, name: 'Car and Truck Expenses', code: '61100' },
-        { id: 10, name: 'Soil and Nutrients', code: '5614' },
-        { id: 11, name: 'Non Deductible Expenses', code: '9000' },
-        { id: 12, name: 'Fertilizers and Lime', code: '63000' },
-        { id: 13, name: 'Security', code: '5612' },
-        { id: 14, name: 'Garbage Expense', code: '6101' },
-        { id: 15, name: 'Utilities', code: '68600' },
-        { id: 16, name: 'Postage and Shipping', code: '6440' },
-        { id: 17, name: 'Parking and other', code: '6610' },
-        { id: 18, name: 'Uniforms', code: '6620' },
-    ]
+    // const chartData = [
+    //     { id: 1, name: 'Repairs and Maintenance', code: '6110' },
+    //     { id: 2, name: 'Gasoline, Fuel and Oil', code: '63200' },
+    //     { id: 3, name: 'Small Tools and Equipment', code: '67800' },
+    //     { id: 4, name: 'Inventory Grow Supplies', code: '5609' },
+    //     { id: 5, name: 'Ask My Accountant', code: '8400' },
+    //     { id: 6, name: 'Office Supplies', code: '64900' },
+    //     { id: 7, name: 'Rental Equipment', code: '5611' },
+    //     { id: 8, name: 'Chemicals Purchased', code: '61500' },
+    //     { id: 9, name: 'Car and Truck Expenses', code: '61100' },
+    //     { id: 10, name: 'Soil and Nutrients', code: '5614' },
+    //     { id: 11, name: 'Non Deductible Expenses', code: '9000' },
+    //     { id: 12, name: 'Fertilizers and Lime', code: '63000' },
+    //     { id: 13, name: 'Security', code: '5612' },
+    //     { id: 14, name: 'Garbage Expense', code: '6101' },
+    //     { id: 15, name: 'Utilities', code: '68600' },
+    //     { id: 16, name: 'Postage and Shipping', code: '6440' },
+    //     { id: 17, name: 'Parking and other', code: '6610' },
+    //     { id: 18, name: 'Uniforms', code: '6620' },
+    // ]
 
-    const [client, setClient] = useState(data.client)
-    // console.log({ client })
-    const [uploads, setUploads] = useState(data.uploads)
-    const { filterQuery } = useUIContext()
+    // const [client, setClient] = useState(data.client)
+    // // console.log({ client })
+    // const [uploads, setUploads] = useState(data.uploads)
+    // const { filterQuery } = useUIContext()
 
-    const [selected, setSelected] = useState()
+    // const [selected, setSelected] = useState()
 
-    const onClickRow = ({ datum }) => {
-        router.push(`/uploads/${datum.id}`)
-    }
+    // const onClickRow = ({ datum }) => {
+    //     router.push(`/uploads/${datum.id}`)
+    // }
 
-    const filtered = uploads
-        .filter(datum => datum.client.toLocaleLowerCase().includes(filterQuery))
-        .slice(-5)
+    // const filtered = uploads
+    //     .filter(datum => datum.client.toLocaleLowerCase().includes(filterQuery))
+    //     .slice(-5)
 
-    const actions = [
-        // { label: 'Add', onClick: e => console.log(e) },
-        // { label: 'Edit', onClick: e => console.log(e) },
-    ]
+    // const actions = [
+    //     // { label: 'Add', onClick: e => console.log(e) },
+    //     // { label: 'Edit', onClick: e => console.log(e) },
+    // ]
 
-    return (
-        <AppLayout>
-            <AppBar />
-            <Box className="card" fill height={{ min: '555px' }}>
-                <Box direction="row" justify="between" pad="medium">
-                    <Heading level="3" color="brand" className="ff-sans-serif">
-                        Edit Client NAME
-                    </Heading>
-                </Box>
-                <div className="flex client-details">
-                    <div className="panel contact-form">
-                        <Form>
-                            <Box margin={{ bottom: '1em' }}>
-                                <FormField name="name" label="Name">
-                                    <TextInput
-                                        name="name"
-                                        value={client.name}
-                                    />
-                                </FormField>
-                            </Box>
-                            <Grid
-                                rows={'small'}
-                                alignSelf="stretch"
-                                columns={'1/2'}
-                                gap="large">
-                                <Box>
-                                    <FormField name="email" label="Email">
-                                        <TextInput
-                                            name="email"
-                                            value={client.email}
-                                        />
-                                    </FormField>
-                                    <FormField name="address" label="Street">
-                                        <TextInput name="address" />
-                                    </FormField>
-                                    <FormField
-                                        name="poc"
-                                        label="Point of Contact">
-                                        <TextInput name="poc" />
-                                    </FormField>
-                                </Box>
-                                <Box>
-                                    <FormField name="phone" label="Phone">
-                                        <TextInput name="phone" />
-                                    </FormField>
-                                    <FormField name="city" label="City">
-                                        <TextInput name="city" />
-                                    </FormField>
-                                    <FormField name="state" label="State">
-                                        <Select
-                                            options={[
-                                                'AL',
-                                                'CA',
-                                                'NY',
-                                                'OK',
-                                                'TX',
-                                                'WY',
-                                            ]}
-                                            value={value}
-                                            onChange={({ option }) =>
-                                                setValue(option)
-                                            }
-                                        />
-                                    </FormField>
-                                </Box>
-                            </Grid>
-                            <Box
-                                direction="row"
-                                justify="end"
-                                margin={{ top: '6rem' }}>
-                                <Button type="submit" label="Save" secondary />
-                            </Box>
-                        </Form>
-                    </div>
-                    <div className="panel">
-                        <Box margin={{ bottom: 'small' }}>
-                            <Text>Chart of Accounts</Text>
-                        </Box>
-                        <Data data={chartData}>
-                            <Toolbar>
-                                <DataSearch />
-                                <Menu
-                                    label={<SettingsOption />}
-                                    items={[
-                                        { label: 'Import', onClick: onOpen },
-                                    ]}
-                                />
-                            </Toolbar>
-                            <DataSummary />
-                            {/* TODO: onclick, this item should be editable. off click will save the updated value */}
-                            <List
-                                primaryKey="name"
-                                secondaryKey="code"
-                                style={{
-                                    maxHeight: '300px',
-                                    overflow: 'scroll',
-                                }}
-                            />
-                        </Data>
-                    </div>
-                </div>
-            </Box>
-            <DataTable
-                title="Recent Uploads"
-                columns={columns}
-                data={filtered}
-                setSelected={setSelected}
-                onClickRow={onClickRow}
-                actions={actions}
-            />
+    // return (
+    //     <AppLayout>
+    //         <AppBar />
+    //         <Box className="card" fill height={{ min: '555px' }}>
+    //             <Box direction="row" justify="between" pad="medium">
+    //                 <Heading level="3" color="brand" className="ff-sans-serif">
+    //                     Edit Client NAME
+    //                 </Heading>
+    //             </Box>
+    //             <div className="flex client-details">
+    //                 <div className="panel contact-form">
+    //                     <Form>
+    //                         <Box margin={{ bottom: '1em' }}>
+    //                             <FormField name="name" label="Name">
+    //                                 <TextInput
+    //                                     name="name"
+    //                                     value={client.name}
+    //                                 />
+    //                             </FormField>
+    //                         </Box>
+    //                         <Grid
+    //                             rows={'small'}
+    //                             alignSelf="stretch"
+    //                             columns={'1/2'}
+    //                             gap="large">
+    //                             <Box>
+    //                                 <FormField name="email" label="Email">
+    //                                     <TextInput
+    //                                         name="email"
+    //                                         value={client.email}
+    //                                     />
+    //                                 </FormField>
+    //                                 <FormField name="address" label="Street">
+    //                                     <TextInput name="address" />
+    //                                 </FormField>
+    //                                 <FormField
+    //                                     name="poc"
+    //                                     label="Point of Contact">
+    //                                     <TextInput name="poc" />
+    //                                 </FormField>
+    //                             </Box>
+    //                             <Box>
+    //                                 <FormField name="phone" label="Phone">
+    //                                     <TextInput name="phone" />
+    //                                 </FormField>
+    //                                 <FormField name="city" label="City">
+    //                                     <TextInput name="city" />
+    //                                 </FormField>
+    //                                 <FormField name="state" label="State">
+    //                                     <Select
+    //                                         options={[
+    //                                             'AL',
+    //                                             'CA',
+    //                                             'NY',
+    //                                             'OK',
+    //                                             'TX',
+    //                                             'WY',
+    //                                         ]}
+    //                                         value={value}
+    //                                         onChange={({ option }) =>
+    //                                             setValue(option)
+    //                                         }
+    //                                     />
+    //                                 </FormField>
+    //                             </Box>
+    //                         </Grid>
+    //                         <Box
+    //                             direction="row"
+    //                             justify="end"
+    //                             margin={{ top: '6rem' }}>
+    //                             <Button type="submit" label="Save" secondary />
+    //                         </Box>
+    //                     </Form>
+    //                 </div>
+    //                 <div className="panel">
+    //                     <Box margin={{ bottom: 'small' }}>
+    //                         <Text>Chart of Accounts</Text>
+    //                     </Box>
+    //                     <Data data={chartData}>
+    //                         <Toolbar>
+    //                             <DataSearch />
+    //                             <Menu
+    //                                 label={<SettingsOption />}
+    //                                 items={[
+    //                                     { label: 'Import', onClick: onOpen },
+    //                                 ]}
+    //                             />
+    //                         </Toolbar>
+    //                         <DataSummary />
+    //                         {/* TODO: onclick, this item should be editable. off click will save the updated value */}
+    //                         <List
+    //                             primaryKey="name"
+    //                             secondaryKey="code"
+    //                             style={{
+    //                                 maxHeight: '300px',
+    //                                 overflow: 'scroll',
+    //                             }}
+    //                         />
+    //                     </Data>
+    //                 </div>
+    //             </div>
+    //         </Box>
+    //         <DataTable
+    //             title="Recent Uploads"
+    //             columns={columns}
+    //             data={filtered}
+    //             setSelected={setSelected}
+    //             onClickRow={onClickRow}
+    //             actions={actions}
+    //         />
 
-            {/* <Box
-                className="box_container"
-                fill
-                margin={{ top: '3em' }}
-                height={{ min: '650px' }}>
-                <Box
-                    direction="row"
-                    justify="between"
-                    margin={{ bottom: 'medium' }}>
-                    <Heading margin="none" level="3" color="brand">
-                        Recent Uploads
-                    </Heading>
-                    <FileInput
-                        name="file"
-                        multiple
-                        onChange={event => {
-                            const fileList = event.target.files
-                            for (let i = 0; i < fileList.length; i += 1) {
-                                const file = fileList[i]
-                            }
-                        }}
-                    />
-                </Box>
+    //         {/* <Box
+    //             className="box_container"
+    //             fill
+    //             margin={{ top: '3em' }}
+    //             height={{ min: '650px' }}>
+    //             <Box
+    //                 direction="row"
+    //                 justify="between"
+    //                 margin={{ bottom: 'medium' }}>
+    //                 <Heading margin="none" level="3" color="brand">
+    //                     Recent Uploads
+    //                 </Heading>
+    //                 <FileInput
+    //                     name="file"
+    //                     multiple
+    //                     onChange={event => {
+    //                         const fileList = event.target.files
+    //                         for (let i = 0; i < fileList.length; i += 1) {
+    //                             const file = fileList[i]
+    //                         }
+    //                     }}
+    //                 />
+    //             </Box>
 
-                
-            </Box> */}
-            {isOpen && <ChartOfAccountsImport onClose={onClose} isOpen />}
-        </AppLayout>
-    )
+    //         </Box> */}
+    //         {isOpen && <ChartOfAccountsImport onClose={onClose} isOpen />}
+    //     </AppLayout>
+    // )
 }
 
 export async function getServerSideProps(context) {
