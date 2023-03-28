@@ -7,6 +7,7 @@ import getConfig from 'next/config'
 import AppLayout from '@/components/Layouts/AppLayout'
 import AppBar from '@/components/Layouts/AppBar'
 import DataTable from '@/components/Layouts/DataTable'
+import ErrorMessage from '@/components/ErrorMessage'
 import axios from '@/lib/axios'
 
 import { useUIContext } from '@/contexts/ui'
@@ -16,15 +17,14 @@ const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
 // const { publicRuntimeConfig } = getConfig()
 // const { apiURL } = publicRuntimeConfig
 
-function Files(data) {
-  console.log('here', data)
+function Files({ status, statusText, data }) {
+    console.log({ data })
+    const router = useRouter()
+
     const onClick = datum => {
-        // TODO: Either we include all data in work space or we get data from dedicated API Route
-        alert(
-            'Either we include all data (client names, supplier names,...) in work space or we get data from dedicated API Route',
-        )
-        // router.push(`/files/${datum.id}`)
+        router.push(`/files/${datum.id}`)
     }
+
     const clientRender = datum => (
         <Box pad={{ vertical: 'xsmall' }} gap="small" direction="row">
             {/* <Avatar  round="xsmall" src={src} /> */}
@@ -97,7 +97,6 @@ function Files(data) {
         { property: 'x', header: <Text>Details</Text>, render: viewFileRender },
     ]
 
-    const router = useRouter()
     const [files, setFiles] = useState([])
     const [selected, setSelected] = useState()
 
@@ -114,63 +113,84 @@ function Files(data) {
             datum.supplierName.toLocaleLowerCase().includes(filterQuery),
     )
 
-    const extractFiles = clients => {
-        clients.forEach(client => {
-            const { uploads } = client
-
-            uploads.forEach(upload => {
-                upload.files.forEach(file => {
-                    setFiles(currentFiles =>
-                        [
-                            ...currentFiles,
-                            {
-                                id: file.id,
-                                fileName: file.name,
-                                clientName: `Client with id ${upload.client_id}`,
-                                supplierName: `Supplier of id ${upload.client_id}`,
-                                lineItems: 0,
-                                totalAmount: 0,
-                                uploadName: upload.results_directory,
-                                date: file.update_at || file.created_at,
-                            },
-                        ].sort((a, b) => new Date(b.date) - new Date(a.date)),
-                    )
-                })
-            })
+    const extractFiles = files => {
+        files.forEach(file => {
+            setFiles(currentFiles =>
+                [
+                    ...currentFiles,
+                    {
+                        id: file.id,
+                        fileName: file.file_name,
+                        clientName: file.client_name,
+                        supplierName: file.supplier_name,
+                        lineItems: file.line_items_count,
+                        totalAmount: file.receipt_total,
+                        uploadName: file.upload_name,
+                        date: file.created_at,
+                        sorting_date: file.update_at,
+                    },
+                ].sort(
+                    (a, b) =>
+                        new Date(b.sorting_date) - new Date(a.sorting_date),
+                ),
+            )
         })
     }
 
     useEffect(() => {
-        extractFiles(workSpace.clients)
-    }, [workSpace])
+        if (data.length) extractFiles(data)
+    }, [data])
 
     return (
-        <AppLayout>
-            <AppBar />
-            <DataTable
-                title="Files"
-                columns={columns}
-                data={filtered}
-                setSelected={setSelected}
-                actions={actions}
-            />
-        </AppLayout>
+        <>
+            {status !== 200 && (
+                <ErrorMessage status={status} statusText={statusText} />
+            )}
+            {status === 200 && (
+                <AppLayout>
+                    <AppBar />
+                    <DataTable
+                        title="Files"
+                        columns={columns}
+                        data={filtered}
+                        setSelected={setSelected}
+                        actions={actions}
+                    />
+                </AppLayout>
+            )}
+        </>
     )
 }
 
 export default Files
 
-
 export async function getServerSideProps(context) {
-    const cookies = context.req.headers.cookie || ''
-    const res = await axios.get('/files', {
-        headers: {
-            cookie: cookies,
-        },
-    })
-    const data = res.data
-    return {
-        props: { data },
+    const cookie = context.req.headers.cookie
+
+    if (!cookie)
+        return {
+            redirect: {
+                destination: '/login',
+                permanent: false,
+            },
+        }
+
+    try {
+        const res = await axios.get('/files', {
+            headers: {
+                cookie: cookie,
+            },
+        })
+        const { data } = res
+
+        return {
+            props: { status: 200, data },
+        }
+    } catch (error) {
+        const { status, statusText } = error.response
+
+        return {
+            props: { status, statusText },
+        }
     }
 }
-

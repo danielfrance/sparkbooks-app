@@ -20,20 +20,29 @@ import UploadResultItem from './UploadResultItem'
 // TODO: remove this
 import getConfig from 'next/config'
 
-const styleButton = {
-    width: '15rem',
-    backgroundColor: '#FFFFFF',
-    boxShadow: '0px 5px 10px rgba(199, 103, 245, 0.15)',
-    borderRadius: '18px',
-    color: '#b01df4',
-    border: '#c866f567 1px solid',
-}
+// const styleButton = {
+//     width: '15rem',
+//     backgroundColor: '#FFFFFF',
+//     boxShadow: '0px 5px 10px rgba(199, 103, 245, 0.15)',
+//     borderRadius: '18px',
+//     color: '#b01df4',
+//     border: '#c866f567 1px solid',
+// }
 
 export default function UploadResultContainer({ data, index }) {
-    const [uploadData, setuploadData] = useState(data)
-    const [lineItems, setLineItems] = useState(
-        Object.values(uploadData.lineItems),
-    )
+    const { result_items, result_details } = data
+    // const [uploadData, setuploadData] = useState(data)
+    const [lineItems, setLineItems] = useState(result_items)
+
+    const addLineItem = () => {
+        const newItem = {
+            amount: 0,
+            category_id: '',
+            item: '',
+            sku: '',
+        }
+        setLineItems(items => [...items, newItem])
+    }
 
     // TODO REMOVE THIS
     const { publicRuntimeConfig } = getConfig()
@@ -48,18 +57,17 @@ export default function UploadResultContainer({ data, index }) {
                 height={{ min: '50px', max: '90px' }}>
                 <TextInput
                     name="supplierName"
-                    value={uploadData.supplierName}
+                    value={result_details.supplier_name}
                     width="medium"
                     margin="none"
                 />
-                <Button
-                    fill="false"
-                    plain="true"
-                    style={styleButton}
-                    icon={<Add color="#b01df4" />}
-                    label="New Line Item"
-                    onClick={() => alert('add new line item')}
-                />
+
+                <button
+                    className="btn secondary inverse"
+                    style={{ width: '30%' }}
+                    onClick={addLineItem}>
+                    New Line Item
+                </button>
             </Box>
             <Grid
                 direction="row"
@@ -92,7 +100,11 @@ export default function UploadResultContainer({ data, index }) {
                         </TableHeader>
                         <TableBody>
                             {lineItems.map((item, index) => (
-                                <UploadResultItem item={item} index={index} />
+                                <UploadResultItem
+                                    item={item}
+                                    index={index}
+                                    key={index}
+                                />
                             ))}
                             <TableRow key={`${index}-subtotal`}>
                                 <TableCell scope="row"></TableCell>

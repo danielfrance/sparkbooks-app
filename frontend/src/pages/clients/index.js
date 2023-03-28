@@ -8,6 +8,7 @@ import AppBar from '@/components/Layouts/AppBar'
 import { Box, Meter, Text, Avatar } from 'grommet'
 import DataTable from '@/components/Layouts/DataTable'
 import axios from '@/lib/axios'
+import ErrorMessage from '@/components/ErrorMessage'
 
 const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
 
@@ -52,13 +53,12 @@ const columns = [
     },
 ]
 
-export default function Clients({ data }) {
-    console.log('clients', data)
+export default function Clients({ data, status, statusText }) {
     const router = useRouter()
     const [isOpen, setIsOpen] = useState(false)
     const [clients, setClients] = useState([])
     const [selected, setSelected] = useState()
-    const { filterQuery, workSpace } = useUIContext()
+    const { filterQuery } = useUIContext()
 
     const onClose = () => setIsOpen(false)
 
@@ -74,22 +74,22 @@ export default function Clients({ data }) {
 
     const extractClients = clients => {
         clients.forEach(client => {
-            const { id, name, uploads } = client
-            let uploadsCount = 0
-            let filesCount = 0
+            const { id, name, upload_count, files_count } = client
+            // let uploadsCount = 0
+            // let filesCount = 0
 
-            uploads.forEach(upload => {
-                uploadsCount++
-                filesCount = filesCount + upload.files.length
-            })
+            // uploads.forEach(upload => {
+            //     uploadsCount++
+            //     filesCount = filesCount + upload.files.length
+            // })
 
             setClients(currentClients => [
                 ...currentClients,
                 {
                     id,
                     name,
-                    uploads: uploadsCount,
-                    files: filesCount,
+                    uploads: upload_count || 0,
+                    files: files_count || 0,
                     connected: 'status-ok',
                 },
             ])
@@ -97,40 +97,63 @@ export default function Clients({ data }) {
     }
 
     useEffect(() => {
-        extractClients(workSpace.clients)
-    }, [workSpace])
+        extractClients(data)
+    }, [data])
 
     return (
-        <AppLayout>
-            <AppBar />
-            <DataTable
-                title="Clients"
-                columns={columns}
-                data={filtered}
-                setSelected={setSelected}
-                onClickRow={onClickRow}
-                actions={actions}
-            />
+        <>
+            {status !== 200 && (
+                <ErrorMessage status={status} statusText={statusText} />
+            )}
+            {status === 200 && (
+                <AppLayout>
+                    <AppBar />
+                    <DataTable
+                        title="Clients"
+                        columns={columns}
+                        data={filtered}
+                        setSelected={setSelected}
+                        onClickRow={onClickRow}
+                        actions={actions}
+                    />
 
-            {isOpen && <NewClientLayer onClose={onClose} isOpen />}
-        </AppLayout>
+                    {isOpen && <NewClientLayer onClose={onClose} isOpen />}
+                </AppLayout>
+            )}
+        </>
     )
 }
 
-
 export async function getServerSideProps(context) {
-    const cookies = context.req.headers.cookie || ''
-    const res = await axios.get('/clients', {
-        headers: {
-            cookie: cookies,
-        },
-    })
-    const data = res.data
+    const cookie = context.req.headers.cookie
 
-     return {
-         props: { data },     
-     }
- }
+    if (!cookie)
+        return {
+            redirect: {
+                destination: '/login',
+                permanent: false,
+            },
+        }
+
+    try {
+        const res = await axios.get(`/clients`, {
+            headers: {
+                cookie: cookie,
+            },
+        })
+        const { data } = res
+
+        return {
+            props: { status: 200, data },
+        }
+    } catch (error) {
+        const { status, statusText } = error.response
+
+        return {
+            props: { status, statusText },
+        }
+    }
+}
 
 // <Box className="box_container" fill>
 //               <Box direction="row" justify="between">

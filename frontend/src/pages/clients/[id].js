@@ -11,9 +11,6 @@ import {
     Select,
     Text,
     Meter,
-    FileInput,
-    DataFilters,
-    DataFilter,
     DataSearch,
     DataSummary,
     Toolbar,
@@ -23,35 +20,52 @@ import {
 } from 'grommet'
 import { SettingsOption } from 'grommet-icons'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import DataTable from '@/components/Layouts/DataTable'
 import { useUIContext } from '@/contexts/ui'
 import ChartOfAccountsImport from './chartOfAccountsModal'
 import axios from '@/lib/axios'
+import { useRouter } from 'next/router'
+import ErrorMessage from '@/components/ErrorMessage'
 
-const clientRender = datum => (
+const clientRender = property => datum => (
     <Box pad={{ vertical: 'xsmall' }} gap="small" direction="row">
         {/* <Avatar size="small" round="xsmall" src={src} /> */}
-        <Text>{datum.client}</Text>
+        <Text>{datum[property]}</Text>
     </Box>
 )
 
-const processingDataRender = datum => (
-    <Box pad={{ vertical: 'xsmall' }} direction="row">
-        <Meter
-            values={[
-                {
-                    value: datum.percent,
-                    color: '#4112fb',
-                    background: '#ECECEC',
-                },
-            ]}
-            thickness="xsmall"
-            round
-        />
-        <Text className="text-dark" margin={{ left: '20px' }}>
-            {datum.percent}%
-        </Text>
+const numberRender = property => datum => (
+    <Box
+        pad={{ vertical: 'xsmall' }}
+        gap="small"
+        alignSelf="end"
+        direction="row">
+        <Text>{datum[property]}</Text>
+    </Box>
+)
+
+const processingDataRender = property => datum => (
+    <Box pad={{ vertical: 'xsmall' }} direction="row" alignSelf="end">
+        {!datum[property] ? (
+            <>
+                <Meter
+                    background={{ color: '#466EC7', opacity: 'medium' }}
+                    values={[
+                        {
+                            value: 70,
+                            color: '#C767F5',
+                        },
+                    ]}
+                    thickness="xsmall"
+                    round
+                />
+            </>
+        ) : (
+            <Text className="text-dark" margin={{ left: '20px' }}>
+                {new Date(datum[property]).toLocaleDateString('us-us')}
+            </Text>
+        )}
     </Box>
 )
 
@@ -60,29 +74,31 @@ const columns = [
         property: 'id',
         header: <Text>Uploads</Text>,
         size: 'small',
+        render: numberRender('id'),
         // sortable: true,
         // primary: true,
     },
     {
-        property: 'client',
+        property: 'name',
         size: 'medium',
         header: <Text>Client</Text>,
-        render: clientRender,
+        render: clientRender('name'),
     },
+    // {
+    //     property: 'files',
+    //     size: 'medium',
+    //     header: <Text>Files</Text>,
+    // },
     {
-        property: 'files',
+        property: 'processed',
         size: 'medium',
-        header: <Text>Files</Text>,
-    },
-    {
-        property: 'percent',
-        size: 'medium',
-        header: <Text>Processing %</Text>,
-        render: processingDataRender,
+        header: <Text>Processed</Text>,
+        render: processingDataRender('processed'),
     },
 ]
 
-export default function ClientEdit({ data }) {
+export default function ClientEdit({ data, status, statusText }) {
+    const router = useRouter()
     const [value, setValue] = useState('OK')
     const [isOpen, setIsOpen] = useState(false)
     const onOpen = () => setIsOpen(true)
@@ -109,9 +125,9 @@ export default function ClientEdit({ data }) {
         { id: 18, name: 'Uniforms', code: '6620' },
     ]
 
-    const [client, setClient] = useState(data.client)
+    const [client, setClient] = useState()
     // console.log({ client })
-    const [uploads, setUploads] = useState(data.uploads)
+    const [uploads, setUploads] = useState([])
     const { filterQuery } = useUIContext()
 
     const [selected, setSelected] = useState()
@@ -120,127 +136,154 @@ export default function ClientEdit({ data }) {
         router.push(`/uploads/${datum.id}`)
     }
 
-    const filtered = uploads
-        .filter(datum => datum.client.toLocaleLowerCase().includes(filterQuery))
-        .slice(-5)
+    const filtered = uploads.filter(datum =>
+        datum.name.toLocaleLowerCase().includes(filterQuery),
+    )
 
     const actions = [
         // { label: 'Add', onClick: e => console.log(e) },
         // { label: 'Edit', onClick: e => console.log(e) },
     ]
 
-    return (
-        <AppLayout>
-            <AppBar />
-            <Box className="card" fill height={{ min: '555px' }}>
-                <Box direction="row" justify="between" pad="medium">
-                    <Heading level="3" color="brand" className="ff-sans-serif">
-                        Edit Client NAME
-                    </Heading>
-                </Box>
-                <div className="flex client-details">
-                    <div className="panel contact-form">
-                        <Form>
-                            <Box margin={{ bottom: '1em' }}>
-                                <FormField name="name" label="Name">
-                                    <TextInput
-                                        name="name"
-                                        value={client.name}
-                                    />
-                                </FormField>
-                            </Box>
-                            <Grid
-                                rows={'small'}
-                                alignSelf="stretch"
-                                columns={'1/2'}
-                                gap="large">
-                                <Box>
-                                    <FormField name="email" label="Email">
-                                        <TextInput
-                                            name="email"
-                                            value={client.email}
-                                        />
-                                    </FormField>
-                                    <FormField name="address" label="Street">
-                                        <TextInput name="address" />
-                                    </FormField>
-                                    <FormField
-                                        name="poc"
-                                        label="Point of Contact">
-                                        <TextInput name="poc" />
-                                    </FormField>
-                                </Box>
-                                <Box>
-                                    <FormField name="phone" label="Phone">
-                                        <TextInput name="phone" />
-                                    </FormField>
-                                    <FormField name="city" label="City">
-                                        <TextInput name="city" />
-                                    </FormField>
-                                    <FormField name="state" label="State">
-                                        <Select
-                                            options={[
-                                                'AL',
-                                                'CA',
-                                                'NY',
-                                                'OK',
-                                                'TX',
-                                                'WY',
-                                            ]}
-                                            value={value}
-                                            onChange={({ option }) =>
-                                                setValue(option)
-                                            }
-                                        />
-                                    </FormField>
-                                </Box>
-                            </Grid>
-                            <Box
-                                direction="row"
-                                justify="end"
-                                margin={{ top: '6rem' }}>
-                                <Button type="submit" label="Save" secondary />
-                            </Box>
-                        </Form>
-                    </div>
-                    <div className="panel">
-                        <Box margin={{ bottom: 'small' }}>
-                            <Text>Chart of Accounts</Text>
-                        </Box>
-                        <Data data={chartData}>
-                            <Toolbar>
-                                <DataSearch />
-                                <Menu
-                                    label={<SettingsOption />}
-                                    items={[
-                                        { label: 'Import', onClick: onOpen },
-                                    ]}
-                                />
-                            </Toolbar>
-                            <DataSummary />
-                            {/* TODO: onclick, this item should be editable. off click will save the updated value */}
-                            <List
-                                primaryKey="name"
-                                secondaryKey="code"
-                                style={{
-                                    maxHeight: '300px',
-                                    overflow: 'scroll',
-                                }}
-                            />
-                        </Data>
-                    </div>
-                </div>
-            </Box>
-            <DataTable
-                title="Recent Uploads"
-                columns={columns}
-                data={filtered}
-                setSelected={setSelected}
-                onClickRow={onClickRow}
-                actions={actions}
-            />
+    useEffect(() => {
+        setClient(data.client)
+        setUploads(data.uploads)
+    }, [data])
 
-            {/* <Box
+    return (
+        <>
+            {status !== 200 && (
+                <ErrorMessage status={status} statusText={statusText} />
+            )}
+            {status === 200 && (
+                <AppLayout>
+                    <AppBar />
+                    <Box className="card" fill height={{ min: '555px' }}>
+                        <Box direction="row" justify="between" pad="medium">
+                            <Heading
+                                level="3"
+                                color="brand"
+                                className="ff-sans-serif">
+                                Edit Client NAME
+                            </Heading>
+                        </Box>
+                        <div className="flex client-details">
+                            <div className="panel contact-form">
+                                <Form>
+                                    <Box margin={{ bottom: '1em' }}>
+                                        <FormField name="name" label="Name">
+                                            <TextInput
+                                                name="name"
+                                                value={client?.name}
+                                            />
+                                        </FormField>
+                                    </Box>
+                                    <Grid
+                                        rows={'small'}
+                                        alignSelf="stretch"
+                                        columns={'1/2'}
+                                        gap="large">
+                                        <Box>
+                                            <FormField
+                                                name="email"
+                                                label="Email">
+                                                <TextInput
+                                                    name="email"
+                                                    value={client?.email}
+                                                />
+                                            </FormField>
+                                            <FormField
+                                                name="address"
+                                                label="Street">
+                                                <TextInput name="address" />
+                                            </FormField>
+                                            <FormField
+                                                name="poc"
+                                                label="Point of Contact">
+                                                <TextInput name="poc" />
+                                            </FormField>
+                                        </Box>
+                                        <Box>
+                                            <FormField
+                                                name="phone"
+                                                label="Phone">
+                                                <TextInput name="phone" />
+                                            </FormField>
+                                            <FormField name="city" label="City">
+                                                <TextInput name="city" />
+                                            </FormField>
+                                            <FormField
+                                                name="state"
+                                                label="State">
+                                                <Select
+                                                    options={[
+                                                        'AL',
+                                                        'CA',
+                                                        'NY',
+                                                        'OK',
+                                                        'TX',
+                                                        'WY',
+                                                    ]}
+                                                    value={value}
+                                                    onChange={({ option }) =>
+                                                        setValue(option)
+                                                    }
+                                                />
+                                            </FormField>
+                                        </Box>
+                                    </Grid>
+                                    <Box
+                                        direction="row"
+                                        justify="end"
+                                        margin={{ top: '6rem' }}>
+                                        <Button
+                                            type="submit"
+                                            label="Save"
+                                            secondary
+                                        />
+                                    </Box>
+                                </Form>
+                            </div>
+                            <div className="panel">
+                                <Box margin={{ bottom: 'small' }}>
+                                    <Text>Chart of Accounts</Text>
+                                </Box>
+                                <Data data={chartData}>
+                                    <Toolbar>
+                                        <DataSearch />
+                                        <Menu
+                                            label={<SettingsOption />}
+                                            items={[
+                                                {
+                                                    label: 'Import',
+                                                    onClick: onOpen,
+                                                },
+                                            ]}
+                                        />
+                                    </Toolbar>
+                                    <DataSummary />
+                                    <List
+                                        primaryKey="name"
+                                        secondaryKey="code"
+                                        style={{
+                                            maxHeight: '300px',
+                                            overflow: 'scroll',
+                                        }}
+                                    />
+                                </Data>
+                            </div>
+                        </div>
+                    </Box>
+                    <DataTable
+                        title="Recent Uploads"
+                        columns={columns}
+                        data={filtered}
+                        setSelected={setSelected}
+                        onClickRow={onClickRow}
+                        actions={actions}
+                    />
+
+                    {/* <Box
                 className="box_container"
                 fill
                 margin={{ top: '3em' }}
@@ -266,24 +309,43 @@ export default function ClientEdit({ data }) {
 
                 
             </Box> */}
-            {isOpen && <ChartOfAccountsImport onClose={onClose} isOpen />}
-        </AppLayout>
+                    {isOpen && (
+                        <ChartOfAccountsImport onClose={onClose} isOpen />
+                    )}
+                </AppLayout>
+            )}
+        </>
     )
 }
 
 export async function getServerSideProps(context) {
-    const cookies = context.req.headers.cookie || ''
+    const cookie = context.req.headers.cookie
 
-    const clientRes = await axios.get(`/clients/${context.params.id}`, {
-        headers: {
-            cookie: cookies,
-        },
-    })
-    const client = clientRes.data.client
-    const uploads = clientRes.data.uploads
+    if (!cookie)
+        return {
+            redirect: {
+                destination: '/login',
+                permanent: false,
+            },
+        }
 
-    return {
-        props: { data: { client, uploads } },
+    try {
+        const res = await axios.get(`/clients/${context.params.id}`, {
+            headers: {
+                cookie: cookie,
+            },
+        })
+        const { data } = res
+
+        return {
+            props: { status: 200, data },
+        }
+    } catch (error) {
+        const { status, statusText } = error.response
+
+        return {
+            props: { status, statusText },
+        }
     }
 }
 

@@ -250,14 +250,24 @@ form {
     color: hsl(var(--clr-white));
 }
 
+.btn.primary.inverse {
+    background-color: hsl(var(--clr-white));
+    color: hsl(var(--clr-dark));
+    border: solid 1px hsl(var(--clr-dark));
+}
 
-.btn.inverse {
+.btn.secondary.inverse {
     background-color: hsl(var(--clr-white));
     color: hsl(var(--clr-light));
     border: solid 1px hsl(var(--clr-light));
 }
 
-.inverse:hover {
+.primary.inverse:hover {
+    background-color: hsl(var(--clr-dark));
+    color:hsl( var(--clr-white));
+}
+
+.secondary.inverse:hover {
     background-color: hsl(var(--clr-light));
     color:hsl( var(--clr-white));
 }

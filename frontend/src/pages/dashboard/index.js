@@ -4,53 +4,11 @@ import { Box, Meter, Text, Avatar } from 'grommet'
 import DataTable from '@/components/Layouts/DataTable'
 import { useEffect, useState } from 'react'
 import { useUIContext } from '@/contexts/ui'
-import { useAuth } from '@/hooks/auth'
 import { useRouter } from 'next/router'
 import axios from '@/lib/axios'
+import ErrorMessage from '@/components/ErrorMessage'
 
 const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
-
-const ErrorMessage = ({ status }) => {
-    const { logout } = useAuth()
-
-    return (
-        <div
-            className="card"
-            style={{
-                font: 'ff-sans-serif',
-                margin: '10% auto',
-                padding: '2rem',
-                width: '50%',
-            }}>
-            {status == 500 && (
-                <>
-                    <span className="title">Account</span>
-                    <p>Please contact your manageer to activate your account</p>
-
-                    <button
-                        className="btn secondary"
-                        style={{ marginTop: '2rem' }}
-                        onClick={logout}>
-                        Logout
-                    </button>
-                </>
-            )}
-            {status != 500 && (
-                <>
-                    <span className="title">Login problem</span>
-                    <p>Something went wrong, try again later</p>
-
-                    <button
-                        className="btn secondary"
-                        style={{ marginTop: '2rem' }}
-                        onClick={logout}>
-                        Try in again
-                    </button>
-                </>
-            )}
-        </div>
-    )
-}
 
 const clientRender = datum => (
     <Box pad={{ vertical: 'xsmall' }} gap="small" direction="row">
@@ -59,22 +17,37 @@ const clientRender = datum => (
     </Box>
 )
 
-const processingDataRender = datum => (
-    <Box pad={{ vertical: 'xsmall' }} direction="row">
-        <Meter
-            values={[
-                {
-                    value: datum.percent,
-                    color: '#4112fb',
-                    background: '#ECECEC',
-                },
-            ]}
-            thickness="xsmall"
-            round
-        />
-        <Text className="text-dark" margin={{ left: '20px' }}>
-            {datum.percent}%
-        </Text>
+const numberRender = property => datum => (
+    <Box
+        pad={{ vertical: 'xsmall' }}
+        gap="small"
+        alignSelf="end"
+        direction="row">
+        <Text>{datum[property]}</Text>
+    </Box>
+)
+
+const processingDataRender = property => datum => (
+    <Box pad={{ vertical: 'xsmall' }} direction="row" alignSelf="end">
+        {!datum[property] ? (
+            <>
+                <Meter
+                    background={{ color: '#466EC7', opacity: 'medium' }}
+                    values={[
+                        {
+                            value: 70,
+                            color: '#C767F5',
+                        },
+                    ]}
+                    thickness="xsmall"
+                    round
+                />
+            </>
+        ) : (
+            <Text className="text-dark" margin={{ left: '20px' }}>
+                {new Date(datum[property]).toLocaleDateString('us-us')}
+            </Text>
+        )}
     </Box>
 )
 
@@ -83,6 +56,7 @@ const columns = [
         property: 'id',
         header: <Text>Uploads</Text>,
         size: 'small',
+        render: numberRender('id'),
         // sortable: true,
         // primary: true,
     },
@@ -96,212 +70,18 @@ const columns = [
         property: 'files',
         size: 'medium',
         header: <Text>Files</Text>,
+        render: numberRender('files'),
     },
     {
         property: 'percent',
         size: 'medium',
         header: <Text>Processing %</Text>,
-        render: processingDataRender,
+        render: processingDataRender('percent'),
     },
 ]
 
-// const fixedData = [
-//     {
-//         id: '1',
-//         client: 'Alan',
-//         files: 23,
-//         percent: 20,
-//     },
-//     {
-//         id: '2',
-//         client: 'Bryan',
-//         files: 3,
-//         percent: 30,
-//     },
-//     {
-//         id: '3',
-//         client: 'Chris',
-//         files: 11,
-//         percent: 40,
-//     },
-//     {
-//         id: '4',
-//         client: 'Eric',
-//         files: 13,
-//         percent: 100,
-//     },
-//     {
-//         id: '1',
-//         client: 'Alan',
-//         files: 23,
-//         percent: 20,
-//     },
-//     {
-//         id: '2',
-//         client: 'Bryan',
-//         files: 3,
-//         percent: 30,
-//     },
-//     {
-//         id: '3',
-//         client: 'Chris',
-//         files: 11,
-//         percent: 40,
-//     },
-//     {
-//         id: '4',
-//         client: 'Eric',
-//         files: 13,
-//         percent: 100,
-//     },
-//     {
-//         id: '1',
-//         client: 'Alan',
-//         files: 23,
-//         percent: 20,
-//     },
-//     {
-//         id: '2',
-//         client: 'Bryan',
-//         files: 3,
-//         percent: 30,
-//     },
-//     {
-//         id: '3',
-//         client: 'Chris',
-//         files: 11,
-//         percent: 40,
-//     },
-//     {
-//         id: '4',
-//         client: 'Eric',
-//         files: 13,
-//         percent: 100,
-//     },
-//     {
-//         id: '1',
-//         client: 'Alan',
-//         files: 23,
-//         percent: 20,
-//     },
-//     {
-//         id: '2',
-//         client: 'Bryan',
-//         files: 3,
-//         percent: 30,
-//     },
-//     {
-//         id: '3',
-//         client: 'Chris',
-//         files: 11,
-//         percent: 40,
-//     },
-//     {
-//         id: '4',
-//         client: 'Eric',
-//         files: 13,
-//         percent: 100,
-//     },
-//     {
-//         id: '1',
-//         client: 'Alan',
-//         files: 23,
-//         percent: 20,
-//     },
-//     {
-//         id: '2',
-//         client: 'Bryan',
-//         files: 3,
-//         percent: 30,
-//     },
-//     {
-//         id: '3',
-//         client: 'Chris',
-//         files: 11,
-//         percent: 40,
-//     },
-//     {
-//         id: '4',
-//         client: 'Eric',
-//         files: 13,
-//         percent: 100,
-//     },
-//     {
-//         id: '1',
-//         client: 'Alan',
-//         files: 23,
-//         percent: 20,
-//     },
-//     {
-//         id: '2',
-//         client: 'Bryan',
-//         files: 3,
-//         percent: 30,
-//     },
-//     {
-//         id: '3',
-//         client: 'Chris',
-//         files: 11,
-//         percent: 40,
-//     },
-//     {
-//         id: '4',
-//         client: 'Eric',
-//         files: 13,
-//         percent: 100,
-//     },
-//     {
-//         id: '1',
-//         client: 'Alan',
-//         files: 23,
-//         percent: 20,
-//     },
-//     {
-//         id: '2',
-//         client: 'Bryan',
-//         files: 3,
-//         percent: 30,
-//     },
-//     {
-//         id: '3',
-//         client: 'Chris',
-//         files: 11,
-//         percent: 40,
-//     },
-//     {
-//         id: '4',
-//         client: 'Eric',
-//         files: 13,
-//         percent: 100,
-//     },
-//     {
-//         id: '1',
-//         client: 'Alan',
-//         files: 23,
-//         percent: 20,
-//     },
-//     {
-//         id: '2',
-//         client: 'Bryan',
-//         files: 3,
-//         percent: 30,
-//     },
-//     {
-//         id: '3',
-//         client: 'Chris',
-//         files: 11,
-//         percent: 40,
-//     },
-//     {
-//         id: '4',
-//         client: 'Eric',
-//         files: 13,
-//         percent: 100,
-//     },
-// ]
-
 export default function Dashboard({ data }) {
-    const { status, hasWorkSpace } = data
+    const { status, statusText, hasWorkSpace } = data
     const router = useRouter()
     const { filterQuery, workSpace, setWorkSpace } = useUIContext()
     const [uploads, setUploads] = useState([])
@@ -326,19 +106,18 @@ export default function Dashboard({ data }) {
     ]
 
     const extractUploads = clients => {
+        setUploads([])
         clients.forEach(client => {
             setUploads(currentUploads => [
                 ...currentUploads,
                 ...client.uploads.map(upload => {
-                    if (upload.percent === 100)
-                        setProcessedFiles(count => count + 1)
-                    if (upload.percent !== 100)
-                        setRemainingFiles(count => count + 1)
+                    if (upload.processed) setProcessedFiles(count => count + 1)
+                    if (!upload.processed) setRemainingFiles(count => count + 1)
                     return {
                         id: client.id,
                         client: client.name,
                         files: upload.files.length,
-                        percent: Number.parseFloat(upload.processed) || 0.1,
+                        percent: upload.processed,
                     }
                 }),
             ])
@@ -347,10 +126,12 @@ export default function Dashboard({ data }) {
 
     useEffect(() => {
         if (hasWorkSpace) {
+            setProcessedFiles(0)
+            setRemainingFiles(0)
             setWorkSpace(data.workSpace)
             extractUploads(data.workSpace.clients)
         }
-    }, [workSpace])
+    }, [data])
 
     return (
         <>
@@ -392,7 +173,9 @@ export default function Dashboard({ data }) {
                     />
                 </AppLayout>
             )}
-            {!hasWorkSpace && <ErrorMessage status={status} />}
+            {!hasWorkSpace && (
+                <ErrorMessage status={status} statusText={statusText} />
+            )}
         </>
     )
 }
@@ -420,10 +203,10 @@ export async function getServerSideProps(context) {
             props: { data: { status: 200, workSpace, hasWorkSpace: true } },
         }
     } catch (error) {
-        const { status } = error.response
+        const { status, statusText } = error.response
 
         return {
-            props: { data: { status, hasWorkSpace: false } },
+            props: { data: { status, statusText, hasWorkSpace: false } },
         }
     }
 }
