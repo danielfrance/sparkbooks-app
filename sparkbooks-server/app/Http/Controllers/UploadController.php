@@ -26,12 +26,10 @@ class UploadController extends Controller
     {
         $user = Auth::user();
 
-        $uploads = Upload::whereIn('client_id', $user->getClientIDs())->get();
-
+        $uploads = Upload::whereIn('client_id', $user->getClientIDs())->withCount("files")->get();
+        
         return $uploads;
 
-
-        return view('components.uploads.index')->with(['uploads' => $uploads]);
     }
 
     public function store(Request $request)

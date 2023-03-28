@@ -16,4 +16,9 @@ class File extends Model
     {
         return $this->belongsTo(Upload::class);
     }
+
+    public function result()
+    {
+        return $this->hasOne(Result::class);
+    }
 }

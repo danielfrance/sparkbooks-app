@@ -17,7 +17,7 @@ const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
 // const { apiURL } = publicRuntimeConfig
 
 function Files(data) {
-  console.log(data);
+  console.log('here', data)
     const onClick = datum => {
         // TODO: Either we include all data in work space or we get data from dedicated API Route
         alert(

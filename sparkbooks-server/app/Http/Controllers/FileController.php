@@ -15,13 +15,30 @@ class FileController extends Controller
 
         $user = Auth::user();
         $clients = $user->workspace->clients;
-
+        $array = [];
         // for every client in the workspace, get the files associated with the uploads
-        $files = $clients->map(function ($client) {
-            return $client->files;
-        })->flatten();
+        foreach ($clients as $client) {
 
-        return $files;
+            foreach ($client->files as $file) {
+                $result = $file->result;
+                $fileInfo = [
+                    "client_name" => $client->name,
+                    "file_name" => $file->name,
+                    "file_id"  => $file->id,
+                    "created_at" => $file->created_at,
+                    "updated_at" => $file->updated_at,
+                    "line_items_count" => isset($result->lineItems) ? $result->resultItems->count() : null,
+                    "supplier_name" => isset($result->resultDetails) ? $result->resultDetails->supplier_name : null,
+                    "reciept_total" => isset($result->resultDetails) ? $result->resultDetails->total : 0,
+                    "upload_name" => $file->upload->name,
+                ];
+
+                array_push($array, $fileInfo);
+            }
+        }
+
+        return $array;
+
     }
 
     public function show($id)
