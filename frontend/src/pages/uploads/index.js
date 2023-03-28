@@ -106,7 +106,7 @@ function Uploads({ data, status, statusText }) {
     const filtered = uploads.filter(
         datum =>
             datum.deleted_at === null &&
-            datum.name.toLocaleLowerCase().includes(filterQuery),
+            datum.name?.toLocaleLowerCase().includes(filterQuery),
     )
 
     return (

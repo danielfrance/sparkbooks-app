@@ -115,7 +115,7 @@ export default function Dashboard({ data }) {
                     if (!upload.processed) setRemainingFiles(count => count + 1)
                     return {
                         id: client.id,
-                        client: client.name,
+                        client: client.name || '',
                         files: upload.files.length,
                         percent: upload.processed,
                     }

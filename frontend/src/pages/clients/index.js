@@ -93,7 +93,7 @@ export default function Clients({ data, status, statusText }) {
                 ...currentClients,
                 {
                     id,
-                    name,
+                    name: name || '',
                     uploads: uploads_count || 0,
                     files: files_count || 0,
                     connected: 'status-ok',
