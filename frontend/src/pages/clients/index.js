@@ -19,6 +19,16 @@ const clientRender = datum => (
     </Box>
 )
 
+const numberRender = property => datum => (
+    <Box
+        pad={{ vertical: 'xsmall' }}
+        gap="small"
+        alignSelf="end"
+        direction="row">
+        <Text>{datum[property]}</Text>
+    </Box>
+)
+
 const statusRender = datum => {
     return datum.connected == 'status-ok' ? (
         <StatusGood color="status-ok" />
@@ -38,19 +48,21 @@ const columns = [
         property: 'uploads',
         size: 'small',
         header: <Text>Total Uploads</Text>,
+        render: numberRender('uploads'),
     },
     {
         property: 'files',
         size: 'small',
         header: <Text>Total Files</Text>,
+        render: numberRender('files'),
     },
-    {
-        property: 'connected',
-        size: 'small',
-        align: 'center',
-        header: <Text>Status</Text>,
-        render: statusRender,
-    },
+    // {
+    //     property: 'connected',
+    //     size: 'small',
+    //     align: 'center',
+    //     header: <Text>Status</Text>,
+    //     render: statusRender,
+    // },
 ]
 
 export default function Clients({ data, status, statusText }) {
@@ -73,22 +85,16 @@ export default function Clients({ data, status, statusText }) {
     )
 
     const extractClients = clients => {
+        setClients([])
         clients.forEach(client => {
-            const { id, name, upload_count, files_count } = client
-            // let uploadsCount = 0
-            // let filesCount = 0
-
-            // uploads.forEach(upload => {
-            //     uploadsCount++
-            //     filesCount = filesCount + upload.files.length
-            // })
+            const { id, name, uploads_count, files_count } = client
 
             setClients(currentClients => [
                 ...currentClients,
                 {
                     id,
                     name,
-                    uploads: upload_count || 0,
+                    uploads: uploads_count || 0,
                     files: files_count || 0,
                     connected: 'status-ok',
                 },
@@ -154,45 +160,3 @@ export async function getServerSideProps(context) {
         }
     }
 }
-
-// <Box className="box_container" fill>
-//               <Box direction="row" justify="between">
-//                   <Heading margin="none" level="3" color="brand">
-//                       Clients
-//                   </Heading>
-//                   <Button secondary label="New Client" onClick={onOpen} />
-//               </Box>
-//               <DataTable
-//                   margin={{ top: '3em' }}
-//                   sortable
-//                   paginate={{ step: 10 }}
-//                   alignSelf="stretch"
-//                   background={{
-//                       body: ['white', 'light-2'],
-//                       footer: { dark: 'light-2', light: 'dark-3' },
-//                   }}
-//                   columns={[
-//                       {
-//                           property: 'name',
-//                           header: <Text>Client Name</Text>,
-//                       },
-//                       {
-//                           property: 'uploads',
-//                           header: <Text>Total Uploads</Text>,
-//                       },
-//                       {
-//                           property: 'files',
-//                           header: <Text>Total Files</Text>,
-//                       },
-//                       {
-//                           property: 'connected',
-//                           align: 'center',
-//                           header: <Text>Accounting Software</Text>,
-//                       },
-//                   ]}
-//                   data={clientData}
-//                   onClickRow={({ datum }) => {
-//                       router.push(`/clients/edit/${datum.id}`)
-//                   }}
-//               />
-//           </Box>
