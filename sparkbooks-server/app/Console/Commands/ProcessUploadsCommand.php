@@ -49,12 +49,12 @@ class ProcessUploadsCommand extends Command
         $upload = Upload::find(126);
         $this->info('starting job');
 
-
         try {
+            $GCP_BUCKET_DIRECTORY = env('GCP_BUCKET_DIRECTORY');
 
-            $documents = array_map(function ($file) use ($client) {
-                return new GcsDocument([
-                    "gcs_uri" => "gs://cannaparser/" . $client->gcs_directory . '/' . $file['name'],
+
+            $documents = array_map(function ($file) use ($client, $GCP_BUCKET_DIRECTORY) {
+                return new GcsDocument(["gcs_uri" => "gs://" . $GCP_BUCKET_DIRECTORY . "/" . $client->gcs_directory . '/' . $file['name'],
                     "mime_type" => "application/pdf"
                 ]);
             }, $upload->files->toArray());
@@ -65,16 +65,14 @@ class ProcessUploadsCommand extends Command
 
 
             $inputConfig = new BatchDocumentsInputConfig([
-                "gcs_prefix" => new GcsPrefix([
-                    "gcs_uri_prefix" => "gs://cannaparser"
+                "gcs_prefix" => new GcsPrefix(["gcs_uri_prefix" => "gs://" . $GCP_BUCKET_DIRECTORY
                 ]),
                 "gcs_documents" => new GcsDocuments([
                     "documents" => $documents
                 ])
             ]);
             $outputConfig = new DocumentOutputConfig([
-                "gcs_output_config" => new GcsOutputConfig([
-                    "gcs_uri" => "gs://cannaparser/" . $client->gcs_directory . "/results"
+                "gcs_output_config" => new GcsOutputConfig(["gcs_uri" => "gs://" . $GCP_BUCKET_DIRECTORY . "/" . $client->gcs_directory . "/results"
                 ])
             ]);
 

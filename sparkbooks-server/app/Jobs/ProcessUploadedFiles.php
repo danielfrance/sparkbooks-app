@@ -57,11 +57,12 @@ class ProcessUploadedFiles implements ShouldQueue
         $client = $this->client;
         $upload = $this->upload;
         Log::info('starting job');
+        $GCP_BUCKET_DIRECTORY = env('GCP_BUCKET_DIRECTORY');
+
 
         try {
-            $documents = array_map(function ($file) use ($client) {
-                return new GcsDocument([
-                    "gcs_uri" => "gs://cannaparser/" . $client->gcs_directory . '/' . $file['name'],
+            $documents = array_map(function ($file) use ($client, $GCP_BUCKET_DIRECTORY) {
+                return new GcsDocument(["gcs_uri" => "gs://" . $GCP_BUCKET_DIRECTORY . "/" . $client->gcs_directory . '/' . $file['name'],
                     "mime_type" => "application/pdf"
                 ]);
             }, $upload->files->toArray());
@@ -73,8 +74,7 @@ class ProcessUploadedFiles implements ShouldQueue
 
 
             $inputConfig = new BatchDocumentsInputConfig([
-                "gcs_prefix" => new GcsPrefix([
-                    "gcs_uri_prefix" => "gs://cannaparser"
+                "gcs_prefix" => new GcsPrefix(["gcs_uri_prefix" => "gs://" . $GCP_BUCKET_DIRECTORY 
                 ]),
                 "gcs_documents" => new GcsDocuments([
                     "documents" => $documents
@@ -82,8 +82,7 @@ class ProcessUploadedFiles implements ShouldQueue
             ]);
 
             $outputConfig = new DocumentOutputConfig([
-                "gcs_output_config" => new GcsOutputConfig([
-                    "gcs_uri" => "gs://cannaparser/" . $client->gcs_directory . "/results"
+                "gcs_output_config" => new GcsOutputConfig(["gcs_uri" => "gs://" . $GCP_BUCKET_DIRECTORY . "/" . $client->gcs_directory . "/results"
                 ])
             ]);
 
