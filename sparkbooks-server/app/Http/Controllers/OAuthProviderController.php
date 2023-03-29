@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\OAuthProviderEnum;
 use App\Models\OAuthProvider;
 use App\Models\User;
+use App\Models\Workspace;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
@@ -33,18 +34,28 @@ class OAuthProviderController extends Controller
     {
         $socialite = Socialite::driver($provider->value)->user();
 
+        $user = User::where('email', $socialite->getEmail())->first();
 
-        $user = User::firstOrCreate([
-            'email' => $socialite->getEmail(),
-        ], [
-            'name' => $socialite->getName(),
-            'email_verified_at' => now(),
-        ]);
+        if (!$user) {
+            $workspace = Workspace::create([
+                'name' => 'My Workspace'
+            ]);
 
-        $user->providers()->updateOrCreate([
-            'provider' => $provider,
-            'provider_id' => $socialite->getId(),
-        ]);
+            $user = User::firstOrCreate([
+                'email' => $socialite->getEmail(),
+            ], [
+                'name' => $socialite->getName(),
+                'email_verified_at' => now(),
+                'workspace_id' => $workspace->id,
+            ]);
+
+            $user->providers()->updateOrCreate([
+                'provider' => $provider,
+                'provider_id' => $socialite->getId(),
+            ]);
+        } 
+
+        
 
         Auth::login($user);
 
