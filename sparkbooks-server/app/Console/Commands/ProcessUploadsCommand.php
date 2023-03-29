@@ -43,21 +43,33 @@ class ProcessUploadsCommand extends Command
      *
      * @return int
      */
+
     public function handle()
     {
-        $client = Client::find(1);
-        $upload = Upload::find(126);
+
+        $this->processUpload();
+        // $this->saveResults('5818806092699961950');
+    }
+
+    public function processUpload()
+    {
+        //change these to the correct values as needed
+        $upload = Upload::find(131);
+        $client = Client::find(65);
+  
         $this->info('starting job');
 
         try {
-            $GCP_BUCKET_DIRECTORY = env('GCP_BUCKET_DIRECTORY');
+            $GCP_BUCKET_DIRECTORY = env('GOOGLE_CLOUD_STORAGE_BUCKET');
 
 
             $documents = array_map(function ($file) use ($client, $GCP_BUCKET_DIRECTORY) {
-                return new GcsDocument(["gcs_uri" => "gs://" . $GCP_BUCKET_DIRECTORY . "/" . $client->gcs_directory . '/' . $file['name'],
+                return new GcsDocument([
+                    "gcs_uri" => "gs://" . $GCP_BUCKET_DIRECTORY . "/" . $client->gcs_directory . '/' . $file['name'],
                     "mime_type" => "application/pdf"
                 ]);
             }, $upload->files->toArray());
+
 
             $documentProcessorServiceClient = new DocumentProcessorServiceClient([
                 'credentials' => json_decode(file_get_contents(app_path("../.config/gcloud-processor.json")), true)
@@ -65,14 +77,16 @@ class ProcessUploadsCommand extends Command
 
 
             $inputConfig = new BatchDocumentsInputConfig([
-                "gcs_prefix" => new GcsPrefix(["gcs_uri_prefix" => "gs://" . $GCP_BUCKET_DIRECTORY
+                "gcs_prefix" => new GcsPrefix([
+                    "gcs_uri_prefix" => "gs://" . $GCP_BUCKET_DIRECTORY
                 ]),
                 "gcs_documents" => new GcsDocuments([
                     "documents" => $documents
                 ])
             ]);
             $outputConfig = new DocumentOutputConfig([
-                "gcs_output_config" => new GcsOutputConfig(["gcs_uri" => "gs://" . $GCP_BUCKET_DIRECTORY . "/" . $client->gcs_directory . "/results"
+                "gcs_output_config" => new GcsOutputConfig([
+                    "gcs_uri" => "gs://" . $GCP_BUCKET_DIRECTORY . "/" . $client->gcs_directory . "/results"
                 ])
             ]);
 
@@ -103,7 +117,6 @@ class ProcessUploadsCommand extends Command
                 $this->saveResults($resultFolder);
             } else {
                 $error = $operationResponse->getError();
-                dd($error->getMessage());
                 // $this->error($error, ['context' => 'operationResponse did not succeed']);
             }
         } catch (\Exception $e) {
@@ -114,8 +127,8 @@ class ProcessUploadsCommand extends Command
 
     public function saveResults($resultFolder)
     {
-        $client = Client::find(1);
-        $upload = Upload::find(126);
+        $upload = Upload::find(131);
+        $client = Client::find(65);
 
         $disk = Storage::disk('gcs');
         $this->info('saving results');
@@ -124,25 +137,32 @@ class ProcessUploadsCommand extends Command
         // check each subfolder for each file that was uploaded
         // if returns, create a new array
         $files = $disk->allFiles($client->gcs_directory . "/results/" . $resultFolder);
-        $upload = $upload;
         //for ($i = 0; $i < count($files); $i++) {
         // $file[$i] 
         // $upload-files
 
+        
+
         for ($i = 0; $i < count($files); $i++) {
+            $this->info("saving each file");
+            try {
+                $contents = $disk->get($files[$i]);
+                $directory = Str::beforeLast($files[$i], '/');
+                $name = Str::afterLast($files[$i], '/');
+                $this->info("saving file " . $name);
 
-            $contents = $disk->get($files[$i]);
-            $directory = Str::beforeLast($files[$i], '/');
-            $name = Str::afterLast($files[$i], '/');
-
-            Result::create([
-                'name' => $name,
-                'upload_id' => $upload->id,
-                'directory' => $directory,
-                'contents' => $contents,
-                'file_id' => $upload->files[$i]->id,
-                'client_id' => $upload->client_id
-            ]);
+                Result::create([
+                    'name' => $name,
+                    'upload_id' => $upload->id,
+                    'directory' => $directory,
+                    'contents' => $contents,
+                    'file_id' => $upload->files[$i]->id,
+                    'client_id' => $upload->client_id,
+                    'workspace_id' => $upload->client->workspace_id
+                ]);
+            } catch (\Throwable $th) {
+                throw $th;
+            }
         }
     }
 }

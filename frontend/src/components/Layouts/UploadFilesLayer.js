@@ -50,7 +50,7 @@ const UploadFilesLayer = ({ client, isOpen, onClose }) => {
             })
 
             try {
-                await axios.post('/upload/new', formData, {
+                const uploadFiles = await axios.post('/upload/new', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
@@ -58,14 +58,17 @@ const UploadFilesLayer = ({ client, isOpen, onClose }) => {
 
                 //  refresh work space data after upload
                 const res = await axios.get('/dashboardData')
+
                 setWorkSpace(res.data.workSpace)
 
                 setShow(false)
                 onClose()
+                setError(uploadFiles.data.status)
+                setVisible(true)
             } catch (error) {
                 // console.log(error)
                 setShow(false)
-                setError('Something went wrong, try again later.')
+                setError(error.data.status)
                 setVisible(true)
             }
         } else {
