@@ -60,7 +60,7 @@ export default function Table({
                 <div className="actions">
                     {actions.map(action => (
                         <button
-                            className="btn inverse small"
+                            className="btn secondary inverse small"
                             key={`${title}${action.label}`}
                             onClick={e => action.onClick(e)}>
                             {action.label}
@@ -89,7 +89,6 @@ export default function Table({
                             }}
                             step={10}
                             paginate
-                            alignSelf="stretch"
                             gap="small"
                             sort={sort}
                             onSort={setSort}

@@ -6,50 +6,77 @@ import AppBar from '@/components/Layouts/AppBar'
 import { Box, Meter, Text, Avatar } from 'grommet'
 import DataTable from '@/components/Layouts/DataTable'
 import axios from '@/lib/axios'
+import ErrorMessage from '@/components/ErrorMessage'
 
 const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
 
 const defaultRender = property => datum => <Text>{datum[property]}</Text>
 
-const fileRender = property => datum => <Text>{datum[property].length}</Text>
-
-const clientRender = datum => (
-    <Box pad={{ vertical: 'xsmall' }} gap="small" direction="row">
-        {/* <Avatar round="xsmall" src={src} /> */}
-        <Text>{datum.client}</Text>
+const numberRender = property => datum => (
+    <Box
+        pad={{ vertical: 'xsmall', horizontal: 'medium' }}
+        alignSelf="end"
+        direction="row">
+        <Text>{datum[property]}</Text>
     </Box>
 )
 
-const processingDataRender = datum => (
+const fileRender = property => datum => (
+    <Text>{datum[property] || 'unknown'}</Text>
+)
+
+const clientRender = datum => (
     <Box pad={{ vertical: 'xsmall' }} direction="row">
-        <Meter
-            values={[
-                {
-                    value: datum.percent,
-                    color: '#4112fb',
-                    background: '#ECECEC',
-                },
-            ]}
-            thickness="xsmall"
-            round
-        />
-        <Text className="text-dark" margin={{ left: '20px' }}>
-            {datum.percent}%
-        </Text>
+        {/* <Avatar round="xsmall" src={src} /> */}
+        <Text>{datum.name}</Text>
+    </Box>
+)
+
+const processingDataRender = property => datum => (
+    <Box
+        pad={{ vertical: 'xsmall', horizontal: 'medium' }}
+        direction="row"
+        alignSelf="end">
+        {!datum[property] ? (
+            <Meter
+                background={{ color: '#466EC7', opacity: 'medium' }}
+                values={[
+                    {
+                        value: 70,
+                        color: '#C767F5',
+                    },
+                ]}
+                thickness="xsmall"
+                round
+            />
+        ) : (
+            <Meter
+                background={{ color: '#466EC7', opacity: 'medium' }}
+                values={[
+                    {
+                        value: 100,
+                        color: 'green',
+                    },
+                ]}
+                thickness="xsmall"
+                round
+            />
+        )}
     </Box>
 )
 
 const columns = [
+    // {
+    //     property: 'id',
+    //     align: 'end',
+    //     header: <Text>Uploads</Text>,
+    //     size: 'small',
+    //     sortable: true,
+    //     primary: true,
+    //     render: numberRender('id'),
+    // },
     {
-        property: 'id',
-        header: <Text>Uploads</Text>,
-        size: 'small',
-        sortable: true,
-        primary: true,
-        render: defaultRender('id'),
-    },
-    {
-        property: 'client',
+        property: 'name',
         size: 'medium',
         header: <Text>Client</Text>,
         render: clientRender,
@@ -57,89 +84,91 @@ const columns = [
     {
         property: 'files',
         size: 'medium',
+        align: 'end',
         header: <Text>Files</Text>,
-        render: fileRender('files'),
+        render: numberRender('files_count'),
     },
     {
-        property: 'percent',
+        property: 'processed',
         size: 'medium',
-        header: <Text>Processing %</Text>,
-        render: processingDataRender,
+        align: 'end',
+        header: <Text>Processing</Text>,
+        render: processingDataRender('processed'),
     },
 ]
 
-
-
-function Uploads({ data }) {
-    console.log(data)
+function Uploads({ data, status, statusText }) {
+    // console.log({ data, status, statusText })
     const router = useRouter()
     const { filterQuery } = useUIContext()
     const [show, setShow] = useState(false)
     const [clicked, setClicked] = useState({})
 
+    // const [clients, setClients] = useState(data.clients || [])
 
-    const [uploads, setUploads] = useState([])
+    const [uploads, setUploads] = useState(data)
 
     const [selected, setSelected] = useState()
 
     const onClickRow = ({ datum }) => {
-        // TODO: Either we include all data in work space or we get data from dedicated API Route
-        alert(
-            'Either we include all data (client name, supplier name,...) in work space or we get data from dedicated API Route',
-        )
-
-        // router.push(`/uploads/${datum.id}`)
+        router.push(`/uploads/${datum.id}`)
     }
 
-    const filtered = uploads.filter(datum =>
-        datum.client.toLocaleLowerCase().includes(filterQuery),
+    const filtered = uploads.filter(
+        datum =>
+            datum.deleted_at === null &&
+            datum.name?.toLocaleLowerCase().includes(filterQuery),
     )
 
-    const extractUploads = clients => {
-        clients.forEach(client => {
-            setUploads(currentUploads => [
-                ...currentUploads,
-                ...client.uploads.map(upload => {
-                    return {
-                        id: client.id,
-                        client: client.name,
-                        files: upload.files.length,
-                        percent: Number.parseFloat(upload.processed) || 0.1,
-                    }
-                }),
-            ])
-        })
-    }
-
-    useEffect(() => {
-        extractUploads(workSpace.clients)
-    }, [workSpace])
-
     return (
-        <AppLayout>
-            <AppBar />
-            <DataTable
-                title="Uploads"
-                columns={columns}
-                data={filtered}
-                setSelected={setSelected}
-                onClickRow={onClickRow}
-            />
-        </AppLayout>
+        <>
+            {status !== 200 && (
+                <ErrorMessage status={status} statusText={statusText} />
+            )}
+            {status === 200 && (
+                <AppLayout>
+                    <AppBar />
+                    <DataTable
+                        title="Uploads"
+                        columns={columns}
+                        data={filtered}
+                        setSelected={setSelected}
+                        onClickRow={onClickRow}
+                    />
+                </AppLayout>
+            )}
+        </>
     )
 }
 
 export async function getServerSideProps(context) {
-    const cookies = context.req.headers.cookie || ''
-    const res = await axios.get('/uploads', {
-        headers: {
-            cookie: cookies,
-        },
-    })
-    const data = res.data
+    const cookie = context.req.headers.cookie
 
-    return {
-        props: { data },
+    if (!cookie)
+        return {
+            redirect: {
+                destination: '/login',
+                permanent: false,
+            },
+        }
+
+    try {
+        const res = await axios.get('/uploads', {
+            headers: {
+                cookie: cookie,
+            },
+        })
+        const { data } = res
+
+        return {
+            props: { status: 200, data },
+        }
+    } catch (error) {
+        const { status, statusText } = error.response
+
+        return {
+            props: { status, statusText },
+        }
     }
 }
 
