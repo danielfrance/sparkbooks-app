@@ -60,15 +60,15 @@ const processingDataRender = property => datum => (
 )
 
 const columns = [
-    {
-        property: 'id',
-        align: 'end',
-        header: <Text>Uploads</Text>,
-        size: 'small',
-        render: numberRender('id'),
-        // sortable: true,
-        // primary: true,
-    },
+    // {
+    //     property: 'id',
+    //     align: 'end',
+    //     header: <Text>Uploads</Text>,
+    //     size: 'small',
+    //     render: numberRender('id'),
+    //     // sortable: true,
+    //     // primary: true,
+    // },
     {
         property: 'client',
         size: 'medium',

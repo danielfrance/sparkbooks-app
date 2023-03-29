@@ -35,49 +35,58 @@ const clientRender = property => datum => (
     </Box>
 )
 
-const numberRender = property => datum => (
-    <Box
-        pad={{ vertical: 'xsmall' }}
-        gap="small"
-        alignSelf="end"
-        direction="row">
-        <Text>{datum[property]}</Text>
-    </Box>
-)
+// const numberRender = property => datum => (
+//     <Box
+//         pad={{ vertical: 'xsmall' }}
+//         gap="small"
+//         alignSelf="end"
+//         direction="row">
+//         <Text>{datum[property]}</Text>
+//     </Box>
+// )
 
 const processingDataRender = property => datum => (
-    <Box pad={{ vertical: 'xsmall' }} direction="row" alignSelf="end">
+    <Box
+        pad={{ vertical: 'xsmall', horizontal: 'medium' }}
+        direction="row"
+        alignSelf="end">
         {!datum[property] ? (
-            <>
-                <Meter
-                    background={{ color: '#466EC7', opacity: 'medium' }}
-                    values={[
-                        {
-                            value: 70,
-                            color: '#C767F5',
-                        },
-                    ]}
-                    thickness="xsmall"
-                    round
-                />
-            </>
+            <Meter
+                background={{ color: '#466EC7', opacity: 'medium' }}
+                values={[
+                    {
+                        value: 70,
+                        color: '#C767F5',
+                    },
+                ]}
+                thickness="xsmall"
+                round
+            />
         ) : (
-            <Text className="text-dark" margin={{ left: '20px' }}>
-                {new Date(datum[property]).toLocaleDateString('us-us')}
-            </Text>
+            <Meter
+                background={{ color: '#466EC7', opacity: 'medium' }}
+                values={[
+                    {
+                        value: 100,
+                        color: 'green',
+                    },
+                ]}
+                thickness="xsmall"
+                round
+            />
         )}
     </Box>
 )
 
 const columns = [
-    {
-        property: 'id',
-        header: <Text>Uploads</Text>,
-        size: 'small',
-        render: numberRender('id'),
-        // sortable: true,
-        // primary: true,
-    },
+    // {
+    //     property: 'id',
+    //     header: <Text>Uploads</Text>,
+    //     size: 'small',
+    //     render: numberRender('id'),
+    //     // sortable: true,
+    //     // primary: true,
+    // },
     {
         property: 'name',
         size: 'medium',

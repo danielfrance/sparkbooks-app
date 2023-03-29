@@ -26,10 +26,7 @@ const fileRender = property => datum => (
 )
 
 const clientRender = datum => (
-    <Box
-        pad={{ vertical: 'xsmall', horizontal: 'large' }}
-        alignSelf="end"
-        direction="row">
+    <Box pad={{ vertical: 'xsmall' }} direction="row">
         {/* <Avatar round="xsmall" src={src} /> */}
         <Text>{datum.name}</Text>
     </Box>
@@ -69,15 +66,15 @@ const processingDataRender = property => datum => (
 )
 
 const columns = [
-    {
-        property: 'id',
-        align: 'end',
-        header: <Text>Uploads</Text>,
-        size: 'small',
-        sortable: true,
-        primary: true,
-        render: numberRender('id'),
-    },
+    // {
+    //     property: 'id',
+    //     align: 'end',
+    //     header: <Text>Uploads</Text>,
+    //     size: 'small',
+    //     sortable: true,
+    //     primary: true,
+    //     render: numberRender('id'),
+    // },
     {
         property: 'name',
         size: 'medium',
