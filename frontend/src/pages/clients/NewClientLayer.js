@@ -36,17 +36,14 @@ const NewClientLayer = ({ client, isOpen, onClose }) => {
             data.append('name', name)
             data.append('email', email)
 
-            console.log({ data })
-
             try {
-                await axios.post('/clients', data, {
+                const newClient = await axios.post('/clients', data, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
                 })
 
-                // refresh work space data after upload
-                router.replace(router.asPath)
+                router.push(`/clients/${newClient.data.id}`)
 
                 setShow(false)
                 onClose()

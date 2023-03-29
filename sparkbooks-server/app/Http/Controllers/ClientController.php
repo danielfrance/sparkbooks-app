@@ -66,7 +66,7 @@ class ClientController extends Controller
         $disk = Storage::disk('gcs');
         $disk->makeDirectory($client->gcs_directory);
 
-        return response()->json(['client' => $client, 'message' => 'Client created']);
+        return response()->json(['id' => $client->id, 'message' => 'Client created']);
         // return redirect('clients')->with('status', 'Client created');
     }
 

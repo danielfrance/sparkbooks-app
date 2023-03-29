@@ -107,8 +107,9 @@ const columns = [
 ]
 
 export default function ClientEdit({ data, status, statusText }) {
+    console.log(data)
     const router = useRouter()
-    const [value, setValue] = useState('OK')
+    const [value, setValue] = useState(data.client.state)
     const [isOpen, setIsOpen] = useState(false)
     const onOpen = () => setIsOpen(true)
     const onClose = () => setIsOpen(false)
@@ -204,22 +205,36 @@ export default function ClientEdit({ data, status, statusText }) {
                                             <FormField
                                                 name="address"
                                                 label="Street">
-                                                <TextInput name="address" />
+                                                <TextInput
+                                                    name="address"
+                                                    value={client?.address}
+                                                />
                                             </FormField>
                                             <FormField
                                                 name="poc"
                                                 label="Point of Contact">
-                                                <TextInput name="poc" />
+                                                <TextInput
+                                                    name="point_of_contact"
+                                                    value={
+                                                        client?.point_of_contact
+                                                    }
+                                                />
                                             </FormField>
                                         </Box>
                                         <Box>
                                             <FormField
                                                 name="phone"
                                                 label="Phone">
-                                                <TextInput name="phone" />
+                                                <TextInput
+                                                    name="phone"
+                                                    value={client?.phone}
+                                                />
                                             </FormField>
                                             <FormField name="city" label="City">
-                                                <TextInput name="city" />
+                                                <TextInput
+                                                    name="city"
+                                                    value={client?.city}
+                                                />
                                             </FormField>
                                             <FormField
                                                 name="state"
