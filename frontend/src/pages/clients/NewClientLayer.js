@@ -57,7 +57,7 @@ const NewClientLayer = ({ client, isOpen, onClose }) => {
                 setVisible(true)
             }
         } else {
-            setError('Please select both the client and files')
+            setError('Both fields are required to create a new client')
             setVisible(true)
         }
     }
