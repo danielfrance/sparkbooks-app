@@ -14,8 +14,7 @@ const defaultRender = property => datum => <Text>{datum[property]}</Text>
 
 const numberRender = property => datum => (
     <Box
-        pad={{ vertical: 'xsmall' }}
-        gap="small"
+        pad={{ vertical: 'xsmall', horizontal: 'medium' }}
         alignSelf="end"
         direction="row">
         <Text>{datum[property]}</Text>
@@ -27,32 +26,44 @@ const fileRender = property => datum => (
 )
 
 const clientRender = datum => (
-    <Box pad={{ vertical: 'xsmall' }} gap="small" direction="row">
+    <Box
+        pad={{ vertical: 'xsmall', horizontal: 'large' }}
+        alignSelf="end"
+        direction="row">
         {/* <Avatar round="xsmall" src={src} /> */}
         <Text>{datum.name}</Text>
     </Box>
 )
 
 const processingDataRender = property => datum => (
-    <Box pad={{ vertical: 'xsmall' }} direction="row" alignSelf="end">
+    <Box
+        pad={{ vertical: 'xsmall', horizontal: 'medium' }}
+        direction="row"
+        alignSelf="end">
         {!datum[property] ? (
-            <>
-                <Meter
-                    background={{ color: '#466EC7', opacity: 'medium' }}
-                    values={[
-                        {
-                            value: 70,
-                            color: '#C767F5',
-                        },
-                    ]}
-                    thickness="xsmall"
-                    round
-                />
-            </>
+            <Meter
+                background={{ color: '#466EC7', opacity: 'medium' }}
+                values={[
+                    {
+                        value: 70,
+                        color: '#C767F5',
+                    },
+                ]}
+                thickness="xsmall"
+                round
+            />
         ) : (
-            <Text className="text-dark" margin={{ left: '20px' }}>
-                {new Date(datum[property]).toLocaleDateString('us-us')}
-            </Text>
+            <Meter
+                background={{ color: '#466EC7', opacity: 'medium' }}
+                values={[
+                    {
+                        value: 100,
+                        color: 'green',
+                    },
+                ]}
+                thickness="xsmall"
+                round
+            />
         )}
     </Box>
 )
@@ -60,6 +71,7 @@ const processingDataRender = property => datum => (
 const columns = [
     {
         property: 'id',
+        align: 'end',
         header: <Text>Uploads</Text>,
         size: 'small',
         sortable: true,
@@ -75,13 +87,15 @@ const columns = [
     {
         property: 'files',
         size: 'medium',
+        align: 'end',
         header: <Text>Files</Text>,
         render: numberRender('files_count'),
     },
     {
         property: 'processed',
         size: 'medium',
-        header: <Text>Processed </Text>,
+        align: 'end',
+        header: <Text>Processing</Text>,
         render: processingDataRender('processed'),
     },
 ]

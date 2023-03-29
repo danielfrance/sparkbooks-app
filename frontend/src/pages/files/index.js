@@ -18,6 +18,7 @@ const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
 // const { apiURL } = publicRuntimeConfig
 
 function Files({ status, statusText, data }) {
+    console.log({ data })
     const router = useRouter()
 
     const onClick = datum => {
@@ -42,8 +43,7 @@ function Files({ status, statusText, data }) {
 
     const numberRender = property => datum => (
         <Box
-            pad={{ vertical: 'xsmall' }}
-            gap="small"
+            pad={{ vertical: 'xsmall', horizontal: 'medium' }}
             alignSelf="end"
             direction="row">
             <Text>{datum[property]}</Text>
@@ -84,11 +84,13 @@ function Files({ status, statusText, data }) {
         },
         {
             property: 'lineItems',
+            align: 'end',
             header: <Text>Line Items</Text>,
             render: numberRender('lineItems'),
         },
         {
             property: 'totalAmount',
+            align: 'align',
             header: <Text>Total</Text>,
             render: numberRender('totalAmount'),
         },
@@ -127,7 +129,7 @@ function Files({ status, statusText, data }) {
                 [
                     ...currentFiles,
                     {
-                        id: file.id,
+                        id: file.file_id,
                         fileName: file.file_name || '',
                         clientName: file.client_name || '',
                         supplierName: file.supplier_name || '',

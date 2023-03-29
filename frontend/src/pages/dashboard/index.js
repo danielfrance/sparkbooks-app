@@ -19,8 +19,7 @@ const clientRender = datum => (
 
 const numberRender = property => datum => (
     <Box
-        pad={{ vertical: 'xsmall' }}
-        gap="small"
+        pad={{ vertical: 'xsmall', horizontal: 'medium' }}
         alignSelf="end"
         direction="row">
         <Text>{datum[property]}</Text>
@@ -28,25 +27,34 @@ const numberRender = property => datum => (
 )
 
 const processingDataRender = property => datum => (
-    <Box pad={{ vertical: 'xsmall' }} direction="row" alignSelf="end">
+    <Box
+        pad={{ vertical: 'xsmall', horizontal: 'medium' }}
+        direction="row"
+        alignSelf="end">
         {!datum[property] ? (
-            <>
-                <Meter
-                    background={{ color: '#466EC7', opacity: 'medium' }}
-                    values={[
-                        {
-                            value: 70,
-                            color: '#C767F5',
-                        },
-                    ]}
-                    thickness="xsmall"
-                    round
-                />
-            </>
+            <Meter
+                background={{ color: '#466EC7', opacity: 'medium' }}
+                values={[
+                    {
+                        value: 70,
+                        color: '#C767F5',
+                    },
+                ]}
+                thickness="xsmall"
+                round
+            />
         ) : (
-            <Text className="text-dark" margin={{ left: '20px' }}>
-                {new Date(datum[property]).toLocaleDateString('us-us')}
-            </Text>
+            <Meter
+                background={{ color: '#466EC7', opacity: 'medium' }}
+                values={[
+                    {
+                        value: 100,
+                        color: 'green',
+                    },
+                ]}
+                thickness="xsmall"
+                round
+            />
         )}
     </Box>
 )
@@ -54,6 +62,7 @@ const processingDataRender = property => datum => (
 const columns = [
     {
         property: 'id',
+        align: 'end',
         header: <Text>Uploads</Text>,
         size: 'small',
         render: numberRender('id'),
@@ -68,14 +77,16 @@ const columns = [
     },
     {
         property: 'files',
+        align: 'end',
         size: 'medium',
         header: <Text>Files</Text>,
         render: numberRender('files'),
     },
     {
         property: 'percent',
+        align: 'end',
         size: 'medium',
-        header: <Text>Processing %</Text>,
+        header: <Text>Processing</Text>,
         render: processingDataRender('percent'),
     },
 ]

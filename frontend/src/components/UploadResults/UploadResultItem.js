@@ -41,14 +41,14 @@ export default function UploadResultItem({ item, index }) {
             <TableCell scope="row">
                 <TextInput
                     name="description"
-                    value={inputValue.item}
+                    value={inputValue.item || ''}
                     onChange={e => handleInputChange(e, index)}
                 />
             </TableCell>
             <TableCell scope="row">
                 <TextInput
                     name="sku"
-                    value={inputValue.sku}
+                    value={inputValue.sku || ''}
                     onChange={e => handleInputChange(e, index)}
                 />
             </TableCell>
@@ -65,7 +65,7 @@ export default function UploadResultItem({ item, index }) {
             <TableCell scope="row">
                 <TextInput
                     name="amount"
-                    value={inputValue.amount}
+                    value={inputValue.amount || ''}
                     onChange={e => handleInputChange(e, index)}
                 />
             </TableCell>

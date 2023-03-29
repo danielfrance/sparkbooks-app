@@ -7,8 +7,6 @@ import ErrorMessage from '@/components/ErrorMessage'
 import axios from '@/lib/axios'
 
 export default function File({ status, statusText, data }) {
-    console.log({ status, statusText, data })
-
     const [fileData, setFileData] = useState([])
 
     const extractFileData = clients => {
@@ -34,11 +32,17 @@ export default function File({ status, statusText, data }) {
                         height={{ min: '96px', max: '110px' }}>
                         <Box direction="row" justify="between">
                             <Heading margin="none" level="3" color="brand">
-                                {/* View {fileData.fileName} details */}
+                                View {data.result_details?.name} details
                             </Heading>
                         </Box>
                     </Box>
-                    {/* <UploadResultContainer data={fileData} index /> */}
+                    {[data].map((item, index) => (
+                        <UploadResultContainer
+                            data={item}
+                            index={index}
+                            key={index}
+                        />
+                    ))}
                 </AppLayout>
             )}
         </>

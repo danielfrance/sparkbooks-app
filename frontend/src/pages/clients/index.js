@@ -21,8 +21,7 @@ const clientRender = datum => (
 
 const numberRender = property => datum => (
     <Box
-        pad={{ vertical: 'xsmall' }}
-        gap="small"
+        pad={{ vertical: 'xsmall', horizontal: 'medium' }}
         alignSelf="end"
         direction="row">
         <Text>{datum[property]}</Text>
@@ -47,12 +46,14 @@ const columns = [
     {
         property: 'uploads',
         size: 'small',
+        align: 'end',
         header: <Text>Total Uploads</Text>,
         render: numberRender('uploads'),
     },
     {
         property: 'files',
         size: 'small',
+        align: 'end',
         header: <Text>Total Files</Text>,
         render: numberRender('files'),
     },

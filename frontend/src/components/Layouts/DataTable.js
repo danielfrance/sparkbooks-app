@@ -89,7 +89,6 @@ export default function Table({
                             }}
                             step={10}
                             paginate
-                            alignSelf="stretch"
                             gap="small"
                             sort={sort}
                             onSort={setSort}
