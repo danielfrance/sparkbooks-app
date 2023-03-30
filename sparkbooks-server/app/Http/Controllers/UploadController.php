@@ -97,8 +97,13 @@ class UploadController extends Controller
 
             // TODO: !!! update this!!!
             $results = Result::where('upload_id', $id)
+                ->select('id', 'name', 'directory', 'upload_id')
                 ->with(['resultDetails', 'resultItems'])
                 ->get();
+
+            $results->map(function ($result) {
+                $result->imageURL = $result->getResultImageURL();
+            });
 
             return $results;
 

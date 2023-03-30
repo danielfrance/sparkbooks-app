@@ -165,6 +165,20 @@ class Result extends Model
         return $normalizedArray;
     }
 
+    public function getResultImageURL()
+    {
+        $filename = Str::before($this->name, '-0.json');
+
+        $directory = $this->upload->client->gcs_directory;
+        $disk = Storage::disk('gcs');
+
+        $path = $directory . "/" . $filename . ".pdf";
+        // dd($disk->exists($directory . "/" . $filename . ".pdf"));
+
+
+        return ($disk->exists($path)) ? $disk->temporaryUrl($path, now()->addMinutes(120)) : null;
+    }
+
     public function getSupplierInfo($rawContent)
     {
         $suppliers = Provider::select('name')->get()->toArray();
