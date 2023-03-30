@@ -6,6 +6,7 @@ import ErrorMessage from '@/components/ErrorMessage'
 import axios from '@/lib/axios'
 
 function UploadDetails({ data, status, statusText }) {
+    console.log(data)
     const [fileData, setFileData] = useState([])
     return (
         <>
@@ -46,14 +47,6 @@ function UploadDetails({ data, status, statusText }) {
 export async function getServerSideProps(context) {
     const cookie = context.req.headers.cookie
 
-    if (!cookie)
-        return {
-            redirect: {
-                destination: '/login',
-                permanent: false,
-            },
-        }
-
     try {
         const res = await axios.get(`/uploads/${context.params.id}`, {
             headers: {
@@ -68,7 +61,7 @@ export async function getServerSideProps(context) {
         }
     } catch (error) {
         const { status, statusText } = error.response
-
+        console.log(status, statusText)
         return {
             props: { status, statusText },
         }
