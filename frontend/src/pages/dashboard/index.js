@@ -103,7 +103,6 @@ export default function Dashboard({ data }) {
 
     const onClickRow = ({ datum }) => {
         router.push(`/uploads/${datum.id}`)
-        router.push(`/uploads/1`)
     }
 
     const filtered = uploads.filter(datum =>
@@ -125,7 +124,7 @@ export default function Dashboard({ data }) {
                     if (upload.processed) setProcessedFiles(count => count + 1)
                     if (!upload.processed) setRemainingFiles(count => count + 1)
                     return {
-                        id: client.id,
+                        id: upload.id,
                         client: client.name || '',
                         files: upload.files.length,
                         percent: upload.processed,
