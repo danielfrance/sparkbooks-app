@@ -75,7 +75,7 @@ export default function UploadResultItem({ item: data, updateItems, index }) {
     const remove = () => {
         console.log({ index })
         setIsUpdating(true)
-        updateItems(index, null, 'remove', () => setIsUpdating(false))
+        updateItems(index, itemData, 'remove', () => setIsUpdating(false))
     }
 
     return (

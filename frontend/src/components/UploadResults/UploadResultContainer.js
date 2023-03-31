@@ -72,20 +72,22 @@ export default function UploadResultContainer({ data, index }) {
 
     const addLineItem = () => {
         const newItem = {
+            id: new Date().toString(),
             amount: 0,
             category_id: '',
             item: '',
             sku: '',
             client_id: details.client_id,
             result_id: details.result_id,
+            isNew: true,
         }
         setLineItems(items => [...items, newItem])
     }
 
     const updateLinesItems = (index, item, action, callback) => {
         console.log({ index, item })
-        if (action === 'remove' && !item)
-            setLineItems(items => items.splice(index, 1))
+        if (action === 'remove' && item.isNew)
+            setLineItems(items => items.filter(el => el.id !== item.id))
         else {
             // TODO: Update the backend and update lineItems with result
             lineItems.splice(index, 1, item)
