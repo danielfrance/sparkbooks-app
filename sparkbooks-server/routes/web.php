@@ -44,8 +44,17 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('uploads/{upload}', [UploadController::class, 'update']);
     Route::delete('uploads/{upload}', [UploadController::class, 'destroy']);
 
+
+    Route::put('/results/{upload_id}/details/{result_detail_id}', [ResultController::class, 'updateDetail']);
+
+    Route::put('/results/{upload_id}/lineitem/{result_line_id}', [ResultController::class, 'updateLineItem']);
+    Route::post('/results/{upload_id}/lineitem', [ResultController::class, 'storeLineItem']);
+    Route::delete('/results/{upload_id}/lineitem/{result_line_id}', [ResultController::class, 'deleteLineItem']);
+
     Route::get('files', [FileController::class, 'index']);
     Route::get('files/{file}', [FileController::class, 'show']);
+
+
 });
 
 
