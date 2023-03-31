@@ -1,6 +1,6 @@
-import { TableRow, TableCell, TextInput, Select } from 'grommet'
+import { TableRow, TableCell, TextInput, Select, Spinner } from 'grommet'
 import { Trash } from 'grommet-icons'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const chartOfAccounts = [
     { id: 1, name: '6110 Repairs and Maintenance' },
@@ -23,58 +23,98 @@ const chartOfAccounts = [
     { id: 18, name: '6620 Uniforms' },
 ]
 
-export default function UploadResultItem({ item, index }) {
-    // console.log(item)
-    const [inputValue, setInputValue] = useState(item)
-    const [selectValue, setSelectValue] = useState(item.category)
-    //   console.log(item);
+export default function UploadResultItem({ item: data, updateItems, index }) {
+    // console.log(data)
+    const border = [
+        {
+            side: 'all',
+            color: '#C767F5',
+            size: 'medium',
+            style: 'dotted',
+        },
+    ]
+    const [isUpdating, setIsUpdating] = useState(false)
+    const [itemData, setItemData] = useState(data)
+    const [selectValue, setSelectValue] = useState(() =>
+        chartOfAccounts.find(account => account.id === itemData.category_id),
+    )
+
     const handleInputChange = (event, index) => {
         const { name, value } = event.target
-        const updatedInputValue = [inputValue]
-        updatedInputValue[name] = value
+        const updates = { ...itemData, [name]: value }
 
-        setInputValue(updatedInputValue)
+        setItemData(updates)
+        update(updates)
+    }
+
+    const handleSelection = option => {
+        setSelectValue(option)
+        const updates = { ...itemData, category_id: option.id }
+        setItemData(updates)
+
+        if (updates.category_id) update(updates)
+    }
+
+    const update = updates => {
+        const { amount, category_id, item, sku } = updates
+
+        if (amount && category_id && item && sku) {
+            setTimeout(() => {
+                let timer
+                clearTimeout(timer)
+                setIsUpdating(false)
+
+                console.log({ updates })
+                setIsUpdating(true)
+                updateItems(index, updates, 'update', () =>
+                    setIsUpdating(false),
+                )
+            }, 2000)
+        }
     }
 
     return (
         <TableRow key={index}>
             <TableCell scope="row">
                 <TextInput
-                    name="description"
-                    value={inputValue.item || ''}
+                    name="item"
+                    value={itemData.item || ''}
                     onChange={e => handleInputChange(e, index)}
                 />
             </TableCell>
             <TableCell scope="row">
                 <TextInput
                     name="sku"
-                    value={inputValue.sku || ''}
+                    value={itemData.sku || ''}
                     onChange={e => handleInputChange(e, index)}
                 />
             </TableCell>
             <TableCell scope="row">
                 <Select
-                    name="account"
+                    name="category_id"
                     labelKey="name"
                     value={selectValue}
                     valueKey={{ key: 'id' }}
                     options={chartOfAccounts}
-                    onChange={({ option }) => setSelectValue(option)}
+                    onChange={({ option }) => handleSelection(option)}
                 />
             </TableCell>
             <TableCell scope="row">
                 <TextInput
                     name="amount"
-                    value={inputValue.amount || ''}
+                    value={itemData.amount || ''}
                     onChange={e => handleInputChange(e, index)}
                 />
             </TableCell>
-            <TableCell scope="row">
-                <Trash
-                    color="status-error"
-                    size="medium"
-                    onClick={() => alert('delete row')}
-                />
+            <TableCell scope="row" pad="small">
+                {!isUpdating && (
+                    <Trash
+                        color="status-error"
+                        size="large"
+                        onClick={() => alert('delete row')}
+                    />
+                )}
+                {isUpdating && <Spinner size="xsmall" border={border} />}
             </TableCell>
         </TableRow>
     )

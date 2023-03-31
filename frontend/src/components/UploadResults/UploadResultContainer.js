@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     Box,
     Grid,
@@ -11,28 +11,64 @@ import {
     TextInput,
     Button,
     Text,
+    Spinner,
 } from 'grommet'
 
-import { Add } from 'grommet-icons'
+import { Checkmark, StatusWarning } from 'grommet-icons'
 
 import UploadResultItem from './UploadResultItem'
 
-// TODO: remove this
-import getConfig from 'next/config'
-
-// const styleButton = {
-//     width: '15rem',
-//     backgroundColor: '#FFFFFF',
-//     boxShadow: '0px 5px 10px rgba(199, 103, 245, 0.15)',
-//     borderRadius: '18px',
-//     color: '#b01df4',
-//     border: '#c866f567 1px solid',
-// }
+const border = [
+    {
+        side: 'all',
+        color: '#C767F5',
+        size: 'medium',
+        style: 'dotted',
+    },
+]
 
 export default function UploadResultContainer({ data, index }) {
-    const { result_items, result_details } = data
-    // const [uploadData, setuploadData] = useState(data)
+    const { result_items, result_details, imageURL } = data
+    const [isUpdating, setIsUpdating] = useState(false)
     const [lineItems, setLineItems] = useState(result_items)
+    const [currentTotal, setCurrentTotal] = useState(0)
+
+    const [details, setDetails] = useState(result_details)
+
+    const correctTotal = () => {
+        return (
+            parseFloat(details.total) ===
+            parseFloat(currentTotal) + parseFloat(details.total_tax_amount)
+        )
+    }
+
+    const correctSubtotal = () =>
+        parseFloat(details.net_amount) === parseFloat(currentTotal)
+
+    const computeCurrentTotal = () => {
+        const total = lineItems.reduce(
+            (cum, item) => cum + parseFloat(item.amount),
+            0,
+        )
+        setCurrentTotal(total)
+    }
+
+    const handleInputChange = event => {
+        const { name, value } = event.target
+        setDetails(current => {
+            return { ...current, [name]: value }
+        })
+
+        submit()
+    }
+
+    const submit = () => {
+        let timer
+        clearTimeout(timer)
+        setIsUpdating(false)
+
+        // TODO: Submit to the server
+    }
 
     const addLineItem = () => {
         const newItem = {
@@ -40,13 +76,29 @@ export default function UploadResultContainer({ data, index }) {
             category_id: '',
             item: '',
             sku: '',
+            client_id: details.client_id,
+            result_id: details.result_id,
         }
         setLineItems(items => [...items, newItem])
     }
 
-    // TODO REMOVE THIS
-    const { publicRuntimeConfig } = getConfig()
-    const { pdfURL } = publicRuntimeConfig
+    const updateLinesItems = (index, item, action, callback) => {
+        console.log({ index, item })
+        if (action === 'remove' && !item.id) lineItems.splice(index, 1)
+        else {
+            // TODO: Update the backend and update lineItems with result
+            lineItems.splice(index, 1, item)
+        }
+
+        if (callback instanceof Function) {
+            setTimeout(() => {
+                callback()
+                computeCurrentTotal()
+            }, 2000)
+        }
+    }
+
+    useEffect(() => computeCurrentTotal(), [])
 
     return (
         <Box className="box_container" margin={{ top: 'medium' }} fill>
@@ -55,12 +107,23 @@ export default function UploadResultContainer({ data, index }) {
                 justify="between"
                 margin={{ top: 'medium' }}
                 height={{ min: '50px', max: '90px' }}>
-                <TextInput
-                    name="supplierName"
-                    value={result_details.supplier_name}
-                    width="medium"
-                    margin="none"
-                />
+                <Box direction="row" gap="small">
+                    <TextInput
+                        name="supplier_name"
+                        value={details.supplier_name}
+                        onChange={e => handleInputChange(e)}
+                        width="medium"
+                        margin="none"
+                    />
+
+                    {isUpdating && (
+                        <Spinner
+                            size="xsmall"
+                            margin={{ top: 'xsmall' }}
+                            border={border}
+                        />
+                    )}
+                </Box>
 
                 <button
                     className="btn secondary inverse"
@@ -71,14 +134,11 @@ export default function UploadResultContainer({ data, index }) {
             </Box>
             <Grid
                 direction="row"
+                gap="small"
                 margin={{ top: '3em' }}
                 columns={['1/3', '2/3']}>
                 <Box height={{ min: 'large' }}>
-                    <embed
-                        src={pdfURL}
-                        height="100%"
-                        // min-height="500px"
-                    />
+                    <embed src={imageURL} height="100%" />
                 </Box>
                 <Box align="start">
                     <Table>
@@ -103,6 +163,7 @@ export default function UploadResultContainer({ data, index }) {
                                 <UploadResultItem
                                     item={item}
                                     index={index}
+                                    updateItems={updateLinesItems}
                                     key={index}
                                 />
                             ))}
@@ -116,9 +177,29 @@ export default function UploadResultContainer({ data, index }) {
                                 </TableCell>
                                 <TableCell scope="row">
                                     <TextInput
-                                        name="subTotal"
-                                        value="2342.23"
+                                        name="net_amount"
+                                        value={details.net_amount || ''}
+                                        onChange={e =>
+                                            handleInputChange(e, index)
+                                        }
                                     />
+                                </TableCell>
+                                <TableCell scope="row">
+                                    {isUpdating && (
+                                        <Spinner
+                                            size="xsmall"
+                                            border={border}
+                                        />
+                                    )}
+                                    {correctSubtotal() && !isUpdating && (
+                                        <Checkmark color="green" />
+                                    )}
+                                    {!correctSubtotal() && !isUpdating && (
+                                        <StatusWarning
+                                            size="large"
+                                            color="red"
+                                        />
+                                    )}
                                 </TableCell>
                             </TableRow>
                             <TableRow key={`${index}-tax`}>
@@ -131,9 +212,20 @@ export default function UploadResultContainer({ data, index }) {
                                 </TableCell>
                                 <TableCell scope="row">
                                     <TextInput
-                                        name="subTotal"
-                                        value="2342.23"
+                                        name="total_tax_amount"
+                                        value={details.total_tax_amount || ''}
+                                        onChange={e =>
+                                            handleInputChange(e, index)
+                                        }
                                     />
+                                </TableCell>
+                                <TableCell scope="row">
+                                    {isUpdating && (
+                                        <Spinner
+                                            size="xsmall"
+                                            border={border}
+                                        />
+                                    )}
                                 </TableCell>
                             </TableRow>
                             <TableRow key={`${index}-total`}>
@@ -146,9 +238,29 @@ export default function UploadResultContainer({ data, index }) {
                                 </TableCell>
                                 <TableCell scope="row">
                                     <TextInput
-                                        name="subTotal"
-                                        value="2342.23"
+                                        name="total"
+                                        value={details.total || ''}
+                                        onChange={e =>
+                                            handleInputChange(e, index)
+                                        }
                                     />
+                                </TableCell>
+                                <TableCell scope="row">
+                                    {isUpdating && (
+                                        <Spinner
+                                            size="xsmall"
+                                            border={border}
+                                        />
+                                    )}
+                                    {correctTotal() && !isUpdating && (
+                                        <Checkmark color="green" />
+                                    )}
+                                    {!correctTotal() && !isUpdating && (
+                                        <StatusWarning
+                                            size="large"
+                                            color="red"
+                                        />
+                                    )}
                                 </TableCell>
                             </TableRow>
                         </TableBody>
