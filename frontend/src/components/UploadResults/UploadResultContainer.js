@@ -85,24 +85,27 @@ export default function UploadResultContainer({ data, index }) {
         setLineItems(items => [...items, newItem])
     }
 
-    const updateLinesItems = (index, item, action, callback) => {
-        console.log({ index, item, lineItems })
+    const updateLinesItems = (item, action, callback) => {
         if (action === 'remove' && item.isNew)
             setLineItems(items => items.filter(el => el.id != item.id))
-        else {
+        else if (action === 'update') {
             // TODO: Update the backend and update lineItems with result
-            lineItems.splice(index, 1, item)
-        }
+            const index = lineItems.findIndex(el => el.id === item.id)
+            console.log({ index, lineItems, item })
 
-        if (callback instanceof Function) {
-            setTimeout(() => {
-                callback()
-                computeCurrentTotal()
-            }, 2000)
+            if (index >= 0) {
+                lineItems[index] = item
+                setLineItems(lineItems)
+            }
         }
+        computeCurrentTotal()
+
+        setTimeout(() => {
+            if (callback instanceof Function) callback()
+        }, 2000)
     }
 
-    useEffect(() => computeCurrentTotal(), [])
+    useEffect(() => computeCurrentTotal(), [lineItems])
 
     return (
         <Box className="box_container" margin={{ top: 'medium' }} fill>

@@ -65,9 +65,7 @@ export default function UploadResultItem({ item: data, updateItems, index }) {
                 clearTimeout(timer)
 
                 setIsUpdating(true)
-                updateItems(index, updates, 'update', () =>
-                    setIsUpdating(false),
-                )
+                updateItems(updates, 'update', () => setIsUpdating(false))
             }, 2000)
         }
     }
@@ -75,8 +73,12 @@ export default function UploadResultItem({ item: data, updateItems, index }) {
     const remove = () => {
         console.log({ index })
         setIsUpdating(true)
-        updateItems(index, itemData, 'remove', () => setIsUpdating(false))
+        updateItems(itemData, 'remove', () => setIsUpdating(false))
     }
+
+    useEffect(() => {
+        setItemData(data)
+    }, [data])
 
     return (
         <TableRow key={index}>
