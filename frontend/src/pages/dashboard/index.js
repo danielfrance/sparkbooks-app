@@ -91,8 +91,7 @@ const columns = [
     },
 ]
 
-export default function Dashboard({ data }) {
-    const { status, statusText, hasWorkSpace } = data
+export default function Dashboard({ data, status, statusText }) {
     const router = useRouter()
     const { filterQuery, workSpace, setWorkSpace } = useUIContext()
     const [uploads, setUploads] = useState([])
@@ -135,17 +134,17 @@ export default function Dashboard({ data }) {
     }
 
     useEffect(() => {
-        if (hasWorkSpace) {
+        if (status === 200) {
             setProcessedFiles(0)
             setRemainingFiles(0)
-            setWorkSpace(data.workSpace)
-            extractUploads(data.workSpace.clients)
+            extractUploads(data.clients)
+            setWorkSpace(data)
         }
     }, [data])
 
     return (
         <>
-            {hasWorkSpace && (
+            {status === 200 && (
                 <AppLayout>
                     <AppBar />
                     <div className="flex dashboard-header">
@@ -183,7 +182,7 @@ export default function Dashboard({ data }) {
                     />
                 </AppLayout>
             )}
-            {!hasWorkSpace && (
+            {status !== 200 && (
                 <ErrorMessage status={status} statusText={statusText} />
             )}
         </>
@@ -207,16 +206,15 @@ export async function getServerSideProps(context) {
                 cookie: cookie,
             },
         })
-        const workSpace = res.data
 
         return {
-            props: { data: { status: 200, workSpace, hasWorkSpace: true } },
+            props: { status: 200, data: res.data },
         }
     } catch (error) {
         const { status, statusText } = error.response
 
         return {
-            props: { data: { status, statusText, hasWorkSpace: false } },
+            props: { status, statusText },
         }
     }
 }

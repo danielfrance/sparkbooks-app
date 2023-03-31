@@ -18,33 +18,32 @@ import { useUIContext } from '@/contexts/ui'
 
 import axios from '@/lib/axios'
 
-const UploadFilesLayer = ({ client, isOpen, onClose }) => {
-    const [selectedClient, setSelectedClient] = useState([])
+const UploadFilesLayer = ({ onClose }) => {
+    const [selectedClient, setSelectedClient] = useState()
     const [selectedFiles, setSelectedFiles] = useState(null)
     const [show, setShow] = useState(false)
     const [visible, setVisible] = useState(false)
     const [error, setError] = useState()
-    // const fileInputStyles = {}
 
     const { workSpace, setWorkSpace } = useUIContext()
 
     const { clients } = workSpace
 
-    const selectOptions = clients.map(client => client.name)
+    const selectOptions = clients.map(client => {
+        const { id, name } = client
 
-    const findClient = name => {
-        return clients.find(client => client.name == name)
-    }
+        return { id, name }
+    })
 
     const submit = async event => {
         event.preventDefault()
 
-        if (selectedClient && selectedFiles?.length) {
+        if (selectedClient.id && selectedFiles?.length) {
             setShow(true)
 
             const formData = new FormData()
 
-            formData.append('client_id', findClient(selectedClient).id)
+            formData.append('client_id', selectedClient.id)
             selectedFiles.forEach(file => {
                 formData.append('files[]', file)
             })
@@ -76,6 +75,21 @@ const UploadFilesLayer = ({ client, isOpen, onClose }) => {
             setVisible(true)
         }
     }
+
+    const reloadWorkSpace = async () => {
+        try {
+            const res = await axios.get('/dashboardData')
+            return res.data
+        } catch (error) {
+            setError(error.data.status)
+        }
+    }
+
+    useEffect(() => {
+        if (!workSpace) {
+            setWorkSpace(() => reloadWorkSpace())
+        }
+    }, [])
 
     return (
         <>
@@ -118,6 +132,8 @@ const UploadFilesLayer = ({ client, isOpen, onClose }) => {
                             <Select
                                 required
                                 value={selectedClient}
+                                valueKey={{ key: 'id' }}
+                                labelKey="name"
                                 options={selectOptions}
                                 onChange={({ option }) =>
                                     setSelectedClient(option)
