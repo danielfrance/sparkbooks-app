@@ -55,16 +55,16 @@ export default function UploadResultItem({ item: data, updateItems, index }) {
         if (updates.category_id) update(updates)
     }
 
+    let timer
+
     const update = updates => {
-        const { amount, category_id, item, sku } = updates
+        clearTimeout(timer)
         setIsUpdating(false)
+        const { amount, category_id, item, sku } = updates
 
         if (amount && category_id && item && sku) {
-            setTimeout(() => {
-                let timer
-                clearTimeout(timer)
-
-                setIsUpdating(true)
+            setIsUpdating(true)
+            timer = setTimeout(() => {
                 updateItems(updates, 'update', () => setIsUpdating(false))
             }, 2000)
         }

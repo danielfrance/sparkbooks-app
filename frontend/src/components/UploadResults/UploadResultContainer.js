@@ -19,6 +19,8 @@ import { v4 as uuidv4 } from 'uuid'
 
 import UploadResultItem from './UploadResultItem'
 
+import axios from '@/lib/axios'
+
 const border = [
     {
         side: 'all',
@@ -54,23 +56,48 @@ export default function UploadResultContainer({ data, index }) {
         setCurrentTotal(total)
     }
 
+    let timer
+
     const handleInputChange = event => {
+        clearTimeout(timer)
+
         const { name, value } = event.target
         setDetails(current => {
             return { ...current, [name]: value }
         })
 
-        submit()
+        if (
+            correctSubtotal() &&
+            correctTotal() &&
+            details.supplier_name.trim().length
+        ) {
+            console.log("let's update details...")
+
+            const formData = new FormData()
+            for (const [key, value] of Object.entries(details)) {
+                formData.append(key, value)
+            }
+            setIsUpdating(true)
+            timer = setTimeout(async () => {
+                try {
+                    const res = await axios.put(
+                        `/results/${details.upload_id}/details/${details.result_id}`,
+                        formData,
+                    )
+
+                    console.log({ data: res.data })
+                } catch (error) {
+                    console.log({ error })
+                }
+
+                setIsUpdating(false)
+            }, 3000)
+        } else {
+            console.log("we can't update details...")
+        }
     }
 
-    const submit = () => {
-        let timer
-        clearTimeout(timer)
-        setIsUpdating(false)
-
-        // TODO: Submit to the server
-    }
-
+    console.log({ details })
     const addLineItem = () => {
         const newItem = {
             id: uuidv4(),
@@ -80,29 +107,76 @@ export default function UploadResultContainer({ data, index }) {
             sku: '',
             client_id: details.client_id,
             result_id: details.result_id,
+            upload_id: details.upload_id,
             isNew: true,
         }
         setLineItems(items => [...items, newItem])
     }
 
     const updateLinesItems = (item, action, callback) => {
+        clearTimeout(timer)
+
+        const isValid =
+            correctSubtotal() &&
+            correctTotal() &&
+            details.supplier_name.trim().length
+
+        const formData = new FormData()
+        for (const [key, value] of Object.entries(item)) {
+            formData.append(key, value)
+        }
+
         if (action === 'remove' && item.isNew)
             setLineItems(items => items.filter(el => el.id != item.id))
-        else if (action === 'update') {
-            // TODO: Update the backend and update lineItems with result
-            const index = lineItems.findIndex(el => el.id === item.id)
-            console.log({ index, lineItems, item })
+        else if (action === 'remove' && !item.isNew) {
+            timer = setTimeout(() => {
+                console.log('Delete exisiting item...')
 
-            if (index >= 0) {
-                lineItems[index] = item
-                setLineItems(lineItems)
-            }
+                try {
+                    const res = axios.delete(
+                        `/results/${item.upload_id}/lineitem/${item.id}`,
+                        formData,
+                    )
+                } catch (error) {
+                    console.log({ newItemError: error })
+                }
+            }, 3000)
+        } else if (action === 'update' && isValid) {
+            timer = setTimeout(async () => {
+                if (item.isNew) {
+                    console.log('add new line item...')
+                    try {
+                        const res = axios.post(
+                            `/results/${item.upload_id}/lineitem`,
+                            formData,
+                        )
+                    } catch (error) {
+                        console.log({ newItemError: error })
+                    }
+                } else {
+                    console.log('updatating existing item')
+                    try {
+                        const res = axios.put(
+                            `/results/${item.upload_id}/lineitem/${item.id}`,
+                            formData,
+                        )
+                    } catch (error) {
+                        console.log({ newItemError: error })
+                    }
+                }
+            }, 3000)
         }
-        computeCurrentTotal()
 
-        setTimeout(() => {
-            if (callback instanceof Function) callback()
-        }, 2000)
+        const index = lineItems.findIndex(el => el.id === item.id)
+        console.log({ index, lineItems, item })
+
+        if (index >= 0) {
+            lineItems[index] = item
+            setLineItems(lineItems)
+        }
+
+        computeCurrentTotal()
+        if (callback instanceof Function) callback()
     }
 
     useEffect(() => computeCurrentTotal(), [lineItems])
