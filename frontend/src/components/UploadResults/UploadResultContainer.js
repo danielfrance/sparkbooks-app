@@ -80,7 +80,7 @@ export default function UploadResultContainer({ data, index }) {
             setIsUpdating(true)
             timer = setTimeout(async () => {
                 try {
-                    const res = await axios.put(
+                    const res = await axios.post(
                         `/results/${details.upload_id}/details/${details.result_id}`,
                         formData,
                     )
@@ -156,7 +156,7 @@ export default function UploadResultContainer({ data, index }) {
                 } else {
                     console.log('updatating existing item')
                     try {
-                        const res = axios.put(
+                        const res = axios.post(
                             `/results/${item.upload_id}/lineitem/${item.id}`,
                             formData,
                         )

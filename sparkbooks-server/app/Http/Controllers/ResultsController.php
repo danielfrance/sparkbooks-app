@@ -19,6 +19,7 @@ class ResultsController extends Controller
 
     public function updateDetail(Request $request, $uploadID, $resultID)
     {
+
         return ["message" => "updating result detail info", "request" => $request->input()];
     }
 
