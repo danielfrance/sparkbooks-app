@@ -84,7 +84,8 @@ export default function UploadResultContainer({ data, index }) {
 
     const updateLinesItems = (index, item, action, callback) => {
         console.log({ index, item })
-        if (action === 'remove' && !item.id) lineItems.splice(index, 1)
+        if (action === 'remove' && !item)
+            setLineItems(items => items.splice(index, 1))
         else {
             // TODO: Update the backend and update lineItems with result
             lineItems.splice(index, 1, item)

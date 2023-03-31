@@ -57,20 +57,25 @@ export default function UploadResultItem({ item: data, updateItems, index }) {
 
     const update = updates => {
         const { amount, category_id, item, sku } = updates
+        setIsUpdating(false)
 
         if (amount && category_id && item && sku) {
             setTimeout(() => {
                 let timer
                 clearTimeout(timer)
-                setIsUpdating(false)
 
-                console.log({ updates })
                 setIsUpdating(true)
                 updateItems(index, updates, 'update', () =>
                     setIsUpdating(false),
                 )
             }, 2000)
         }
+    }
+
+    const remove = () => {
+        console.log({ index })
+        setIsUpdating(true)
+        updateItems(index, null, 'remove', () => setIsUpdating(false))
     }
 
     return (
@@ -108,11 +113,7 @@ export default function UploadResultItem({ item: data, updateItems, index }) {
             </TableCell>
             <TableCell scope="row" pad="small">
                 {!isUpdating && (
-                    <Trash
-                        color="status-error"
-                        size="large"
-                        onClick={() => alert('delete row')}
-                    />
+                    <Trash color="status-error" size="large" onClick={remove} />
                 )}
                 {isUpdating && <Spinner size="xsmall" border={border} />}
             </TableCell>
