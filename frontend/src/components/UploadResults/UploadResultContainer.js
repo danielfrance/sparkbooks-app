@@ -15,6 +15,7 @@ import {
 } from 'grommet'
 
 import { Checkmark, StatusWarning } from 'grommet-icons'
+import { v4 as uuidv4 } from 'uuid'
 
 import UploadResultItem from './UploadResultItem'
 
@@ -72,7 +73,7 @@ export default function UploadResultContainer({ data, index }) {
 
     const addLineItem = () => {
         const newItem = {
-            id: new Date().toString(),
+            id: uuidv4(),
             amount: 0,
             category_id: '',
             item: '',
@@ -85,9 +86,9 @@ export default function UploadResultContainer({ data, index }) {
     }
 
     const updateLinesItems = (index, item, action, callback) => {
-        console.log({ index, item })
+        console.log({ index, item, lineItems })
         if (action === 'remove' && item.isNew)
-            setLineItems(items => items.filter(el => el.id !== item.id))
+            setLineItems(items => items.filter(el => el.id != item.id))
         else {
             // TODO: Update the backend and update lineItems with result
             lineItems.splice(index, 1, item)
