@@ -79,6 +79,7 @@ export default function UploadResultContainer({ data, index }) {
         timer = setTimeout(async () => {
             console.log("let's update details...")
             try {
+                console.log(formData)
                 const res = await axios.post(
                     `/results/${details.upload_id}/details/${details.result_id}`,
                     formData,
@@ -107,7 +108,7 @@ export default function UploadResultContainer({ data, index }) {
         setLineItems(items => [...items, newItem])
     }
 
-    const updateLinesItems = (item, action, callback) => {
+    const updateLinesItems = async (item, action, callback) => {
         clearTimeout(timer)
 
         const formData = new FormData()
@@ -140,32 +141,33 @@ export default function UploadResultContainer({ data, index }) {
 
             computeCurrentTotal()
 
-            if (isValid) {
+            if (isValid || !isValid) {
                 let res
 
-                timer = setTimeout(async () => {
-                    if (item.isNew) {
-                        console.log('add new line item...')
-                        try {
-                            res = await axios.post(
-                                `/results/${item.upload_id}/lineitem`,
-                                formData,
-                            )
-                        } catch (error) {
-                            res = error
-                        }
-                    } else {
-                        console.log('updatating existing item')
-                        try {
-                            res = await axios.post(
-                                `/results/${item.upload_id}/lineitem/${item.id}`,
-                                formData,
-                            )
-                        } catch (error) {
-                            res = error
-                        }
+                if (item.isNew) {
+                    console.log('add new line item...')
+                    try {
+                        res = await axios.post(
+                            `/results/${item.upload_id}/lineitem`,
+                            formData,
+                        )
+                    } catch (error) {
+                        res = error
                     }
-                }, 3000)
+                } else {
+                    console.log('updatating existing item')
+                    try {
+                        res = await axios.post(
+                            `/results/${item.upload_id}/lineitem/${item.id}`,
+                            formData,
+                        )
+                    } catch (error) {
+                        res = error
+                    }
+                }
+                // timer = setTimeout(async () => {
+
+                // }, 3000)
                 console.log({ responseData: res?.data })
             }
         }
