@@ -20,6 +20,7 @@ import UploadResultItem from './UploadResultItem'
 import axios from '@/lib/axios'
 
 let timer
+const timeout = 3 * 1000
 
 const border = [
     {
@@ -35,7 +36,6 @@ export default function UploadResultContainer({ data, index }) {
     const [isUpdating, setIsUpdating] = useState(false)
     const [lineItems, setLineItems] = useState(result_items)
     const [currentTotal, setCurrentTotal] = useState(0)
-
     const [details, setDetails] = useState(result_details)
     const [correctSubtotal, setCorrectSubtotal] = useState(false)
     const [correctTotal, setCorrectTotal] = useState(false)
@@ -50,9 +50,7 @@ export default function UploadResultContainer({ data, index }) {
     }
 
     const handleInputChange = event => {
-        clearTimeout(timer)
         setIsUpdating(true)
-
         const { name, value } = event.target
 
         if (
@@ -66,11 +64,10 @@ export default function UploadResultContainer({ data, index }) {
         setDetails(current => {
             return { ...current, [name]: value }
         })
+    }
 
-        if (!isValid) {
-            setIsUpdating(false)
-            return
-        }
+    const updateDetails = () => {
+        clearTimeout(timer)
 
         const formData = new FormData()
         for (const [key, value] of Object.entries(details)) {
@@ -89,7 +86,7 @@ export default function UploadResultContainer({ data, index }) {
                 console.log({ error })
             }
             setIsUpdating(false)
-        }, 3000)
+        }, timeout)
     }
 
     const addLineItem = () => {
@@ -128,7 +125,7 @@ export default function UploadResultContainer({ data, index }) {
                     } catch (error) {
                         console.log({ error })
                     }
-                }, 3000)
+                }, timeout)
             }
 
             setLineItems(items => items.filter(el => el.id != item.id))
@@ -165,8 +162,8 @@ export default function UploadResultContainer({ data, index }) {
                             res = error
                         }
                     }
-                }, 3000)
-                console.log({ responseData: res?.data })
+                }, timeout)
+                console.log({ res })
             }
         }
 
@@ -174,8 +171,6 @@ export default function UploadResultContainer({ data, index }) {
     }
 
     useEffect(() => {
-        computeCurrentTotal()
-
         setCorrectTotal(() => {
             return (
                 parseFloat(details.total) ===
@@ -185,24 +180,41 @@ export default function UploadResultContainer({ data, index }) {
         })
 
         setCorrectSubtotal(
-            () => parseFloat(details.net_amount) === parseFloat(currentTotal),
+            () => parseFloat(details.net_amount) == parseFloat(currentTotal),
         )
 
         setIsValid(() => {
             return (
                 correctSubtotal &&
                 correctTotal &&
-                details.supplier_name.trim().length
+                details.supplier_name.trim().length > 0
             )
         })
     }, [
-        isUpdating,
-        lineItems,
         currentTotal,
-        details,
         details.net_amount,
         details.total_tax_amount,
         details.total,
+        details.supplier_name,
+    ])
+
+    useEffect(() => {
+        computeCurrentTotal()
+
+        if (
+            parseFloat(details.total) ===
+                parseFloat(details.net_amount) +
+                    parseFloat(details.total_tax_amount) &&
+            parseFloat(details.net_amount) === parseFloat(currentTotal) &&
+            details.supplier_name.trim().length > 0
+        )
+            updateDetails()
+        else setIsUpdating(false)
+    }, [
+        details.net_amount,
+        details.total_tax_amount,
+        details.total,
+        details.supplier_name,
     ])
 
     return (
