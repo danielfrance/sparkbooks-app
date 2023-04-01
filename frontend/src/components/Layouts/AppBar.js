@@ -7,9 +7,10 @@ import { useUIContext } from '@/contexts/ui'
 const Filter = ({}) => {
     const { filterQuery, setFilterQuery } = useUIContext()
     const [value, setValue] = useState(filterQuery)
+    let timer
+
     const handleChange = e => {
         setValue(e.target.value)
-        let timer
 
         clearTimeout(timer)
         timer = setTimeout(() => setFilterQuery(e.target.value), 1000)

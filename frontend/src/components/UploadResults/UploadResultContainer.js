@@ -7,9 +7,7 @@ import {
     TableRow,
     TableCell,
     TableBody,
-    FormField,
     TextInput,
-    Button,
     Text,
     Spinner,
 } from 'grommet'
@@ -20,6 +18,8 @@ import { v4 as uuidv4 } from 'uuid'
 import UploadResultItem from './UploadResultItem'
 
 import axios from '@/lib/axios'
+
+let timer
 
 const border = [
     {
@@ -56,12 +56,18 @@ export default function UploadResultContainer({ data, index }) {
         setCurrentTotal(total)
     }
 
-    let timer
-
     const handleInputChange = event => {
         clearTimeout(timer)
-
         const { name, value } = event.target
+
+        if (
+            (name === 'net_amount' ||
+                name === 'total_tax_amount' ||
+                name === 'total') &&
+            isNaN(value)
+        )
+            return
+
         setDetails(current => {
             return { ...current, [name]: value }
         })
@@ -71,14 +77,13 @@ export default function UploadResultContainer({ data, index }) {
             correctTotal() &&
             details.supplier_name.trim().length
         ) {
-            console.log("let's update details...")
-
             const formData = new FormData()
             for (const [key, value] of Object.entries(details)) {
                 formData.append(key, value)
             }
             setIsUpdating(true)
             timer = setTimeout(async () => {
+                console.log("let's update details...")
                 try {
                     const res = await axios.post(
                         `/results/${details.upload_id}/details/${details.result_id}`,
@@ -97,7 +102,6 @@ export default function UploadResultContainer({ data, index }) {
         }
     }
 
-    console.log({ details })
     const addLineItem = () => {
         const newItem = {
             id: uuidv4(),
@@ -129,11 +133,11 @@ export default function UploadResultContainer({ data, index }) {
         if (action === 'remove' && item.isNew)
             setLineItems(items => items.filter(el => el.id != item.id))
         else if (action === 'remove' && !item.isNew) {
-            timer = setTimeout(() => {
+            timer = setTimeout(async () => {
                 console.log('Delete exisiting item...')
 
                 try {
-                    const res = axios.delete(
+                    const res = await axios.delete(
                         `/results/${item.upload_id}/lineitem/${item.id}`,
                         formData,
                     )
@@ -146,7 +150,7 @@ export default function UploadResultContainer({ data, index }) {
                 if (item.isNew) {
                     console.log('add new line item...')
                     try {
-                        const res = axios.post(
+                        const res = await axios.post(
                             `/results/${item.upload_id}/lineitem`,
                             formData,
                         )
@@ -156,7 +160,7 @@ export default function UploadResultContainer({ data, index }) {
                 } else {
                     console.log('updatating existing item')
                     try {
-                        const res = axios.post(
+                        const res = await axios.post(
                             `/results/${item.upload_id}/lineitem/${item.id}`,
                             formData,
                         )
@@ -165,14 +169,6 @@ export default function UploadResultContainer({ data, index }) {
                     }
                 }
             }, 3000)
-        }
-
-        const index = lineItems.findIndex(el => el.id === item.id)
-        console.log({ index, lineItems, item })
-
-        if (index >= 0) {
-            lineItems[index] = item
-            setLineItems(lineItems)
         }
 
         computeCurrentTotal()

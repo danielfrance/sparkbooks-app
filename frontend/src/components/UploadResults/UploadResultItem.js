@@ -1,6 +1,7 @@
 import { TableRow, TableCell, TextInput, Select, Spinner } from 'grommet'
 import { Trash } from 'grommet-icons'
 import { useEffect, useState } from 'react'
+let timer
 
 const chartOfAccounts = [
     { id: 1, name: '6110 Repairs and Maintenance' },
@@ -41,6 +42,9 @@ export default function UploadResultItem({ item: data, updateItems, index }) {
 
     const handleInputChange = (event, index) => {
         const { name, value } = event.target
+
+        if (name === 'amount' && isNaN(value)) return
+
         const updates = { ...itemData, [name]: value }
 
         setItemData(updates)
@@ -54,8 +58,6 @@ export default function UploadResultItem({ item: data, updateItems, index }) {
 
         if (updates.category_id) update(updates)
     }
-
-    let timer
 
     const update = updates => {
         clearTimeout(timer)
