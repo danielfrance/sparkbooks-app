@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use App\Models\Workspace;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,63 +17,100 @@ class AccountController extends Controller
     public function index()
     {
         $user = Auth::user();
-        return view('components.account.index')->with(['user' => $user]);
+        $workspace = $user->workspace;
+
+
+        $isAdmin = $user->hasRole(['admin', 'superadmin']);
+
+        $users = $workspace->users;
+        $teamInfo = $users->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->roleName,
+            ];
+        });
+
+
+        $accountInfo = [
+            'name' => $user->name,
+            'email' => $user->email,
+            'workspaceInfo' => ($isAdmin) ? $workspace->info() : null,
+            'team' => ($isAdmin) ? $teamInfo : null,
+
+        ];
+
+        // TODO: current view doesn't have way to update workspace info.  Need to add that.
+
+        return $accountInfo;
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the update the authenticated user's account.
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+
+    public function updateUserDetails(Request $request, $id)
     {
-        //
+        $user = User::find($id);
+
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+        ]);
+
+        return response()->json([
+            'message' => 'User updated successfully',
+            'data' => $user
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function inviteUser(Request $request)
     {
-        //
+        $this->validate($request, [
+            'email' => 'required|email|unique:users',
+            'role' => 'required',
+        ]);
+
+        // TODO: create Invite Capabilities
+
+        return response()->json([
+            'message' => 'User invited successfully',
+        ]);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function updateTeamMember(Request $request, $id)
     {
-        //
+        $user = User::find($id);
+
+        $this->validate($request, [
+            'role' => 'required',
+        ]);
+
+        $user->update([
+            'role' => $request->role,
+        ]);
+
+        return response()->json([
+            'message' => 'User updated successfully',
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+    public function deleteTeamMember(Request $request)
     {
-        //
+        $user = User::find($request->id);
+
+        //TODO: make sure user is not the last admin
+
+        $user->delete();
+
+        return response()->json([
+            'message' => 'User removed successfully',
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
 
     /**
      * Remove the specified resource from storage.
