@@ -24,16 +24,16 @@ const chartOfAccounts = [
     { id: 18, name: '6620 Uniforms' },
 ]
 
+const border = [
+    {
+        side: 'all',
+        color: '#C767F5',
+        size: 'medium',
+        style: 'dotted',
+    },
+]
 export default function UploadResultItem({ item: data, updateItems, index }) {
     // console.log(data)
-    const border = [
-        {
-            side: 'all',
-            color: '#C767F5',
-            size: 'medium',
-            style: 'dotted',
-        },
-    ]
     const [isUpdating, setIsUpdating] = useState(false)
     const [itemData, setItemData] = useState(data)
     const [selectValue, setSelectValue] = useState(() =>
@@ -73,7 +73,6 @@ export default function UploadResultItem({ item: data, updateItems, index }) {
     }
 
     const remove = () => {
-        console.log({ index })
         setIsUpdating(true)
         updateItems(itemData, 'remove', () => setIsUpdating(false))
     }

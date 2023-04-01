@@ -37,16 +37,9 @@ export default function UploadResultContainer({ data, index }) {
     const [currentTotal, setCurrentTotal] = useState(0)
 
     const [details, setDetails] = useState(result_details)
-
-    const correctTotal = () => {
-        return (
-            parseFloat(details.total) ===
-            parseFloat(currentTotal) + parseFloat(details.total_tax_amount)
-        )
-    }
-
-    const correctSubtotal = () =>
-        parseFloat(details.net_amount) === parseFloat(currentTotal)
+    const [correctSubtotal, setCorrectSubtotal] = useState(false)
+    const [correctTotal, setCorrectTotal] = useState(false)
+    const [isValid, setIsValid] = useState(false)
 
     const computeCurrentTotal = () => {
         const total = lineItems.reduce(
@@ -58,6 +51,8 @@ export default function UploadResultContainer({ data, index }) {
 
     const handleInputChange = event => {
         clearTimeout(timer)
+        setIsUpdating(true)
+
         const { name, value } = event.target
 
         if (
@@ -72,34 +67,29 @@ export default function UploadResultContainer({ data, index }) {
             return { ...current, [name]: value }
         })
 
-        if (
-            correctSubtotal() &&
-            correctTotal() &&
-            details.supplier_name.trim().length
-        ) {
-            const formData = new FormData()
-            for (const [key, value] of Object.entries(details)) {
-                formData.append(key, value)
-            }
-            setIsUpdating(true)
-            timer = setTimeout(async () => {
-                console.log("let's update details...")
-                try {
-                    const res = await axios.post(
-                        `/results/${details.upload_id}/details/${details.result_id}`,
-                        formData,
-                    )
-
-                    console.log({ data: res.data })
-                } catch (error) {
-                    console.log({ error })
-                }
-
-                setIsUpdating(false)
-            }, 3000)
-        } else {
-            console.log("we can't update details...")
+        if (!isValid) {
+            setIsUpdating(false)
+            return
         }
+
+        const formData = new FormData()
+        for (const [key, value] of Object.entries(details)) {
+            formData.append(key, value)
+        }
+        timer = setTimeout(async () => {
+            console.log("let's update details...")
+            try {
+                const res = await axios.post(
+                    `/results/${details.upload_id}/details/${details.result_id}`,
+                    formData,
+                )
+
+                console.log({ data: res.data })
+            } catch (error) {
+                console.log({ error })
+            }
+            setIsUpdating(false)
+        }, 3000)
     }
 
     const addLineItem = () => {
@@ -120,62 +110,100 @@ export default function UploadResultContainer({ data, index }) {
     const updateLinesItems = (item, action, callback) => {
         clearTimeout(timer)
 
-        const isValid =
-            correctSubtotal() &&
-            correctTotal() &&
-            details.supplier_name.trim().length
-
         const formData = new FormData()
         for (const [key, value] of Object.entries(item)) {
             formData.append(key, value)
         }
 
-        if (action === 'remove' && item.isNew)
-            setLineItems(items => items.filter(el => el.id != item.id))
-        else if (action === 'remove' && !item.isNew) {
-            timer = setTimeout(async () => {
-                console.log('Delete exisiting item...')
+        if (action === 'remove') {
+            if (!item.isNew) {
+                timer = setTimeout(async () => {
+                    console.log('Delete exisiting item...')
 
-                try {
-                    const res = await axios.delete(
-                        `/results/${item.upload_id}/lineitem/${item.id}`,
-                        formData,
-                    )
-                } catch (error) {
-                    console.log({ newItemError: error })
-                }
-            }, 3000)
-        } else if (action === 'update' && isValid) {
-            timer = setTimeout(async () => {
-                if (item.isNew) {
-                    console.log('add new line item...')
                     try {
-                        const res = await axios.post(
-                            `/results/${item.upload_id}/lineitem`,
-                            formData,
-                        )
-                    } catch (error) {
-                        console.log({ newItemError: error })
-                    }
-                } else {
-                    console.log('updatating existing item')
-                    try {
-                        const res = await axios.post(
+                        const res = await axios.delete(
                             `/results/${item.upload_id}/lineitem/${item.id}`,
                             formData,
                         )
                     } catch (error) {
-                        console.log({ newItemError: error })
+                        console.log({ error })
                     }
-                }
-            }, 3000)
+                }, 3000)
+            }
+
+            setLineItems(items => items.filter(el => el.id != item.id))
         }
 
-        computeCurrentTotal()
+        if (action === 'update') {
+            const index = lineItems.findIndex(el => el.id === item.id)
+            lineItems[index] = item
+
+            computeCurrentTotal()
+
+            if (isValid) {
+                let res
+
+                timer = setTimeout(async () => {
+                    if (item.isNew) {
+                        console.log('add new line item...')
+                        try {
+                            res = await axios.post(
+                                `/results/${item.upload_id}/lineitem`,
+                                formData,
+                            )
+                        } catch (error) {
+                            res = error
+                        }
+                    } else {
+                        console.log('updatating existing item')
+                        try {
+                            res = await axios.post(
+                                `/results/${item.upload_id}/lineitem/${item.id}`,
+                                formData,
+                            )
+                        } catch (error) {
+                            res = error
+                        }
+                    }
+                }, 3000)
+                console.log({ responseData: res?.data })
+            }
+        }
+
         if (callback instanceof Function) callback()
     }
 
-    useEffect(() => computeCurrentTotal(), [lineItems])
+    useEffect(() => {
+        computeCurrentTotal()
+
+        setCorrectTotal(() => {
+            return (
+                parseFloat(details.total) ===
+                parseFloat(details.net_amount) +
+                    parseFloat(details.total_tax_amount)
+            )
+        })
+
+        setCorrectSubtotal(
+            () => parseFloat(details.net_amount) === parseFloat(currentTotal),
+        )
+
+        setIsValid(() => {
+            return (
+                correctSubtotal &&
+                correctTotal &&
+                details.supplier_name.trim().length
+            )
+        })
+    }, [
+        isUpdating,
+        lineItems,
+        currentTotal,
+        details,
+        details.net_amount,
+        details.total_tax_amount,
+        details.total,
+    ])
 
     return (
         <Box className="box_container" margin={{ top: 'medium' }} fill>
@@ -268,15 +296,18 @@ export default function UploadResultContainer({ data, index }) {
                                             border={border}
                                         />
                                     )}
-                                    {correctSubtotal() && !isUpdating && (
-                                        <Checkmark color="green" />
-                                    )}
-                                    {!correctSubtotal() && !isUpdating && (
-                                        <StatusWarning
-                                            size="large"
-                                            color="red"
-                                        />
-                                    )}
+                                    {correctSubtotal &&
+                                        correctTotal &&
+                                        !isUpdating && (
+                                            <Checkmark color="green" />
+                                        )}
+                                    {(!correctSubtotal || !correctTotal) &&
+                                        !isUpdating && (
+                                            <StatusWarning
+                                                size="large"
+                                                color="red"
+                                            />
+                                        )}
                                 </TableCell>
                             </TableRow>
                             <TableRow key={`${index}-tax`}>
@@ -329,15 +360,18 @@ export default function UploadResultContainer({ data, index }) {
                                             border={border}
                                         />
                                     )}
-                                    {correctTotal() && !isUpdating && (
-                                        <Checkmark color="green" />
-                                    )}
-                                    {!correctTotal() && !isUpdating && (
-                                        <StatusWarning
-                                            size="large"
-                                            color="red"
-                                        />
-                                    )}
+                                    {correctSubtotal &&
+                                        correctTotal &&
+                                        !isUpdating && (
+                                            <Checkmark color="green" />
+                                        )}
+                                    {(!correctSubtotal || !correctTotal) &&
+                                        !isUpdating && (
+                                            <StatusWarning
+                                                size="large"
+                                                color="red"
+                                            />
+                                        )}
                                 </TableCell>
                             </TableRow>
                         </TableBody>
