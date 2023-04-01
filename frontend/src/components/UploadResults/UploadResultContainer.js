@@ -138,7 +138,7 @@ export default function UploadResultContainer({ data, index }) {
 
             computeCurrentTotal()
 
-            if (isValid) {
+            if (isValid || !isValid) {
                 let res
 
                 timer = setTimeout(async () => {
