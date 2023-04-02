@@ -10,6 +10,7 @@ import {
     TextInput,
     Text,
     Spinner,
+    Notification,
 } from 'grommet'
 
 import { Checkmark, StatusWarning } from 'grommet-icons'
@@ -39,7 +40,7 @@ export default function UploadResultContainer({ data, index }) {
     const [details, setDetails] = useState(result_details)
     const [correctSubtotal, setCorrectSubtotal] = useState(false)
     const [correctTotal, setCorrectTotal] = useState(false)
-    const [isValid, setIsValid] = useState(false)
+    const [errorMessage, setErrorMessage] = useState('')
 
     const computeCurrentTotal = () => {
         const total = lineItems.reduce(
@@ -76,15 +77,17 @@ export default function UploadResultContainer({ data, index }) {
         timer = setTimeout(async () => {
             console.log("let's update details...")
             try {
-                console.log(formData)
                 const res = await axios.post(
                     `/results/${details.upload_id}/details/${details.result_id}`,
                     formData,
                 )
 
-                console.log({ data: res.data })
+                // console.log({ data: res.data })
             } catch (error) {
-                console.log({ error })
+                // console.log({ error })
+                setErrorMessage(
+                    `We couldn't update receipt details (name, subtotal, tax and total), try again.`,
+                )
             }
             setIsUpdating(false)
         }, timeout)
@@ -105,7 +108,7 @@ export default function UploadResultContainer({ data, index }) {
         setLineItems(items => [...items, newItem])
     }
 
-    const updateLinesItems = async (item, action, callback) => {
+    const updateLinesItems = (item, action, callback) => {
         clearTimeout(timer)
 
         const formData = new FormData()
@@ -119,17 +122,24 @@ export default function UploadResultContainer({ data, index }) {
                     console.log('Delete exisiting item...')
 
                     try {
-                        const res = await axios.delete(
+                        await axios.delete(
                             `/results/${item.upload_id}/lineitem/${item.id}`,
                             formData,
                         )
+                        setLineItems(items =>
+                            items.filter(el => el.id != item.id),
+                        )
                     } catch (error) {
                         console.log({ error })
+                        setErrorMessage(
+                            `We couldn't remove the item, try again.`,
+                        )
                     }
                 }, timeout)
             }
 
-            setLineItems(items => items.filter(el => el.id != item.id))
+            if (item.isNew)
+                setLineItems(items => items.filter(el => el.id != item.id))
         }
 
         if (action === 'update') {
@@ -138,34 +148,23 @@ export default function UploadResultContainer({ data, index }) {
 
             computeCurrentTotal()
 
-            if (isValid || !isValid) {
-                let res
+            const url = item.isNew
+                ? `/results/${item.upload_id}/lineitem`
+                : `/results/${item.upload_id}/lineitem/${item.id}`
 
-                timer = setTimeout(async () => {
-                    if (item.isNew) {
-                        console.log('add new line item...')
-                        try {
-                            res = await axios.post(
-                                `/results/${item.upload_id}/lineitem`,
-                                formData,
-                            )
-                        } catch (error) {
-                            res = error
-                        }
-                    } else {
-                        console.log('updatating existing item')
-                        try {
-                            res = await axios.post(
-                                `/results/${item.upload_id}/lineitem/${item.id}`,
-                                formData,
-                            )
-                        } catch (error) {
-                            res = error
-                        }
-                    }
-                }, timeout)
-                console.log({ res })
-            }
+            timer = setTimeout(async () => {
+                try {
+                    const res = await axios.post(url, formData)
+                    lineItems[index] = res.data.resultLineItem
+                } catch (error) {
+                    console.log({ error })
+                    setErrorMessage(
+                        `We couldn't ${
+                            item.isNew ? 'add' : 'update'
+                        } the item, try again.`,
+                    )
+                }
+            }, timeout)
         }
 
         if (callback instanceof Function) callback()
@@ -174,23 +173,19 @@ export default function UploadResultContainer({ data, index }) {
     useEffect(() => {
         setCorrectTotal(() => {
             return (
-                parseFloat(details.total) ===
-                parseFloat(details.net_amount) +
+                parseFloat(details.total).toFixed(2) ===
+                (
+                    parseFloat(details.net_amount) +
                     parseFloat(details.total_tax_amount)
+                ).toFixed(2)
             )
         })
 
         setCorrectSubtotal(
-            () => parseFloat(details.net_amount) == parseFloat(currentTotal),
+            () =>
+                parseFloat(details.net_amount).toFixed(2) ===
+                parseFloat(currentTotal).toFixed(2),
         )
-
-        setIsValid(() => {
-            return (
-                correctSubtotal &&
-                correctTotal &&
-                details.supplier_name.trim().length > 0
-            )
-        })
     }, [
         currentTotal,
         details.net_amount,
@@ -203,10 +198,13 @@ export default function UploadResultContainer({ data, index }) {
         computeCurrentTotal()
 
         if (
-            parseFloat(details.total) ===
-                parseFloat(details.net_amount) +
-                    parseFloat(details.total_tax_amount) &&
-            parseFloat(details.net_amount) === parseFloat(currentTotal) &&
+            parseFloat(details.total).toFixed(2) ===
+                (
+                    parseFloat(details.net_amount) +
+                    parseFloat(details.total_tax_amount)
+                ).toFixed(2) &&
+            parseFloat(details.net_amount).toFixed(2) ===
+                parseFloat(currentTotal).toFixed(2) &&
             details.supplier_name.trim().length > 0
         )
             updateDetails()
@@ -219,178 +217,192 @@ export default function UploadResultContainer({ data, index }) {
     ])
 
     return (
-        <Box className="box_container" margin={{ top: 'medium' }} fill>
-            <Box
-                direction="row"
-                justify="between"
-                margin={{ top: 'medium' }}
-                height={{ min: '50px', max: '90px' }}>
-                <Box direction="row" gap="small">
-                    <TextInput
-                        name="supplier_name"
-                        value={details.supplier_name}
-                        onChange={e => handleInputChange(e)}
-                        width="medium"
-                        margin="none"
-                    />
+        <>
+            {errorMessage.length > 0 && (
+                <Notification
+                    toast
+                    status="critical"
+                    title="Saving Error"
+                    message={errorMessage}
+                    onClose={() => setErrorMessage('')}
+                />
+            )}
 
-                    {isUpdating && (
-                        <Spinner
-                            size="xsmall"
-                            margin={{ top: 'xsmall' }}
-                            border={border}
+            <Box className="box_container" margin={{ top: 'medium' }} fill>
+                <Box
+                    direction="row"
+                    justify="between"
+                    margin={{ top: 'medium' }}
+                    height={{ min: '50px', max: '90px' }}>
+                    <Box direction="row" gap="small">
+                        <TextInput
+                            name="supplier_name"
+                            value={details.supplier_name}
+                            onChange={e => handleInputChange(e)}
+                            width="medium"
+                            margin="none"
                         />
-                    )}
-                </Box>
 
-                <button
-                    className="btn secondary inverse"
-                    style={{ width: '30%' }}
-                    onClick={addLineItem}>
-                    New Line Item
-                </button>
+                        {isUpdating && (
+                            <Spinner
+                                size="xsmall"
+                                margin={{ top: 'xsmall' }}
+                                border={border}
+                            />
+                        )}
+                    </Box>
+
+                    <button
+                        className="btn secondary inverse"
+                        style={{ width: '30%' }}
+                        onClick={addLineItem}>
+                        New Line Item
+                    </button>
+                </Box>
+                <Grid
+                    direction="row"
+                    gap="small"
+                    margin={{ top: '3em' }}
+                    columns={['1/3', '2/3']}>
+                    <Box height={{ min: 'large' }}>
+                        <embed src={imageURL} height="100%" />
+                    </Box>
+                    <Box align="start">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableCell scope="col" border="bottom">
+                                        Line Item
+                                    </TableCell>
+                                    <TableCell scope="col" border="bottom">
+                                        SKU
+                                    </TableCell>
+                                    <TableCell scope="col" border="bottom">
+                                        Category
+                                    </TableCell>
+                                    <TableCell scope="col" border="bottom">
+                                        Amount
+                                    </TableCell>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {lineItems.map((item, index) => (
+                                    <UploadResultItem
+                                        item={item}
+                                        index={index}
+                                        updateItems={updateLinesItems}
+                                        key={index}
+                                    />
+                                ))}
+                                <TableRow key={`${index}-subtotal`}>
+                                    <TableCell scope="row"></TableCell>
+                                    <TableCell scope="row"></TableCell>
+                                    <TableCell scope="row">
+                                        <Text color="brand" weight="bold">
+                                            Subtotal:
+                                        </Text>
+                                    </TableCell>
+                                    <TableCell scope="row">
+                                        <TextInput
+                                            name="net_amount"
+                                            value={details.net_amount || 0}
+                                            onChange={e =>
+                                                handleInputChange(e, index)
+                                            }
+                                        />
+                                    </TableCell>
+                                    <TableCell scope="row">
+                                        {isUpdating && (
+                                            <Spinner
+                                                size="xsmall"
+                                                border={border}
+                                            />
+                                        )}
+                                        {correctSubtotal &&
+                                            correctTotal &&
+                                            !isUpdating && (
+                                                <Checkmark color="green" />
+                                            )}
+                                        {(!correctSubtotal || !correctTotal) &&
+                                            !isUpdating && (
+                                                <StatusWarning
+                                                    size="large"
+                                                    color="red"
+                                                />
+                                            )}
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow key={`${index}-tax`}>
+                                    <TableCell scope="row"></TableCell>
+                                    <TableCell scope="row"></TableCell>
+                                    <TableCell scope="row">
+                                        <Text color="brand" weight="bold">
+                                            Tax:
+                                        </Text>
+                                    </TableCell>
+                                    <TableCell scope="row">
+                                        <TextInput
+                                            name="total_tax_amount"
+                                            value={
+                                                details.total_tax_amount || 0
+                                            }
+                                            onChange={e =>
+                                                handleInputChange(e, index)
+                                            }
+                                        />
+                                    </TableCell>
+                                    <TableCell scope="row">
+                                        {isUpdating && (
+                                            <Spinner
+                                                size="xsmall"
+                                                border={border}
+                                            />
+                                        )}
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow key={`${index}-total`}>
+                                    <TableCell scope="row"></TableCell>
+                                    <TableCell scope="row"></TableCell>
+                                    <TableCell scope="row">
+                                        <Text color="brand" weight="bold">
+                                            Total:
+                                        </Text>
+                                    </TableCell>
+                                    <TableCell scope="row">
+                                        <TextInput
+                                            name="total"
+                                            value={details.total || 0}
+                                            onChange={e =>
+                                                handleInputChange(e, index)
+                                            }
+                                        />
+                                    </TableCell>
+                                    <TableCell scope="row">
+                                        {isUpdating && (
+                                            <Spinner
+                                                size="xsmall"
+                                                border={border}
+                                            />
+                                        )}
+                                        {correctSubtotal &&
+                                            correctTotal &&
+                                            !isUpdating && (
+                                                <Checkmark color="green" />
+                                            )}
+                                        {(!correctSubtotal || !correctTotal) &&
+                                            !isUpdating && (
+                                                <StatusWarning
+                                                    size="large"
+                                                    color="red"
+                                                />
+                                            )}
+                                    </TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </Box>
+                </Grid>
             </Box>
-            <Grid
-                direction="row"
-                gap="small"
-                margin={{ top: '3em' }}
-                columns={['1/3', '2/3']}>
-                <Box height={{ min: 'large' }}>
-                    <embed src={imageURL} height="100%" />
-                </Box>
-                <Box align="start">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableCell scope="col" border="bottom">
-                                    Line Item
-                                </TableCell>
-                                <TableCell scope="col" border="bottom">
-                                    SKU
-                                </TableCell>
-                                <TableCell scope="col" border="bottom">
-                                    Category
-                                </TableCell>
-                                <TableCell scope="col" border="bottom">
-                                    Amount
-                                </TableCell>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {lineItems.map((item, index) => (
-                                <UploadResultItem
-                                    item={item}
-                                    index={index}
-                                    updateItems={updateLinesItems}
-                                    key={index}
-                                />
-                            ))}
-                            <TableRow key={`${index}-subtotal`}>
-                                <TableCell scope="row"></TableCell>
-                                <TableCell scope="row"></TableCell>
-                                <TableCell scope="row">
-                                    <Text color="brand" weight="bold">
-                                        Subtotal:
-                                    </Text>
-                                </TableCell>
-                                <TableCell scope="row">
-                                    <TextInput
-                                        name="net_amount"
-                                        value={details.net_amount || ''}
-                                        onChange={e =>
-                                            handleInputChange(e, index)
-                                        }
-                                    />
-                                </TableCell>
-                                <TableCell scope="row">
-                                    {isUpdating && (
-                                        <Spinner
-                                            size="xsmall"
-                                            border={border}
-                                        />
-                                    )}
-                                    {correctSubtotal &&
-                                        correctTotal &&
-                                        !isUpdating && (
-                                            <Checkmark color="green" />
-                                        )}
-                                    {(!correctSubtotal || !correctTotal) &&
-                                        !isUpdating && (
-                                            <StatusWarning
-                                                size="large"
-                                                color="red"
-                                            />
-                                        )}
-                                </TableCell>
-                            </TableRow>
-                            <TableRow key={`${index}-tax`}>
-                                <TableCell scope="row"></TableCell>
-                                <TableCell scope="row"></TableCell>
-                                <TableCell scope="row">
-                                    <Text color="brand" weight="bold">
-                                        Tax:
-                                    </Text>
-                                </TableCell>
-                                <TableCell scope="row">
-                                    <TextInput
-                                        name="total_tax_amount"
-                                        value={details.total_tax_amount || ''}
-                                        onChange={e =>
-                                            handleInputChange(e, index)
-                                        }
-                                    />
-                                </TableCell>
-                                <TableCell scope="row">
-                                    {isUpdating && (
-                                        <Spinner
-                                            size="xsmall"
-                                            border={border}
-                                        />
-                                    )}
-                                </TableCell>
-                            </TableRow>
-                            <TableRow key={`${index}-total`}>
-                                <TableCell scope="row"></TableCell>
-                                <TableCell scope="row"></TableCell>
-                                <TableCell scope="row">
-                                    <Text color="brand" weight="bold">
-                                        Total:
-                                    </Text>
-                                </TableCell>
-                                <TableCell scope="row">
-                                    <TextInput
-                                        name="total"
-                                        value={details.total || ''}
-                                        onChange={e =>
-                                            handleInputChange(e, index)
-                                        }
-                                    />
-                                </TableCell>
-                                <TableCell scope="row">
-                                    {isUpdating && (
-                                        <Spinner
-                                            size="xsmall"
-                                            border={border}
-                                        />
-                                    )}
-                                    {correctSubtotal &&
-                                        correctTotal &&
-                                        !isUpdating && (
-                                            <Checkmark color="green" />
-                                        )}
-                                    {(!correctSubtotal || !correctTotal) &&
-                                        !isUpdating && (
-                                            <StatusWarning
-                                                size="large"
-                                                color="red"
-                                            />
-                                        )}
-                                </TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
-                </Box>
-            </Grid>
-        </Box>
+        </>
     )
 }
