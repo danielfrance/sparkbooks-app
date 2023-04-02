@@ -2,6 +2,7 @@ import { TableRow, TableCell, TextInput, Select, Spinner } from 'grommet'
 import { Trash } from 'grommet-icons'
 import { useEffect, useState } from 'react'
 let timer
+const timeout = 2 * 1000
 
 const chartOfAccounts = [
     { id: 1, name: '6110 Repairs and Maintenance' },
@@ -68,7 +69,7 @@ export default function UploadResultItem({ item: data, updateItems, index }) {
             setIsUpdating(true)
             timer = setTimeout(() => {
                 updateItems(updates, 'update', () => setIsUpdating(false))
-            }, 2000)
+            }, timeout)
         }
     }
 

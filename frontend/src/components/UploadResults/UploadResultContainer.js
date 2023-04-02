@@ -21,7 +21,7 @@ import UploadResultItem from './UploadResultItem'
 import axios from '@/lib/axios'
 
 let timer
-const timeout = 3 * 1000
+const timeout = 2 * 1000
 
 const border = [
     {
