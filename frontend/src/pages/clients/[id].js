@@ -17,6 +17,7 @@ import {
     List,
     Data,
     Menu,
+    Notification,
 } from 'grommet'
 import { SettingsOption } from 'grommet-icons'
 
@@ -101,7 +102,8 @@ const columns = [
     {
         property: 'processed',
         size: 'medium',
-        header: <Text>Processed</Text>,
+        align: 'end',
+        header: <Text>Processing</Text>,
         render: processingDataRender('processed'),
     },
 ]
@@ -142,13 +144,16 @@ export default function ClientEdit({ data, status, statusText }) {
 
     const [selected, setSelected] = useState()
 
+    const [isUnvailable, setIsUnvailable] = useState(false)
+
     const onClickRow = ({ datum }) => {
-        router.push(`/uploads/${datum.id}`)
+        if (datum.percent) router.push(`/uploads/${datum.id}`)
+        else setIsUnvailable(true)
     }
 
-    const filtered = uploads.filter(datum =>
-        datum.name.toLocaleLowerCase().includes(filterQuery),
-    )
+    const filtered = uploads
+        .filter(datum => datum.name.toLocaleLowerCase().includes(filterQuery))
+        .sort((a, b) => new Date(b.percent) - new Date(a.percent))
 
     const actions = [
         // { label: 'Add', onClick: e => console.log(e) },
@@ -162,6 +167,15 @@ export default function ClientEdit({ data, status, statusText }) {
 
     return (
         <>
+            {isUnvailable && (
+                <Notification
+                    toast
+                    status="warning"
+                    title="Not ready"
+                    message="Still processing"
+                    onClose={() => setIsUnvailable(false)}
+                />
+            )}
             {status !== 200 && (
                 <ErrorMessage status={status} statusText={statusText} />
             )}
