@@ -24,10 +24,11 @@ const UploadFilesLayer = ({ onClose }) => {
     const [show, setShow] = useState(false)
     const [visible, setVisible] = useState(false)
     const [error, setError] = useState()
+    const [clients, setClients] = useState([])
 
-    const { workSpace, setWorkSpace } = useUIContext()
+    // const { workSpace, setWorkSpace } = useUIContext()
 
-    const { clients } = workSpace
+    // const { clients } = workSpace
 
     const selectOptions = clients.map(client => {
         const { id, name } = client
@@ -76,19 +77,17 @@ const UploadFilesLayer = ({ onClose }) => {
         }
     }
 
-    const reloadWorkSpace = async () => {
+    const getClients = async () => {
         try {
-            const res = await axios.get('/dashboardData')
-            return res.data
+            const res = await axios.get('/clients')
+            setClients(res.data)
         } catch (error) {
             setError(error.data.status)
         }
     }
 
     useEffect(() => {
-        if (!workSpace) {
-            setWorkSpace(() => reloadWorkSpace())
-        }
+        getClients()
     }, [])
 
     return (
