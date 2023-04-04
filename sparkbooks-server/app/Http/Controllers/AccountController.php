@@ -34,8 +34,10 @@ class AccountController extends Controller
 
 
         $accountInfo = [
+            'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
+            'is_admin' => $isAdmin,
             'workspaceInfo' => ($isAdmin) ? $workspace->info() : null,
             'team' => ($isAdmin) ? $teamInfo : null,
 
