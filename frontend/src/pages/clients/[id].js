@@ -109,7 +109,6 @@ const columns = [
 ]
 
 export default function ClientEdit({ data, status, statusText }) {
-    console.log(data)
     const router = useRouter()
     const [value, setValue] = useState(data.client.state)
     const [isOpen, setIsOpen] = useState(false)
@@ -147,7 +146,7 @@ export default function ClientEdit({ data, status, statusText }) {
     const [isUnvailable, setIsUnvailable] = useState(false)
 
     const onClickRow = ({ datum }) => {
-        if (datum.percent) router.push(`/uploads/${datum.id}`)
+        if (datum.processed) router.push(`/uploads/${datum.id}`)
         else setIsUnvailable(true)
     }
 
@@ -198,7 +197,7 @@ export default function ClientEdit({ data, status, statusText }) {
                                         <FormField name="name" label="Name">
                                             <TextInput
                                                 name="name"
-                                                value={client?.name}
+                                                value={client?.name || ''}
                                             />
                                         </FormField>
                                     </Box>
@@ -213,7 +212,7 @@ export default function ClientEdit({ data, status, statusText }) {
                                                 label="Email">
                                                 <TextInput
                                                     name="email"
-                                                    value={client?.email}
+                                                    value={client?.email || ''}
                                                 />
                                             </FormField>
                                             <FormField
@@ -221,7 +220,9 @@ export default function ClientEdit({ data, status, statusText }) {
                                                 label="Street">
                                                 <TextInput
                                                     name="address"
-                                                    value={client?.address}
+                                                    value={
+                                                        client?.address || ''
+                                                    }
                                                 />
                                             </FormField>
                                             <FormField
@@ -230,7 +231,8 @@ export default function ClientEdit({ data, status, statusText }) {
                                                 <TextInput
                                                     name="point_of_contact"
                                                     value={
-                                                        client?.point_of_contact
+                                                        client?.point_of_contact ||
+                                                        ''
                                                     }
                                                 />
                                             </FormField>
@@ -241,13 +243,13 @@ export default function ClientEdit({ data, status, statusText }) {
                                                 label="Phone">
                                                 <TextInput
                                                     name="phone"
-                                                    value={client?.phone}
+                                                    value={client?.phone || ''}
                                                 />
                                             </FormField>
                                             <FormField name="city" label="City">
                                                 <TextInput
                                                     name="city"
-                                                    value={client?.city}
+                                                    value={client?.city || ''}
                                                 />
                                             </FormField>
                                             <FormField
