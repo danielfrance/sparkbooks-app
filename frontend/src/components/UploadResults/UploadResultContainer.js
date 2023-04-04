@@ -13,7 +13,7 @@ import {
     Notification,
 } from 'grommet'
 
-import { Checkmark, StatusWarning } from 'grommet-icons'
+import { Actions, Checkmark, StatusWarning } from 'grommet-icons'
 import { v4 as uuidv4 } from 'uuid'
 
 import UploadResultItem from './UploadResultItem'
@@ -244,10 +244,15 @@ export default function UploadResultContainer({ data, index }) {
                         />
 
                         {isUpdating && (
-                            <Spinner
-                                size="xsmall"
+                            // <Spinner
+                            //     size="xsmall"
+                            //     margin={{ top: 'xsmall' }}
+                            //     border={border}
+                            // />
+                            <Actions
+                                size="medium"
+                                color="#C767F5"
                                 margin={{ top: 'xsmall' }}
-                                border={border}
                             />
                         )}
                     </Box>
@@ -313,9 +318,13 @@ export default function UploadResultContainer({ data, index }) {
                                     </TableCell>
                                     <TableCell scope="row">
                                         {isUpdating && (
-                                            <Spinner
-                                                size="xsmall"
-                                                border={border}
+                                            // <Spinner
+                                            //     size="xsmall"
+                                            //     border={border}
+                                            // />
+                                            <Actions
+                                                size="small"
+                                                color="#C767F5"
                                             />
                                         )}
                                         {correctSubtotal &&
@@ -353,9 +362,13 @@ export default function UploadResultContainer({ data, index }) {
                                     </TableCell>
                                     <TableCell scope="row">
                                         {isUpdating && (
-                                            <Spinner
-                                                size="xsmall"
-                                                border={border}
+                                            // <Spinner
+                                            //     size="xsmall"
+                                            //     border={border}
+                                            // />
+                                            <Actions
+                                                size="small"
+                                                color="#C767F5"
                                             />
                                         )}
                                     </TableCell>
@@ -379,10 +392,14 @@ export default function UploadResultContainer({ data, index }) {
                                     </TableCell>
                                     <TableCell scope="row">
                                         {isUpdating && (
-                                            <Spinner
-                                                size="xsmall"
-                                                border={border}
+                                            <Actions
+                                                size="small"
+                                                color="#C767F5"
                                             />
+                                            // <Spinner
+                                            //     size="xsmall"
+                                            //     border={border}
+                                            // />
                                         )}
                                         {correctSubtotal &&
                                             correctTotal &&

@@ -1,5 +1,5 @@
 import { TableRow, TableCell, TextInput, Select, Spinner } from 'grommet'
-import { Trash } from 'grommet-icons'
+import { Action, Actions, Trash } from 'grommet-icons'
 import { useEffect, useState } from 'react'
 let timer
 const timeout = 2 * 1000
@@ -117,9 +117,12 @@ export default function UploadResultItem({ item: data, updateItems, index }) {
             </TableCell>
             <TableCell scope="row" pad="small">
                 {!isUpdating && (
-                    <Trash color="status-error" size="large" onClick={remove} />
+                    <Trash color="status-error" size="small" onClick={remove} />
                 )}
-                {isUpdating && <Spinner size="xsmall" border={border} />}
+                {isUpdating && (
+                    // <Spinner size="5px" margin="0" border={border} />
+                    <Actions size="small" color="#C767F5" />
+                )}
             </TableCell>
         </TableRow>
     )
