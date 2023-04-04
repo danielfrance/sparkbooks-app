@@ -222,40 +222,6 @@ export default function Account({ data }) {
                                         </button>
                                     </>
                                 )}
-                                {workspaceInfo && (
-                                    <>
-                                        <Box
-                                            direction="row"
-                                            // align="center"
-                                            // margin={{ bottom: 'medium' }}
-                                            margin="0"
-                                            pad="0"
-                                            gap="0">
-                                            <Phone
-                                                // size="medium"
-                                                color="brand"
-                                                style={{ marginRight: '0.5em' }}
-                                            />
-                                            <Text size="medium">
-                                                {workspaceInfo?.phone}
-                                            </Text>
-                                        </Box>
-                                        <Box
-                                            direction="row"
-                                            // align="center"
-                                            // margin={{ bottom: 'medium' }}
-                                        >
-                                            <Organization
-                                                // size="medium"
-                                                color="brand"
-                                                style={{ marginRight: '0.5em' }}
-                                            />
-                                            <Text size="medium">
-                                                {workspaceInfo?.address}
-                                            </Text>
-                                        </Box>
-                                    </>
-                                )}
                             </div>
                         </div>
                         <Card background="brand" elevation="medium">
