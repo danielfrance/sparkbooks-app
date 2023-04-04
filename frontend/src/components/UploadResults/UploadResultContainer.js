@@ -241,9 +241,15 @@ export default function UploadResultContainer({ data, index }) {
                             onChange={e => handleInputChange(e)}
                             width="medium"
                             margin="none"
+                            reverse
+                            icon={
+                                isUpdating && (
+                                    <Actions size="medium" color="#C767F5" />
+                                )
+                            }
                         />
 
-                        {isUpdating && (
+                        {/* {isUpdating && (
                             // <Spinner
                             //     size="xsmall"
                             //     margin={{ top: 'xsmall' }}
@@ -252,9 +258,9 @@ export default function UploadResultContainer({ data, index }) {
                             <Actions
                                 size="medium"
                                 color="#C767F5"
-                                margin={{ top: 'xsmall' }}
+                                
                             />
-                        )}
+                        )} */}
                     </Box>
 
                     <button
