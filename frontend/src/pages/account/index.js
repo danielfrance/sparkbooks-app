@@ -48,10 +48,9 @@ export default function Account({ data }) {
 
     const editAccount = () => {
         router.push(`/account/${id}`)
-        console.log(datum)
     }
 
-    const onClickRow = datum => {
+    const onClickRow = ({ datum }) => {
         router.push(`/account/team/${datum.id}`)
         console.log(datum)
     }
