@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FileController;
@@ -56,6 +57,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('files/{file}', [FileController::class, 'show']);
 
 
+    //Chart of Accounts
+    Route::post('category/{id}', [CategoryController::class, 'update']);
+    Route::post('category', [CategoryController::class, 'store']);
+    Route::delete('category/{id}', [CategoryController::class, 'destroy']);
+    Route::post('category/import', [CategoryController::class, 'import']);
 });
 
 

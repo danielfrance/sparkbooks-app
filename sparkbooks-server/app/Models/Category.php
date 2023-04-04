@@ -10,10 +10,15 @@ class Category extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['client_id', 'name'];
+    protected $fillable = ['client_id', 'name', 'workspace_id', 'detail'];
 
     public function client()
     {
-        $this->belongsTo(Client::class);
+        return $this->belongsTo(Client::class);
+    }
+
+    public function items()
+    {
+        return $this->hasMany(ResultItem::class);
     }
 }
