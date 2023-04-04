@@ -57,12 +57,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('files/{file}', [FileController::class, 'show']);
 
 
+
     // Account routes
     Route::get('account', [AccountController::class, 'index']);
     Route::post('account/user/{id}', [AccountController::class, 'updateUserDetails']);
     Route::post('account/invite', [AccountController::class, 'inviteUser']);
     Route::post('account/team/user/{id}', [AccountController::class, 'updateTeamMember']);
     Route::delete('account/delete/{id}', [AccountController::class, 'deleteTeamMember']);
+
 });
 
 

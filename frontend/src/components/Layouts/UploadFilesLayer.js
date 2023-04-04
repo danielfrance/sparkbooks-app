@@ -26,6 +26,7 @@ const UploadFilesLayer = ({ onClose }) => {
     const [error, setError] = useState()
     const [clients, setClients] = useState([])
 
+
     // const { workSpace, setWorkSpace } = useUIContext()
 
     // const { clients } = workSpace
@@ -76,17 +77,21 @@ const UploadFilesLayer = ({ onClose }) => {
         }
     }
 
+
     const getClients = async () => {
         try {
             const res = await axios.get('/clients')
             setClients(res.data)
         } catch (error) {
             setError("We couldn't load your clients")
+
         }
     }
 
     useEffect(() => {
+
         getClients()
+
     }, [])
 
     return (

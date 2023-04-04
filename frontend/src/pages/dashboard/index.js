@@ -102,8 +102,10 @@ export default function Dashboard({ data, status, statusText }) {
     const [isUnvailable, setIsUnvailable] = useState(false)
 
     const onClickRow = ({ datum }) => {
+
         if (datum.percent) router.push(`/uploads/${datum.id}`)
         else setIsUnvailable(true)
+
     }
 
     const filtered = uploads
@@ -147,6 +149,7 @@ export default function Dashboard({ data, status, statusText }) {
 
     return (
         <>
+
             {isUnvailable && (
                 <Notification
                     toast
@@ -156,6 +159,7 @@ export default function Dashboard({ data, status, statusText }) {
                     onClose={() => setIsUnvailable(false)}
                 />
             )}
+
             {status === 200 && (
                 <AppLayout>
                     <AppBar />
