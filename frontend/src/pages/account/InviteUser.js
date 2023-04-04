@@ -13,19 +13,20 @@ import {
     Spinner,
     Notification,
 } from 'grommet'
-import { useUIContext } from '@/contexts/ui'
 
 import axios from '@/lib/axios'
 
-const InviteUser = ({ onClose }) => {
+const InviteUser = ({ isNew, onClose, oldName, oldEmail, oldRole }) => {
     const [selectedRole, setSelectedRole] = useState()
-    const [name, setName] = useState('')
-    const [email, setEmail] = useState('')
+    const [name, setName] = useState(oldName)
+    const [email, setEmail] = useState(oldEmail)
     const [invitaion, setInvitation] = useState({
-        name: '',
-        email: '',
-        role: '',
+        name: oldName,
+        email: oldEmail,
+        role: oldRole,
     })
+
+    console.log({ invitaion })
     const [show, setShow] = useState(false)
     const [visible, setVisible] = useState(false)
     const [error, setError] = useState()
@@ -180,7 +181,7 @@ const InviteUser = ({ onClose }) => {
                                 className="btn primary"
                                 style={{ width: '100%' }}
                                 onClick={submit}>
-                                Send invitation
+                                {isNew ? 'Send invitation' : 'Save'}
                             </button>
                         </Box>
                     </Form>
