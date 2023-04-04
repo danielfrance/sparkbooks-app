@@ -1,13 +1,16 @@
-import { Box, Button, Grid, Header, Text, TextInput } from 'grommet'
-import { Search, StatusInfo } from 'grommet-icons'
+import { Box, TextInput } from 'grommet'
+import { Search } from 'grommet-icons'
 import { useState } from 'react'
 import UploadFilesLayer from '@/components/Layouts/UploadFilesLayer'
 import { useUIContext } from '@/contexts/ui'
 
 const Filter = ({}) => {
     const { filterQuery, setFilterQuery } = useUIContext()
-    const handleKeyUp = e => {
-        let timer
+    const [value, setValue] = useState(filterQuery)
+    let timer
+
+    const handleChange = e => {
+        setValue(e.target.value)
 
         clearTimeout(timer)
         timer = setTimeout(() => setFilterQuery(e.target.value), 1000)
@@ -19,7 +22,8 @@ const Filter = ({}) => {
                 icon={<Search size="medium" color="#C767F5" />}
                 reverse
                 placeholder="Search"
-                onKeyUp={e => handleKeyUp(e)}
+                value={value}
+                onChange={e => handleChange(e)}
             />
         </Box>
     )
@@ -43,7 +47,7 @@ const AppBar = () => {
                 </button>
             </div>
 
-            {isOpen && <UploadFilesLayer onClose={onClose} isOpen />}
+            {isOpen && <UploadFilesLayer onClose={onClose} />}
         </>
     )
 }

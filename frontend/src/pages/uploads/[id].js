@@ -6,8 +6,8 @@ import ErrorMessage from '@/components/ErrorMessage'
 import axios from '@/lib/axios'
 
 function UploadDetails({ data, status, statusText }) {
-    console.log(data)
-    const [fileData, setFileData] = useState([])
+    // console.log(data)
+    // const [fileData, setFileData] = useState([])
     return (
         <>
             {status !== 200 && (

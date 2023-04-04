@@ -3,6 +3,7 @@
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FileController;
+use App\Http\Controllers\ResultsController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\WorkspaceController;
 use Illuminate\Support\Facades\Route;
@@ -44,8 +45,17 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('uploads/{upload}', [UploadController::class, 'update']);
     Route::delete('uploads/{upload}', [UploadController::class, 'destroy']);
 
+
+    Route::post('/results/{upload_id}/details/{result_detail_id}', [ResultsController::class, 'updateDetail']);
+
+    Route::post('/results/{upload_id}/lineitem/{result_line_id}', [ResultsController::class, 'updateLineItem']);
+    Route::post('/results/{upload_id}/lineitem', [ResultsController::class, 'storeLineItem']);
+    Route::delete('/results/{upload_id}/lineitem/{result_line_id}', [ResultsController::class, 'deleteLineItem']);
+
     Route::get('files', [FileController::class, 'index']);
     Route::get('files/{file}', [FileController::class, 'show']);
+
+
 });
 
 
