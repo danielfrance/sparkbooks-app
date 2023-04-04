@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-
 import { Close, StatusGood } from 'grommet-icons'
 import {
     Box,
@@ -77,7 +76,7 @@ const InviteUser = ({ onClose }) => {
                 setVisible(true)
             } catch (error) {
                 setError(
-                    error.response.data.message ||
+                    error?.response?.data?.message ||
                         "We couldn't send invitation",
                 )
                 setShow(false)

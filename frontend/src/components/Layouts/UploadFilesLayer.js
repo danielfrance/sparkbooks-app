@@ -63,12 +63,11 @@ const UploadFilesLayer = ({ onClose }) => {
 
                 setShow(false)
                 onClose()
-                setError(uploadFiles.data.status)
                 setVisible(true)
             } catch (error) {
                 // console.log(error)
                 setShow(false)
-                setError(error.data.status)
+                setError("We couldn't save files, try again")
                 setVisible(true)
             }
         } else {
@@ -82,7 +81,7 @@ const UploadFilesLayer = ({ onClose }) => {
             const res = await axios.get('/clients')
             setClients(res.data)
         } catch (error) {
-            setError(error.data.status)
+            setError("We couldn't load your clients")
         }
     }
 
@@ -115,8 +114,9 @@ const UploadFilesLayer = ({ onClose }) => {
                     pad="medium">
                     <Form
                         validate="blur"
-                        onReset={event => console.log(event)}
-                        onSubmit={({ value }) => console.log('Submit', value)}>
+                        // onReset={event => console.log(event)}
+                        // onSubmit={({ value }) => console.log('Submit', value)}
+                    >
                         <Box flex={false} direction="row" justify="between">
                             <Heading level={2} margin="none">
                                 Upload New Files
