@@ -47,7 +47,7 @@ class FileController extends Controller
         // $result = Result::where('file_id', $id)->with(['resultDetails', 'resultItems'])->first();
 
         // TODO: !! This is a temporary fix to get the results to show up on the frontend.
-        $result = Result::where('file_id', 296)->with(['resultDetails', 'resultItems'])->first();
+        $result = Result::where('file_id', $id)->with(['resultDetails', 'resultItems'])->first();
         $clients = $user->workspace->clients;
 
         $uploadIDs = $clients->map(function ($client) {
