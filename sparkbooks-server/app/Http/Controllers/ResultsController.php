@@ -49,14 +49,16 @@ class ResultsController extends Controller
     {
         $inputLineItem = $request->except([
             'id',
-            'isNew'
+            'isNew',
+            'client_id',
         ]);
 
-        $result = Result::select('workspace_id')->where('upload_id', $uploadID)->first();
+        $result = Result::select('workspace_id', 'client_id')->where('upload_id', $uploadID)->first();
 
 
         try {
             $inputLineItem['workspace_id'] = $result->workspace_id;
+            $inputLineItem['client_id'] = $result->client_id;
 
             $lineItem = ResultItem::create($inputLineItem);
 

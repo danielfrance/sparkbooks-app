@@ -58,6 +58,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 
     //Chart of Accounts
+    Route::get('client/{id}/category', [CategoryController::class, 'getClientCategories']);
     Route::post('category/{id}', [CategoryController::class, 'update']);
     Route::post('category', [CategoryController::class, 'store']);
     Route::delete('category/{id}', [CategoryController::class, 'destroy']);
