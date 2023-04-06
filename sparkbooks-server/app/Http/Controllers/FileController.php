@@ -57,6 +57,7 @@ class FileController extends Controller
         $check = $uploadIDs->contains($result->upload_id);
 
         if ($check) {
+            $result->imageURL = $result->getResultImageURL();
             return $result;
         } else {
             return response()->json(['message' => 'Unauthorized'], 401);
