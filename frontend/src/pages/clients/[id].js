@@ -130,7 +130,6 @@ const columns = [
 ]
 
 export default function ClientEdit({ data, status, statusText }) {
-    console.log({ data, status, statusText })
     const router = useRouter()
     // const [value, setValue] = useState(data.client.state)
     const [isOpen, setIsOpen] = useState(false)
@@ -477,7 +476,7 @@ export default function ClientEdit({ data, status, statusText }) {
                                         <DataSummary />
                                         <List
                                             primaryKey="name"
-                                            secondaryKey="code"
+                                            secondaryKey="detail"
                                             pad={{
                                                 right: '0px',
                                                 top: '10px',
