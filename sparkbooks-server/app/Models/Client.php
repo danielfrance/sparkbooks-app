@@ -11,13 +11,8 @@ use Illuminate\Notifications\Notifiable;
 
 class Client extends Model
 {
-<<<<<<< HEAD
-    use HasFactory, SoftDeletes, Notifiable;
-    protected $fillable = ['name', 'address', 'gcs_directory', 'workspace_id'];
-=======
     use HasFactory, SoftDeletes;
     protected $fillable = ['name', 'address', 'gcs_directory', 'workspace_id', 'email'];
->>>>>>> main
 
 
     protected static function booted()
