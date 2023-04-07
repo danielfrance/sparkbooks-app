@@ -324,19 +324,20 @@ form {
 }
 
 .grid.account-info {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr 1fr 1fr;
     margin: 20px;
     font-family: var(--ff-sans-serif);
 }
 
 .grid.user-info {
     grid-column: 1 / span 2;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: 1fr 5fr;
 }
 
-.user-info .flex.contacts {
-    grid-column: 2 / span 4;
-    flex-wrap: wrap;
+.user-info .grid.contacts {
+    /* grid-column: 2 / span 4; */
+    margin-top: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 }
 
 .flex.client-details {

@@ -1,6 +1,6 @@
 import AppLayout from '@/components/Layouts/AppLayout'
 import AppBar from '@/components/Layouts/AppBar'
-import { Box, Meter, Text, Avatar } from 'grommet'
+import { Box, Meter, Text, Avatar, Notification } from 'grommet'
 import DataTable from '@/components/Layouts/DataTable'
 import { useEffect, useState } from 'react'
 import { useUIContext } from '@/contexts/ui'
@@ -91,8 +91,7 @@ const columns = [
     },
 ]
 
-export default function Dashboard({ data }) {
-    const { status, statusText, hasWorkSpace } = data
+export default function Dashboard({ data, status, statusText }) {
     const router = useRouter()
     const { filterQuery, workSpace, setWorkSpace } = useUIContext()
     const [uploads, setUploads] = useState([])
@@ -100,16 +99,20 @@ export default function Dashboard({ data }) {
     const [selected, setSelected] = useState()
     const [processedFiles, setProcessedFiles] = useState(0)
     const [remainingFiles, setRemainingFiles] = useState(0)
+    const [isUnvailable, setIsUnvailable] = useState(false)
 
     const onClickRow = ({ datum }) => {
-        router.push(`/uploads/${datum.id}`)
-        router.push(`/uploads/1`)
+
+        if (datum.percent) router.push(`/uploads/${datum.id}`)
+        else setIsUnvailable(true)
+
     }
 
-    const filtered = uploads.filter(datum =>
-        datum.client.toLocaleLowerCase().includes(filterQuery),
-    )
-    // .slice(-5)
+    const filtered = uploads
+        .filter(datum => datum.client.toLocaleLowerCase().includes(filterQuery))
+        .sort((a, b) => new Date(b.percent) - new Date(a.percent))
+
+    // console.log({ uploads })
 
     const actions = [
         // { label: 'Add', onClick: e => console.log(e) },
@@ -125,7 +128,7 @@ export default function Dashboard({ data }) {
                     if (upload.processed) setProcessedFiles(count => count + 1)
                     if (!upload.processed) setRemainingFiles(count => count + 1)
                     return {
-                        id: client.id,
+                        id: upload.id,
                         client: client.name || '',
                         files: upload.files.length,
                         percent: upload.processed,
@@ -136,17 +139,28 @@ export default function Dashboard({ data }) {
     }
 
     useEffect(() => {
-        if (hasWorkSpace) {
+        if (status === 200) {
             setProcessedFiles(0)
             setRemainingFiles(0)
-            setWorkSpace(data.workSpace)
-            extractUploads(data.workSpace.clients)
+            extractUploads(data.clients)
+            setWorkSpace(data)
         }
     }, [data])
 
     return (
         <>
-            {hasWorkSpace && (
+
+            {isUnvailable && (
+                <Notification
+                    toast
+                    status="warning"
+                    title="Not ready"
+                    message="Still processing"
+                    onClose={() => setIsUnvailable(false)}
+                />
+            )}
+
+            {status === 200 && (
                 <AppLayout>
                     <AppBar />
                     <div className="flex dashboard-header">
@@ -184,7 +198,7 @@ export default function Dashboard({ data }) {
                     />
                 </AppLayout>
             )}
-            {!hasWorkSpace && (
+            {status !== 200 && (
                 <ErrorMessage status={status} statusText={statusText} />
             )}
         </>
@@ -208,16 +222,15 @@ export async function getServerSideProps(context) {
                 cookie: cookie,
             },
         })
-        const workSpace = res.data
 
         return {
-            props: { data: { status: 200, workSpace, hasWorkSpace: true } },
+            props: { status: 200, data: res.data },
         }
     } catch (error) {
         const { status, statusText } = error.response
 
         return {
-            props: { data: { status, statusText, hasWorkSpace: false } },
+            props: { status, statusText },
         }
     }
 }

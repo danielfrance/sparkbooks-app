@@ -3,8 +3,14 @@
 namespace App\Console\Commands;
 
 use App\Jobs\ExtractResultsJob;
+use App\Models\Result;
+use App\Models\ResultDetail;
+use App\Models\ResultItem;
 use App\Models\Upload;
 use Illuminate\Console\Command;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ExtractResultsCommand extends Command
 {
@@ -29,6 +35,12 @@ class ExtractResultsCommand extends Command
      */
     public function handle()
     {
-        dispatch(new ExtractResultsJob);
+        try {
+            Log::info('firing ExtractResultsJob');
+            dispatch(new ExtractResultsJob);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
+
 }

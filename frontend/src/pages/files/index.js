@@ -18,7 +18,7 @@ const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
 // const { apiURL } = publicRuntimeConfig
 
 function Files({ status, statusText, data }) {
-    console.log({ data })
+    // console.log({ data })
     const router = useRouter()
 
     const onClick = datum => {
@@ -90,7 +90,7 @@ function Files({ status, statusText, data }) {
         },
         {
             property: 'totalAmount',
-            align: 'align',
+            align: 'end',
             header: <Text>Total</Text>,
             render: numberRender('totalAmount'),
         },
@@ -137,7 +137,7 @@ function Files({ status, statusText, data }) {
                         totalAmount: file.receipt_total,
                         uploadName: file.upload_name || '',
                         date: file.created_at,
-                        sorting_date: file.update_at,
+                        sorting_date: file.created_at,
                     },
                 ].sort(
                     (a, b) =>

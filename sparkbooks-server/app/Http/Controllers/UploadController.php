@@ -40,11 +40,6 @@ class UploadController extends Controller
         ]);
 
         $files = $request->file('files');
-        return [
-            "filename" => $files[0]->getClientOriginalName(),
-            "filetype" => $files[0]->getMimeType(),
-            "client id" => $request->client_id
-        ];
 
         try {
             DB::transaction(function () use ($request) {
@@ -74,12 +69,11 @@ class UploadController extends Controller
                 }
                 $this->dispatch(new ProcessUploadedFiles($client->id, $upload->id));
             });
+            return response()->json(['status' => 'Files uploaded & processing. Check your email shortly'], 200);
         } catch (\Throwable $th) {
-            return redirect()->back()->with('errors', $th->getMessage());
+            return
+                response()->json(['status' => 'Something went wrong. Try uploading your files again'], 200);
         }
-
-
-        return redirect()->back()->with('status', 'Files uploaded & processing. Check your email shortly');
     }
 
     public function show($id)
@@ -102,9 +96,18 @@ class UploadController extends Controller
 
 
             // TODO: !!! update this!!!
-            $results = Result::where('upload_id', 126)
-                ->with(['resultDetails', 'resultItems'])
+            $results = Result::where('upload_id', $id)
+                ->select('id', 'name', 'directory', 'upload_id')
+                ->with(['resultDetails'])
+                ->with('resultItems', function ($query) {
+                    $query->orderBy('id', 'asc');
+                })
+                ->orderBy('id', 'desc')
                 ->get();
+
+            $results->map(function ($result) {
+                $result->imageURL = $result->getResultImageURL();
+            });
 
             return $results;
 

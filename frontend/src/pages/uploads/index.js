@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { useUIContext } from '@/contexts/ui'
 import AppLayout from '@/components/Layouts/AppLayout'
 import AppBar from '@/components/Layouts/AppBar'
-import { Box, Meter, Text, Avatar } from 'grommet'
+import { Box, Meter, Text, Avatar, Notification } from 'grommet'
 import DataTable from '@/components/Layouts/DataTable'
 import axios from '@/lib/axios'
 import ErrorMessage from '@/components/ErrorMessage'
@@ -110,8 +110,11 @@ function Uploads({ data, status, statusText }) {
 
     const [selected, setSelected] = useState()
 
+    const [isUnvailable, setIsUnvailable] = useState(false)
+
     const onClickRow = ({ datum }) => {
-        router.push(`/uploads/${datum.id}`)
+        if (datum.processed) router.push(`/uploads/${datum.id}`)
+        else setIsUnvailable(true)
     }
 
     const filtered = uploads.filter(
@@ -122,6 +125,15 @@ function Uploads({ data, status, statusText }) {
 
     return (
         <>
+            {isUnvailable && (
+                <Notification
+                    toast
+                    status="warning"
+                    title="Not ready"
+                    message="Still processing"
+                    onClose={() => setIsUnvailable(false)}
+                />
+            )}
             {status !== 200 && (
                 <ErrorMessage status={status} statusText={statusText} />
             )}

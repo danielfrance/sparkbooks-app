@@ -14,7 +14,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ExtractResultsJob implements ShouldQueue
 {
@@ -48,16 +49,18 @@ class ExtractResultsJob implements ShouldQueue
         $entities = $contents->entities;
 
         try {
-            $resultDetail = $this->saveResultDetails($entities, $result, $clientID, $workspaceID);
+            DB::transaction(function () use ($entities, $result, $clientID, $workspaceID) {
+                $resultDetail = $this->saveResultDetails($entities, $result, $clientID, $workspaceID);
 
 
-            $lineItems = Arr::where($entities, function ($entity) {
-                return $entity->type == "line_item";
+                $lineItems = Arr::where($entities, function ($entity) {
+                    return $entity->type == "line_item";
+                });
+
+                $this->saveResultLineItems($lineItems, $result, $clientID, $workspaceID);
+                $result->extracted = true;
+                $result->save();
             });
-
-            $this->saveResultLineItems($lineItems, $result, $clientID, $workspaceID);
-            $result->extracted = true;
-            $result->save();
         } catch (\Throwable $th) {
             throw $th;
 
@@ -111,6 +114,7 @@ class ExtractResultsJob implements ShouldQueue
                 'workspace_id' => $workspaceID,
             ]);
         } catch (\Throwable $th) {
+            Log::error("Error saving line item: " . $result->id);
             throw $th;
         }
     }
@@ -122,7 +126,7 @@ class ExtractResultsJob implements ShouldQueue
 
             $itemArray = ['type' => 'line_item'];
             foreach ($item->properties as $property) {
-                ($property->type === 'line_item/description') ? $itemArray['item'] =  $property->normalizedValue->text : $property->mentionText ?? null;
+                ($property->type === 'line_item/description') ? $itemArray['item'] =  $property->normalizedValue->text : $property->mentionText ?? 'unknown';
                 ($property->type === 'line_item/amount') ? $itemArray['amount'] =  $property->normalizedValue->text : $property->mentionText ?? null;
                 ($property->type === 'line_item/product_code') ? $itemArray['sku'] = $property->normalizedValue->text : $property->mentionText ?? null;
             }
@@ -134,27 +138,23 @@ class ExtractResultsJob implements ShouldQueue
                 $sku = ResultItem::where('sku', $itemArray['sku'])->where('client_id', $clientID)->first();
             }
 
-            $data = [
-                'result_id' => $result->id,
-                'upload_id' => $result->upload_id,
-                'item' => isset($itemArray['item']) ? $itemArray['item'] : null,
-                'amount' => isset($itemArray['amount']) ? $itemArray['amount'] : null,
-                'sku' => isset($itemArray['sku']) ? $itemArray['sku'] : null,
-                'client_id' => $clientID,
-                'workspace_id' => $workspaceID,
-                'category_id' => $sku->category_id ?? null,
-            ];
 
-            $resultLineItem = ResultItem::create([
-                'result_id' => $result->id,
-                'upload_id' => $result->upload_id,
-                'item' => isset($itemArray['item']) ? $itemArray['item'] : null,
-                'amount' => isset($itemArray['amount']) ? $itemArray['amount'] : null,
-                'sku' => isset($itemArray['sku']) ? $itemArray['sku'] : null,
-                'client_id' => $clientID,
-                'workspace_id' => $workspaceID,
-                'category_id' => $sku->category_id ?? null,
-            ]);
+
+            try {
+                $resultLineItem = ResultItem::create([
+                    'result_id' => $result->id,
+                    'upload_id' => $result->upload_id,
+                    'item' => isset($itemArray['item']) ? $itemArray['item'] : "unknown",
+                    'amount' => isset($itemArray['amount']) ? $itemArray['amount'] : null,
+                    'sku' => isset($itemArray['sku']) ? $itemArray['sku'] : null,
+                    'client_id' => $clientID,
+                    'workspace_id' => $workspaceID,
+                    'category_id' => $sku->category_id ?? null,
+                ]);
+            } catch (\Throwable $th) {
+                Log::error("Error saving line item: " . $result->id);
+                throw $th;
+            }
         }
     }
 

@@ -17,6 +17,7 @@ import {
     List,
     Data,
     Menu,
+    Notification,
 } from 'grommet'
 import { SettingsOption } from 'grommet-icons'
 
@@ -101,7 +102,8 @@ const columns = [
     {
         property: 'processed',
         size: 'medium',
-        header: <Text>Processed</Text>,
+        align: 'end',
+        header: <Text>Processing</Text>,
         render: processingDataRender('processed'),
     },
 ]
@@ -142,13 +144,16 @@ export default function ClientEdit({ data, status, statusText }) {
 
     const [selected, setSelected] = useState()
 
+    const [isUnvailable, setIsUnvailable] = useState(false)
+
     const onClickRow = ({ datum }) => {
-        router.push(`/uploads/${datum.id}`)
+        if (datum.processed) router.push(`/uploads/${datum.id}`)
+        else setIsUnvailable(true)
     }
 
-    const filtered = uploads.filter(datum =>
-        datum.name.toLocaleLowerCase().includes(filterQuery),
-    )
+    const filtered = uploads
+        .filter(datum => datum.name.toLocaleLowerCase().includes(filterQuery))
+        .sort((a, b) => new Date(b.percent) - new Date(a.percent))
 
     const actions = [
         // { label: 'Add', onClick: e => console.log(e) },
@@ -162,6 +167,15 @@ export default function ClientEdit({ data, status, statusText }) {
 
     return (
         <>
+            {isUnvailable && (
+                <Notification
+                    toast
+                    status="warning"
+                    title="Not ready"
+                    message="Still processing"
+                    onClose={() => setIsUnvailable(false)}
+                />
+            )}
             {status !== 200 && (
                 <ErrorMessage status={status} statusText={statusText} />
             )}
@@ -184,7 +198,7 @@ export default function ClientEdit({ data, status, statusText }) {
                                         <FormField name="name" label="Name">
                                             <TextInput
                                                 name="name"
-                                                value={client?.name}
+                                                value={client?.name || ''}
                                             />
                                         </FormField>
                                     </Box>
@@ -199,7 +213,7 @@ export default function ClientEdit({ data, status, statusText }) {
                                                 label="Email">
                                                 <TextInput
                                                     name="email"
-                                                    value={client?.email}
+                                                    value={client?.email || ''}
                                                 />
                                             </FormField>
                                             <FormField
@@ -207,7 +221,9 @@ export default function ClientEdit({ data, status, statusText }) {
                                                 label="Street">
                                                 <TextInput
                                                     name="address"
-                                                    value={client?.address}
+                                                    value={
+                                                        client?.address || ''
+                                                    }
                                                 />
                                             </FormField>
                                             <FormField
@@ -216,7 +232,8 @@ export default function ClientEdit({ data, status, statusText }) {
                                                 <TextInput
                                                     name="point_of_contact"
                                                     value={
-                                                        client?.point_of_contact
+                                                        client?.point_of_contact ||
+                                                        ''
                                                     }
                                                 />
                                             </FormField>
@@ -227,13 +244,13 @@ export default function ClientEdit({ data, status, statusText }) {
                                                 label="Phone">
                                                 <TextInput
                                                     name="phone"
-                                                    value={client?.phone}
+                                                    value={client?.phone || ''}
                                                 />
                                             </FormField>
                                             <FormField name="city" label="City">
                                                 <TextInput
                                                     name="city"
-                                                    value={client?.city}
+                                                    value={client?.city || ''}
                                                 />
                                             </FormField>
                                             <FormField
