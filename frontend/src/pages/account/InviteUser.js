@@ -26,7 +26,6 @@ const InviteUser = ({ isNew, onClose, oldName, oldEmail, oldRole }) => {
         role: oldRole,
     })
 
-    console.log({ invitaion })
     const [show, setShow] = useState(false)
     const [visible, setVisible] = useState(false)
     const [error, setError] = useState()
@@ -60,8 +59,6 @@ const InviteUser = ({ isNew, onClose, oldName, oldEmail, oldRole }) => {
 
             for (const [key, value] of Object.entries(invitaion))
                 data.append(key, value)
-
-            console.log(data)
 
             try {
                 const res = await axios.post('/account/invite', data, {

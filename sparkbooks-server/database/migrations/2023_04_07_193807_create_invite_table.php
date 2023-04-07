@@ -13,11 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('invite', function (Blueprint $table) {
+        Schema::create('invites', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('email');
-            $table->integer('agency_id')->unsigned();
+            $table->foreignId('workspace_id')->constrained()->onDelete('cascade');
             $table->integer('role_id');
             $table->string('invite_token');
             $table->timestamps();

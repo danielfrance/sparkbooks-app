@@ -69,19 +69,6 @@ class AccountController extends Controller
         ]);
     }
 
-    public function inviteUser(Request $request)
-    {
-        $this->validate($request, [
-            'email' => 'required|email|unique:users',
-            'role' => 'required',
-        ]);
-
-        // TODO: create Invite Capabilities
-
-        return response()->json([
-            'message' => 'User invited successfully',
-        ]);
-    }
 
     public function updateTeamMember(Request $request, $id)
     {

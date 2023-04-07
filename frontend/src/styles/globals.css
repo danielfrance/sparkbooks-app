@@ -368,6 +368,10 @@ form {
     width: 5rem;
 }
 
+.inviteUserForm input[disabled]{
+    color: #7D4CDB !important;
+    opacity: 1 !important;
+}
 
 /* .box_container {
    background: #FFFFFF;

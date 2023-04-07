@@ -49,4 +49,12 @@ class RegisteredUserController extends Controller
 
         return response()->noContent();
     }
+
+    /**
+     * Create a user based on an invitation.
+     */
+    public function storeInvitee(Request $request)
+    {
+        return "you're here now";
+    }
 }
