@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Client extends Model
 {
     use HasFactory, SoftDeletes;
-    protected $fillable = ['name', 'address', 'gcs_directory', 'workspace_id'];
+    protected $fillable = ['name', 'address', 'gcs_directory', 'workspace_id', 'email'];
 
     public function uploads()
     {
