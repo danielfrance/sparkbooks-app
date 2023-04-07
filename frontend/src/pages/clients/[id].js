@@ -139,11 +139,24 @@ export default function ClientEdit({ data, status, statusText }) {
 
     const [chartData, setChartData] = useState([])
     const [add, setAdd] = useState(false)
+    const [account, setAccount] = useState(null)
     const [client, setClient] = useState()
-    // console.log({ client })
     const [uploads, setUploads] = useState([])
     const { filterQuery } = useUIContext()
     const [isUnvailable, setIsUnvailable] = useState(false)
+
+    const addAccount = () => {
+        setAccount({
+            detail: '',
+            name: '',
+        })
+        setAdd(true)
+    }
+
+    const handleAccountInput = event => {
+        const { name, value } = event.target
+        setAccount(currentValue => ({ ...currentValue, [name]: value }))
+    }
 
     const handleClientInput = event => {
         const { name, value } = event.target
@@ -151,11 +164,57 @@ export default function ClientEdit({ data, status, statusText }) {
         setClient(currentValue => ({ ...currentValue, [name]: value }))
     }
 
+    const editAccount = item => {
+        setAccount(item)
+        setAdd(true)
+    }
+
+    const removeAccount = async item => {
+        try {
+            await axios.delete(`category/${item.id}`)
+            router.replace(router.asPath)
+        } catch (error) {}
+    }
+
     const handleClientCitySelection = option =>
         setClient(currentValue => ({ ...currentValue, state: option }))
 
+    const submitAccountData = async () => {
+        if (!account.name) return
+
+        const accountData = {
+            ...account,
+            client_id: client.id,
+            workspace_id: client.workspace_id,
+        }
+
+        try {
+            const data = new FormData()
+            for (const [key, value] of Object.entries(accountData))
+                data.append(key, value)
+
+            console.log({ data })
+            let url
+            if (accountData.id) url = `category/${account.id}`
+            if (!accountData.id) url = `category`
+
+            const res = await axios.post(url, data)
+
+            setAccount(null)
+            setAdd(false)
+            router.replace(router.asPath)
+        } catch (error) {
+            console.log({ error })
+        }
+    }
+
+    const cancelAddAccount = () => {
+        setAccount(null)
+        setAdd(false)
+    }
+
     const submitClientData = async () => {
-        const { id, name, email, phone } = client
+        const { id, name, email } = client
         if (!id || !name || !email) return
 
         try {
@@ -170,9 +229,10 @@ export default function ClientEdit({ data, status, statusText }) {
             console.log({ data })
 
             // FIXME: Returning 422 ??
-            const res = await axios.put(`/clients/${id}`, data)
+            const res = await axios.put(`clients/${id}`, data)
 
             console.log({ res })
+            router.replace(router.asPath)
         } catch (error) {
             console.log({ error })
         }
@@ -199,7 +259,7 @@ export default function ClientEdit({ data, status, statusText }) {
             data.chart.map(el => ({
                 id: el.id,
                 name: el.name,
-                code: el.detail,
+                detail: el.detail,
             })),
         )
     }, [data])
@@ -342,7 +402,7 @@ export default function ClientEdit({ data, status, statusText }) {
                                         <div>
                                             <button
                                                 className="btn secondary inverse small"
-                                                onClick={() => setAdd(true)}>
+                                                onClick={addAccount}>
                                                 Add
                                             </button>
                                             {/* <button
@@ -362,18 +422,32 @@ export default function ClientEdit({ data, status, statusText }) {
                                                 // border: 'red 1px solid',
                                                 borderRadius: '7px',
                                             }}>
-                                            <FormField name="name" label="Name">
+                                            <FormField
+                                                name="account-name"
+                                                label="Account name">
                                                 <TextInput
-                                                    name="account"
-                                                    // value={client?.name || ''}
-                                                    // onChange={handleClientInput}
+                                                    name="name"
+                                                    value={account?.name || ''}
+                                                    onChange={event =>
+                                                        handleAccountInput(
+                                                            event,
+                                                        )
+                                                    }
                                                 />
                                             </FormField>
-                                            <FormField name="code" label="code">
+                                            <FormField
+                                                name="account-detail"
+                                                label="Account code">
                                                 <TextInput
-                                                    name="code"
-                                                    // value={client?.name || ''}
-                                                    // onChange={handleClientInput}
+                                                    name="detail"
+                                                    value={
+                                                        account?.detail || ''
+                                                    }
+                                                    onChange={event =>
+                                                        handleAccountInput(
+                                                            event,
+                                                        )
+                                                    }
                                                 />
                                             </FormField>
                                             <Box
@@ -383,12 +457,12 @@ export default function ClientEdit({ data, status, statusText }) {
                                                 margin={{ top: '1em' }}>
                                                 <button
                                                     className="btn  inverse small"
-                                                    onClick={() =>
-                                                        setAdd(false)
-                                                    }>
+                                                    onClick={cancelAddAccount}>
                                                     Cancel
                                                 </button>
-                                                <button className="btn primary inverse small">
+                                                <button
+                                                    className="btn primary inverse small"
+                                                    onClick={submitAccountData}>
                                                     Save
                                                 </button>
                                             </Box>
@@ -417,8 +491,28 @@ export default function ClientEdit({ data, status, statusText }) {
                                                     hoverIndicator
                                                     // margin={{ right: '0px' }}
                                                     items={[
-                                                        { label: <Edit /> },
-                                                        { label: <Trash /> },
+                                                        {
+                                                            label: (
+                                                                <Edit
+                                                                    onClick={() =>
+                                                                        editAccount(
+                                                                            item,
+                                                                        )
+                                                                    }
+                                                                />
+                                                            ),
+                                                        },
+                                                        {
+                                                            label: (
+                                                                <Trash
+                                                                    onClick={() =>
+                                                                        removeAccount(
+                                                                            item,
+                                                                        )
+                                                                    }
+                                                                />
+                                                            ),
+                                                        },
                                                     ]}
                                                 />
                                             )}
