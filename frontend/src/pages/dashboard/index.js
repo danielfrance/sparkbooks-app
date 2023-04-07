@@ -1,6 +1,6 @@
 import AppLayout from '@/components/Layouts/AppLayout'
 import AppBar from '@/components/Layouts/AppBar'
-import { Box, Meter, Text, Avatar } from 'grommet'
+import { Box, Meter, Text, Avatar, Notification } from 'grommet'
 import DataTable from '@/components/Layouts/DataTable'
 import { useEffect, useState } from 'react'
 import { useUIContext } from '@/contexts/ui'
@@ -99,15 +99,20 @@ export default function Dashboard({ data, status, statusText }) {
     const [selected, setSelected] = useState()
     const [processedFiles, setProcessedFiles] = useState(0)
     const [remainingFiles, setRemainingFiles] = useState(0)
+    const [isUnvailable, setIsUnvailable] = useState(false)
 
     const onClickRow = ({ datum }) => {
-        router.push(`/uploads/${datum.id}`)
+
+        if (datum.percent) router.push(`/uploads/${datum.id}`)
+        else setIsUnvailable(true)
+
     }
 
-    const filtered = uploads.filter(datum =>
-        datum.client.toLocaleLowerCase().includes(filterQuery),
-    )
-    // .slice(-5)
+    const filtered = uploads
+        .filter(datum => datum.client.toLocaleLowerCase().includes(filterQuery))
+        .sort((a, b) => new Date(b.percent) - new Date(a.percent))
+
+    // console.log({ uploads })
 
     const actions = [
         // { label: 'Add', onClick: e => console.log(e) },
@@ -144,6 +149,17 @@ export default function Dashboard({ data, status, statusText }) {
 
     return (
         <>
+
+            {isUnvailable && (
+                <Notification
+                    toast
+                    status="warning"
+                    title="Not ready"
+                    message="Still processing"
+                    onClose={() => setIsUnvailable(false)}
+                />
+            )}
+
             {status === 200 && (
                 <AppLayout>
                     <AppBar />
