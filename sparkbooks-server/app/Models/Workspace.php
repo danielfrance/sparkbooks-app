@@ -18,6 +18,19 @@ class Workspace extends Model
         return $this->hasMany(User::class);
     }
 
+    public function info()
+    {
+        return [
+            'name' => $this->name,
+            'address' => $this->address,
+            'city' => $this->city,
+            'state' => $this->state,
+            'zip' => $this->zip,
+            'phone' => $this->phone,
+            'email' => $this->email,
+        ];
+    }
+
     public function clients()
     {
         return $this->hasMany(Client::class);

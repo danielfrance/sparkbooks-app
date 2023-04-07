@@ -64,4 +64,24 @@ class User extends Authenticatable
     {
         return $this->hasMany(OAuthProvider::class);
     }
+
+    function getRoleNameAttribute()
+    {
+        $roleName = '';
+        switch ($this) {
+            case $this->hasRole('superadmin'):
+                $roleName = 'superadmin';
+                break;
+            case $this->hasRole('admin'):
+                $roleName = 'admin';
+                break;
+            case $this->hasRole('editor'):
+                $roleName = 'editor';
+                break;
+            default:
+                break;
+        }
+        return $roleName;
+    }
+    
 }

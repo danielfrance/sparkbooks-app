@@ -137,7 +137,7 @@ function Files({ status, statusText, data }) {
                         totalAmount: file.receipt_total,
                         uploadName: file.upload_name || '',
                         date: file.created_at,
-                        sorting_date: file.update_at,
+                        sorting_date: file.created_at,
                     },
                 ].sort(
                     (a, b) =>

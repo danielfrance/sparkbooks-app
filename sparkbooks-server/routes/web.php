@@ -1,6 +1,10 @@
 <?php
 
+<<<<<<< HEAD
 use App\Http\Controllers\CategoryController;
+=======
+use App\Http\Controllers\AccountController;
+>>>>>>> feat/client_api_updates
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FileController;
@@ -57,12 +61,23 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('files/{file}', [FileController::class, 'show']);
 
 
+<<<<<<< HEAD
     //Chart of Accounts
     Route::get('client/{id}/category', [CategoryController::class, 'getClientCategories']);
     Route::post('category/{id}', [CategoryController::class, 'update']);
     Route::post('category', [CategoryController::class, 'store']);
     Route::delete('category/{id}', [CategoryController::class, 'destroy']);
     Route::post('category/import', [CategoryController::class, 'import']);
+=======
+
+    // Account routes
+    Route::get('account', [AccountController::class, 'index']);
+    Route::post('account/user/{id}', [AccountController::class, 'updateUserDetails']);
+    Route::post('account/invite', [AccountController::class, 'inviteUser']);
+    Route::post('account/team/user/{id}', [AccountController::class, 'updateTeamMember']);
+    Route::delete('account/delete/{id}', [AccountController::class, 'deleteTeamMember']);
+
+>>>>>>> feat/client_api_updates
 });
 
 

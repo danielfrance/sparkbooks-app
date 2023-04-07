@@ -17,8 +17,9 @@ import {
     List,
     Data,
     Menu,
+    Notification,
 } from 'grommet'
-import { SettingsOption } from 'grommet-icons'
+import { SettingsOption, More, Trash, Edit } from 'grommet-icons'
 
 import { useEffect, useState } from 'react'
 import DataTable from '@/components/Layouts/DataTable'
@@ -101,15 +102,16 @@ const columns = [
     {
         property: 'processed',
         size: 'medium',
-        header: <Text>Processed</Text>,
+        align: 'end',
+        header: <Text>Processing</Text>,
         render: processingDataRender('processed'),
     },
 ]
 
 export default function ClientEdit({ data, status, statusText }) {
-    console.log(data)
+    console.log({ data })
     const router = useRouter()
-    const [value, setValue] = useState(data.client.state)
+    // const [value, setValue] = useState(data.client.state)
     const [isOpen, setIsOpen] = useState(false)
     const onOpen = () => setIsOpen(true)
     const onClose = () => setIsOpen(false)
@@ -139,16 +141,16 @@ export default function ClientEdit({ data, status, statusText }) {
     // console.log({ client })
     const [uploads, setUploads] = useState([])
     const { filterQuery } = useUIContext()
-
-    const [selected, setSelected] = useState()
+    const [isUnvailable, setIsUnvailable] = useState(false)
 
     const onClickRow = ({ datum }) => {
-        router.push(`/uploads/${datum.id}`)
+        if (datum.processed) router.push(`/uploads/${datum.id}`)
+        else setIsUnvailable(true)
     }
 
-    const filtered = uploads.filter(datum =>
-        datum.name.toLocaleLowerCase().includes(filterQuery),
-    )
+    const filtered = uploads
+        .filter(datum => datum.name.toLocaleLowerCase().includes(filterQuery))
+        .sort((a, b) => new Date(b.percent) - new Date(a.percent))
 
     const actions = [
         // { label: 'Add', onClick: e => console.log(e) },
@@ -162,6 +164,15 @@ export default function ClientEdit({ data, status, statusText }) {
 
     return (
         <>
+            {isUnvailable && (
+                <Notification
+                    toast
+                    status="warning"
+                    title="Not ready"
+                    message="Still processing"
+                    onClose={() => setIsUnvailable(false)}
+                />
+            )}
             {status !== 200 && (
                 <ErrorMessage status={status} statusText={statusText} />
             )}
@@ -174,7 +185,7 @@ export default function ClientEdit({ data, status, statusText }) {
                                 level="3"
                                 color="brand"
                                 className="ff-sans-serif">
-                                Edit Client NAME
+                                Edit Client
                             </Heading>
                         </Box>
                         <div className="flex client-details">
@@ -184,7 +195,7 @@ export default function ClientEdit({ data, status, statusText }) {
                                         <FormField name="name" label="Name">
                                             <TextInput
                                                 name="name"
-                                                value={client?.name}
+                                                value={client?.name || ''}
                                             />
                                         </FormField>
                                     </Box>
@@ -199,7 +210,7 @@ export default function ClientEdit({ data, status, statusText }) {
                                                 label="Email">
                                                 <TextInput
                                                     name="email"
-                                                    value={client?.email}
+                                                    value={client?.email || ''}
                                                 />
                                             </FormField>
                                             <FormField
@@ -207,7 +218,9 @@ export default function ClientEdit({ data, status, statusText }) {
                                                 label="Street">
                                                 <TextInput
                                                     name="address"
-                                                    value={client?.address}
+                                                    value={
+                                                        client?.address || ''
+                                                    }
                                                 />
                                             </FormField>
                                             <FormField
@@ -216,7 +229,8 @@ export default function ClientEdit({ data, status, statusText }) {
                                                 <TextInput
                                                     name="point_of_contact"
                                                     value={
-                                                        client?.point_of_contact
+                                                        client?.point_of_contact ||
+                                                        ''
                                                     }
                                                 />
                                             </FormField>
@@ -227,13 +241,13 @@ export default function ClientEdit({ data, status, statusText }) {
                                                 label="Phone">
                                                 <TextInput
                                                     name="phone"
-                                                    value={client?.phone}
+                                                    value={client?.phone || ''}
                                                 />
                                             </FormField>
                                             <FormField name="city" label="City">
                                                 <TextInput
                                                     name="city"
-                                                    value={client?.city}
+                                                    value={client?.city || ''}
                                                 />
                                             </FormField>
                                             <FormField
@@ -248,9 +262,9 @@ export default function ClientEdit({ data, status, statusText }) {
                                                         'TX',
                                                         'WY',
                                                     ]}
-                                                    value={value}
+                                                    value={client?.state}
                                                     onChange={({ option }) =>
-                                                        setValue(option)
+                                                        console.log({ option })
                                                     }
                                                 />
                                             </FormField>
@@ -260,22 +274,33 @@ export default function ClientEdit({ data, status, statusText }) {
                                         direction="row"
                                         justify="end"
                                         margin={{ top: '6rem' }}>
-                                        <Button
-                                            type="submit"
-                                            label="Save"
-                                            secondary
-                                        />
+                                        <button className="btn primary inverse">
+                                            Save
+                                        </button>
                                     </Box>
                                 </Form>
                             </div>
                             <div className="panel">
-                                <Box margin={{ bottom: 'small' }}>
+                                <Box
+                                    margin={{ bottom: 'small' }}
+                                    direction="row"
+                                    justify="between">
                                     <Text>Chart of Accounts</Text>
+                                    <div>
+                                        <button className="btn secondary inverse small">
+                                            Add
+                                        </button>
+                                        <button
+                                            className="btn secondary inverse small"
+                                            onClick={onOpen}>
+                                            Upload
+                                        </button>
+                                    </div>
                                 </Box>
                                 <Data data={chartData}>
                                     <Toolbar>
                                         <DataSearch />
-                                        <Menu
+                                        {/* <Menu
                                             label={<SettingsOption />}
                                             items={[
                                                 {
@@ -283,12 +308,30 @@ export default function ClientEdit({ data, status, statusText }) {
                                                     onClick: onOpen,
                                                 },
                                             ]}
-                                        />
+                                        /> */}
                                     </Toolbar>
                                     <DataSummary />
                                     <List
                                         primaryKey="name"
                                         secondaryKey="code"
+                                        pad={{
+                                            right: '0px',
+                                            top: '10px',
+                                            bottom: '10px',
+                                            left: '0px',
+                                        }}
+                                        action={(item, index) => (
+                                            <Menu
+                                                key={index}
+                                                icon={<More />}
+                                                hoverIndicator
+                                                // margin={{ right: '0px' }}
+                                                items={[
+                                                    { label: <Edit /> },
+                                                    { label: <Trash /> },
+                                                ]}
+                                            />
+                                        )}
                                         style={{
                                             maxHeight: '300px',
                                             overflow: 'scroll',
@@ -302,37 +345,10 @@ export default function ClientEdit({ data, status, statusText }) {
                         title="Recent Uploads"
                         columns={columns}
                         data={filtered}
-                        setSelected={setSelected}
                         onClickRow={onClickRow}
                         actions={actions}
                     />
 
-                    {/* <Box
-                className="box_container"
-                fill
-                margin={{ top: '3em' }}
-                height={{ min: '650px' }}>
-                <Box
-                    direction="row"
-                    justify="between"
-                    margin={{ bottom: 'medium' }}>
-                    <Heading margin="none" level="3" color="brand">
-                        Recent Uploads
-                    </Heading>
-                    <FileInput
-                        name="file"
-                        multiple
-                        onChange={event => {
-                            const fileList = event.target.files
-                            for (let i = 0; i < fileList.length; i += 1) {
-                                const file = fileList[i]
-                            }
-                        }}
-                    />
-                </Box>
-
-                
-            </Box> */}
                     {isOpen && (
                         <ChartOfAccountsImport onClose={onClose} isOpen />
                     )}
