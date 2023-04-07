@@ -25,11 +25,10 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'workspaceName' => ['required', 'string', 'max:555']
         ]);
 
         try {
-            $workSpace = Workspace::create(['name' => $request->workspaceName]);
+            $workSpace = Workspace::create(['name' => 'My Workspace']);
 
             $user = User::create([
                 'name' => $request->name,
