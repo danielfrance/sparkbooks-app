@@ -47,7 +47,8 @@ class ClientController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'name' => 'required'
+            'name' => 'required',
+            'email' => 'required',
         ]);
 
         $user = Auth::user();
@@ -57,6 +58,7 @@ class ClientController extends Controller
         $client = Client::create(
             [
                 'name' => $request->name,
+                'email' => $request->email,
                 'address' => $request->address,
                 'gcs_directory' => $gcs_directory . "-" . Carbon::now()->timestamp,
                 'workspace_id' => $user->workspace_id

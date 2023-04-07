@@ -84,7 +84,11 @@ const InviteUser = ({ isNew, onClose, oldName, oldEmail, oldRole }) => {
                 setVisible(true)
             }
         } else {
+<<<<<<< HEAD
             setError('Please select both the client and files')
+=======
+            setError('Please fill all the fields')
+>>>>>>> main
             setVisible(true)
         }
     }

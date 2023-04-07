@@ -1,6 +1,9 @@
 <?php
 
+<<<<<<< HEAD
 use App\Http\Controllers\CategoryController;
+=======
+>>>>>>> main
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;
@@ -58,12 +61,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('files/{file}', [FileController::class, 'show']);
 
 
+<<<<<<< HEAD
     //Chart of Accounts
     Route::get('client/{id}/category', [CategoryController::class, 'getClientCategories']);
     Route::post('category/{id}', [CategoryController::class, 'update']);
     Route::post('category', [CategoryController::class, 'store']);
     Route::delete('category/{id}', [CategoryController::class, 'destroy']);
     Route::post('category/import', [CategoryController::class, 'import']);
+=======
+>>>>>>> main
 
     // Account routes
     Route::get('account', [AccountController::class, 'index']);
