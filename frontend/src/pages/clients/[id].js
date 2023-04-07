@@ -109,9 +109,9 @@ const columns = [
 ]
 
 export default function ClientEdit({ data, status, statusText }) {
-    console.log(data)
+    console.log({ data })
     const router = useRouter()
-    const [value, setValue] = useState(data.client.state)
+    // const [value, setValue] = useState(data.client.state)
     const [isOpen, setIsOpen] = useState(false)
     const onOpen = () => setIsOpen(true)
     const onClose = () => setIsOpen(false)
@@ -141,9 +141,6 @@ export default function ClientEdit({ data, status, statusText }) {
     // console.log({ client })
     const [uploads, setUploads] = useState([])
     const { filterQuery } = useUIContext()
-
-    const [selected, setSelected] = useState()
-
     const [isUnvailable, setIsUnvailable] = useState(false)
 
     const onClickRow = ({ datum }) => {
@@ -265,9 +262,9 @@ export default function ClientEdit({ data, status, statusText }) {
                                                         'TX',
                                                         'WY',
                                                     ]}
-                                                    value={value}
+                                                    value={client?.state}
                                                     onChange={({ option }) =>
-                                                        setValue(option)
+                                                        console.log({ option })
                                                     }
                                                 />
                                             </FormField>
@@ -291,7 +288,7 @@ export default function ClientEdit({ data, status, statusText }) {
                                     <Text>Chart of Accounts</Text>
                                     <div>
                                         <button className="btn secondary inverse small">
-                                            Edit
+                                            Add
                                         </button>
                                         <button
                                             className="btn secondary inverse small"
@@ -317,11 +314,18 @@ export default function ClientEdit({ data, status, statusText }) {
                                     <List
                                         primaryKey="name"
                                         secondaryKey="code"
+                                        pad={{
+                                            right: '0px',
+                                            top: '10px',
+                                            bottom: '10px',
+                                            left: '0px',
+                                        }}
                                         action={(item, index) => (
                                             <Menu
                                                 key={index}
                                                 icon={<More />}
                                                 hoverIndicator
+                                                // margin={{ right: '0px' }}
                                                 items={[
                                                     { label: <Edit /> },
                                                     { label: <Trash /> },
@@ -341,7 +345,6 @@ export default function ClientEdit({ data, status, statusText }) {
                         title="Recent Uploads"
                         columns={columns}
                         data={filtered}
-                        setSelected={setSelected}
                         onClickRow={onClickRow}
                         actions={actions}
                     />
