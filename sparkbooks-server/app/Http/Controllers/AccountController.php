@@ -92,12 +92,26 @@ class AccountController extends Controller
         $user = User::find($request->id);
 
         //TODO: make sure user is not the last admin
+        $workspace = $user->workspace;
 
-        $user->delete();
+        $users = $workspace->users;
+        //count the number of admins in the workspace
+        $adminCount = $users->filter(function ($user) {
+            return $user->hasRole('admin');
+        })->count();
 
-        return response()->json([
-            'message' => 'User removed successfully',
-        ]);
+        if ($adminCount <= 1 && $user->hasRole('admin')) {
+            return response()->json([
+                'message' => 'You cannot delete the last admin',
+            ]);
+        } else {
+            $user->delete();
+            return response()->json([
+                'message' => 'User removed successfully',
+            ]);
+        }
+
+        
     }
 
 

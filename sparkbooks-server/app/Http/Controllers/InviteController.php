@@ -53,7 +53,7 @@ class InviteController extends Controller
 
     public function show($invite_token)
     {
-        $invite = Invite::where('invite_token', $invite_token)->firstOrFail();
+        $invite = Invite::select('name', 'email', 'id')->where('invite_token', $invite_token)->firstOrFail();
 
         return $invite;
     }

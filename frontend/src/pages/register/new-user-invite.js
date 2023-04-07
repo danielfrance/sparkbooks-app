@@ -29,8 +29,6 @@ export default function RegisterNewInvite({ invite }) {
         redirectIfAuthenticated: '/dashboard',
     })
 
-    console.log('invite', invite)
-
     const [name, setName] = useState(invite.name)
     const [email, setEmail] = useState(invite.email)
     const [password, setPassword] = useState('')
