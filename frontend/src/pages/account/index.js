@@ -4,9 +4,12 @@ import { useUIContext } from '@/contexts/ui'
 import AppLayout from '@/components/Layouts/AppLayout'
 import AppBar from '@/components/Layouts/AppBar'
 import DataTable from '@/components/Layouts/DataTable'
+import InviteUser from './InviteUser'
 import {
     Box,
     Heading,
+    FormField,
+    TextInput,
     Grid,
     Avatar,
     Card,
@@ -16,115 +19,144 @@ import {
     Button,
     List,
     CardFooter,
+    Notification,
 } from 'grommet'
-import { FormEdit, User, Mail, Phone, Lock, Achievement } from 'grommet-icons'
-
-const columns = [
-    {
-        property: 'name',
-        header: <Text>Name</Text>,
-    },
-    {
-        property: 'email',
-        header: <Text>Email</Text>,
-    },
-    {
-        property: 'type',
-        header: <Text>Type</Text>,
-    },
-    {
-        property: 'active',
-        header: <Text>Last Active</Text>,
-    },
-]
-// const data = [
-//     {
-//         name: 'Daniel France',
-//         email: 'dan@ittybam.com',
-//         type: 'Admin',
-//         joined: '12/12/2019',
-//         active: '12/12/2019',
-//         avatar: '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80',
-//     },
-//     {
-//         name: 'Daniel France',
-//         email: '',
-//         type: 'Admin',
-//         joined: '12/12/2019',
-//         active: '12/12/2019',
-//         avatar: '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80',
-//     },
-//     {
-//         name: 'Daniel France',
-//         email: '',
-//         type: 'Admin',
-//         joined: '12/12/2019',
-//         active: '12/12/2019',
-//         avatar: '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80',
-//     },
-//     {
-//         name: 'Daniel France',
-//         email: '',
-//         type: 'Admin',
-//         joined: '12/12/2019',
-//         active: '12/12/2019',
-//         avatar: '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80',
-//     },
-//     {
-//         name: 'Daniel France',
-//         email: '',
-//         type: 'Admin',
-//         joined: '12/12/2019',
-//         active: '12/12/2019',
-//         avatar: '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80',
-//     },
-//     {
-//         name: 'Daniel France',
-//         email: '',
-//         type: 'Admin',
-//         joined: '12/12/2019',
-//         active: '12/12/2019',
-//         avatar: '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80',
-//     },
-// ]
+import {
+    FormEdit,
+    User,
+    Mail,
+    Phone,
+    Lock,
+    Achievement,
+    Organization,
+    Trash,
+} from 'grommet-icons'
+import axios from '@/lib/axios'
 
 export default function Account({ data }) {
-    const [selected, setSelected] = useState()
-    const [users, setUsers] = useState(data)
-    const { filterQuery, userContext } = useUIContext()
+    const { id, name, email, is_admin, workspaceInfo, team } = data
+    const router = useRouter()
+    const [users, setUsers] = useState(team || [])
+    const [onOpen, setOnOpen] = useState(false)
+    const [errorMessage, setErrorMessage] = useState('')
+    const [edit, setEdit] = useState(false)
+    const [names, setNames] = useState(name)
+    const [userEmail, setUserEmail] = useState(email)
+    const [isNew, setIsNew] = useState(true)
+    const [oldName, setOldName] = useState('')
+    const [oldEmail, setOldEmail] = useState('')
+    const [oldRole, setOldRole] = useState('')
+    const { filterQuery } = useUIContext()
 
-    const onClickRow = ({ datum }) => {
-        // router.push(`/clients/${datum.id}`)
-        console.log(datum)
+    const actions = [{ label: 'Invite', onClick: () => setOnOpen(true) }]
+
+    const onClose = () => {
+        router.replace(router.asPath)
+        setOnOpen(false)
+        setOldName('')
+        setOldEmail('')
+        setOldRole('')
     }
 
-    const actions = [{ label: 'Invite', onClick: e => console.log(e) }]
+    const handleChange = event => {
+        setEdit(true)
+        const { name, value } = event.target
+
+        if (name === 'names') setNames(value)
+        if (name === 'usser-email') setUserEmail(value)
+    }
+
+    const save = async () => {
+        const data = new FormData()
+        data.append('name', names)
+        data.append('email', userEmail)
+
+        try {
+            await axios.post(`account/user/${id}`, data)
+
+            setEdit(false)
+        } catch (error) {
+            setErrorMessage("Sorry, we couldn't save, try again")
+        }
+    }
+
+    const onClickRow = ({ datum }) => {
+        setIsNew(false)
+        setOldName(datum.name)
+        setOldEmail(datum.email)
+        setOldRole(datum.role)
+        setOnOpen(true)
+    }
+
+    const onRemove = async datum => {
+        try {
+            await axios.delete(`/account/delete/${datum.id}`)
+
+            setUsers(current => current.filter(user => user.id !== datum.id))
+        } catch (error) {
+            // console.log({ error })
+            setErrorMessage("Sorry, we couldn't remove it, try again")
+        }
+    }
 
     const filtered = users.filter(
         datum =>
-            datum.name?.toLocaleLowerCase().includes(filterQuery) ||
-            datum.type?.toLocaleLowerCase().includes(filterQuery) ||
-            datum.email?.toLocaleLowerCase().includes(filterQuery),
+            datum.name?.toLowerCase().includes(filterQuery) ||
+            datum.role?.toLowerCase().includes(filterQuery) ||
+            datum.email?.toLowerCase().includes(filterQuery),
     )
 
+    const deleteRender = datum => (
+        <Box alignSelf="center" style={{ cursor: 'pointer' }}>
+            <Trash color="#C767F5" onClick={() => onRemove(datum)} />
+        </Box>
+    )
+
+    const columns = [
+        {
+            property: 'name',
+            header: <Text>Name</Text>,
+        },
+        {
+            property: 'email',
+            header: <Text>Email</Text>,
+        },
+        {
+            property: 'role',
+            header: <Text>Role</Text>,
+        },
+        {
+            property: 'active',
+            header: <Text>Last Active</Text>,
+        },
+        {
+            property: 'x',
+            align: 'end',
+            header: <Text>Remove</Text>,
+            render: deleteRender,
+        },
+    ]
+
     return (
-        <AppLayout>
-            <AppBar />
-            <div className="card">
-                <Box direction="row" pad="medium" justify="between">
-                    <div className="title">Account Details</div>
-                    <button
-                        className="btn inverse small"
-                        onClick={() => {
-                            alert('change text fields to textinputs')
-                        }}>
-                        Edit Info
-                    </button>
-                </Box>
-                <div className="grid account-info">
-                    <div className="grid user-info">
-                        <div>
-                            <Box>
+        <>
+            {errorMessage.length > 0 && (
+                <Notification
+                    toast
+                    status="warning"
+                    title="Not ready"
+                    message="Still processing"
+                    onClose={() => setIsUnvailable(false)}
+                />
+            )}
+            <AppLayout>
+                <AppBar />
+                <div className="card">
+                    <Box direction="row" pad="medium" justify="between">
+                        <div className="title">Account Details</div>
+                    </Box>
+                    <div className="grid account-info">
+                        <div className="grid user-info">
+                            <Box margin="0" pad="0">
                                 <Stack
                                     alignSelf="center"
                                     align="center"
@@ -145,260 +177,126 @@ export default function Account({ data }) {
                                     </Box>
                                 </Stack>
                             </Box>
-                        </div>
-                        <div className="flex contacts">
-                            <Box>
-                                <Box
-                                    direction="row"
-                                    align="center"
-                                    margin={{ bottom: 'medium' }}>
-                                    <User
-                                        size="medium"
-                                        color="brand"
-                                        style={{ marginRight: '0.5em' }}
+                            <div className="grid contacts">
+                                <FormField
+                                    label="Names"
+                                    // required
+                                    // margin={{ top: 'medium', bottom: 'medium' }}
+                                >
+                                    <TextInput
+                                        name="names"
+                                        icon={
+                                            <User
+                                                size="medium"
+                                                color="#3396F2"
+                                            />
+                                        }
+                                        value={names}
+                                        onChange={handleChange}
+                                        aria-label="user names"
                                     />
-                                    <Text size="medium">
-                                        {userContext.name}
-                                    </Text>
-                                </Box>
-                                <Box
-                                    direction="row"
-                                    align="center"
-                                    margin={{ bottom: 'medium' }}>
-                                    <Mail
-                                        size="medium"
-                                        color="brand"
-                                        style={{ marginRight: '0.5em' }}
-                                    />
-                                    <Text size="medium">
-                                        {userContext.email}
-                                    </Text>
-                                </Box>
-                            </Box>
-                            <Box>
-                                <Box
-                                    direction="row"
-                                    align="center"
-                                    margin={{ bottom: 'medium' }}>
-                                    <Phone
-                                        size="medium"
-                                        color="brand"
-                                        style={{ marginRight: '0.5em' }}
-                                    />
-                                    <Text size="medium">123-456-7890</Text>
-                                </Box>
-                                <Box
-                                    direction="row"
-                                    align="center"
-                                    margin={{ bottom: 'medium' }}>
-                                    <Lock
-                                        size="medium"
-                                        color="brand"
-                                        style={{ marginRight: '0.5em' }}
-                                    />
-                                    <Text size="medium">********</Text>
-                                </Box>
-                            </Box>
-                        </div>
-                    </div>
-                    <Card background="brand" elevation="medium">
-                        <CardBody pad="medium">
-                            <Grid pad="none" columns={['xsmall', 'large']}>
-                                <Box>
-                                    <Achievement color="white" size="large" />
-                                </Box>
-                                <Box margin={{ left: '-1em' }}>
-                                    <Text
-                                        color="white"
-                                        size="xlarge"
-                                        weight="bold">
-                                        Gold Plan
-                                    </Text>
-                                    <List
-                                        align="start"
-                                        data={[
-                                            { users: '5 Users' },
-                                            { storage: '5GB Storage' },
-                                            { support: '24/7 Support' },
-                                            { files: '1000 Files' },
-                                        ]}
-                                    />
-                                </Box>
-                            </Grid>
-                        </CardBody>
-                        <CardFooter justify="center" pad="small">
-                            <Button
-                                label="Change Plan"
-                                color="white"
-                                href="https://stripe.com"
-                            />
-                        </CardFooter>
-                    </Card>
-                </div>
-            </div>
+                                </FormField>
 
-            <DataTable
-                title="Users"
-                columns={columns}
-                data={filtered}
-                setSelected={setSelected}
-                onClickRow={onClickRow}
-                actions={actions}
-            />
-        </AppLayout>
+                                <FormField label="Names">
+                                    <TextInput
+                                        name="user-email"
+                                        icon={
+                                            <Mail
+                                                size="medium"
+                                                color="#3396F2"
+                                            />
+                                        }
+                                        value={userEmail}
+                                        onChange={handleChange}
+                                        aria-label="user names"
+                                    />
+                                </FormField>
+
+                                {edit && (
+                                    <>
+                                        <Box></Box>
+                                        <button
+                                            className="btn secondary inverse"
+                                            onClick={() => save()}>
+                                            Save
+                                        </button>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                        <Card background="brand" elevation="medium">
+                            <CardBody pad="small">
+                                <Grid pad="none" columns={['xsmall', 'large']}>
+                                    <Box>
+                                        <Achievement
+                                            color="white"
+                                            size="large"
+                                        />
+                                    </Box>
+                                    <Box margin={{ left: '-1em' }}>
+                                        <Text
+                                            color="white"
+                                            size="xlarge"
+                                            weight="bold">
+                                            Gold Plan
+                                        </Text>
+                                        <List
+                                            align="start"
+                                            data={[
+                                                { users: '5 Users' },
+                                                { storage: '5GB Storage' },
+                                                { support: '24/7 Support' },
+                                                { files: '1000 Files' },
+                                            ]}
+                                        />
+                                    </Box>
+                                </Grid>
+                            </CardBody>
+                            <CardFooter justify="center" pad="small">
+                                <Button
+                                    label="Change Plan"
+                                    color="white"
+                                    href="https://stripe.com"
+                                />
+                            </CardFooter>
+                        </Card>
+                    </div>
+                </div>
+                {is_admin && team?.length > 0 && (
+                    <DataTable
+                        title="Users"
+                        columns={columns}
+                        data={filtered}
+                        // setSelected={setSelected}
+                        onClickRow={onClickRow}
+                        actions={actions}
+                    />
+                )}
+                {onOpen && (
+                    <InviteUser
+                        onClose={onClose}
+                        isNew={isNew}
+                        oldName={oldName}
+                        oldEmail={oldEmail}
+                        oldRole={oldRole}
+                    />
+                )}
+            </AppLayout>
+        </>
     )
 }
 
 export async function getServerSideProps(context) {
-    const res = await fetch(`${process.env.JSON_SERVER_URL}/users`)
-    const data = await res.json()
+    const cookie = context.req.headers.cookie
+    const res = await axios.get(`/account`, {
+        headers: {
+            cookie: cookie,
+        },
+    })
+
+    const data = res.data
 
     return {
         props: { data },
     }
 }
-
-// <Box
-//                 className="userDetails box_container"
-//                 alignSelf="stretch"
-//                 margin={{ bottom: '3em' }}
-//                 height={{ min: 'medium', max: 'xlarge' }}>
-//                 <Box direction="row" justify="between">
-//                     <Heading level="3" color="brand">
-//                         Users
-//                     </Heading>
-//                 </Box>
-//                 <Box>
-//                     <DataTable
-//                         sortable
-//                         paginate={{ step: 10 }}
-//                         fill="vertical"
-//                         alignSelf="stretch"
-//                         onSelect={() => {
-//                             alert('selected')
-//                         }}
-//                         background={{
-//                             body: ['white', 'light-2'],
-//                             footer: { dark: 'light-2', light: 'dark-3' },
-//                         }}
-//                         columns={columns}
-//                         data={data}
-//                     />
-//                 </Box>
-//             </Box>
-
-// <Grid
-//                     alignSelf="stretch"
-//                     rows={['auto', 'flex']}
-//                     pad="medium"
-//                     columns={['small', 'small', 'small', 'medium']}
-//                     justifyContent="between"
-//                     margin={{ top: 'medium' }}>
-//                     <Box>
-//                         <Stack
-//                             alignSelf="center"
-//                             align="center"
-//                             anchor="bottom-right"
-//                             pad="large">
-//                             <Avatar
-//                                 src="//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80"
-//                                 size="xlarge"
-//                             />
-//                             <Box
-//                                 pad="xsmall"
-//                                 background={{
-//                                     color: 'brand',
-//                                     opacity: 'strong',
-//                                 }}
-//                                 round="small">
-//                                 <FormEdit size="medium" color="white" />
-//                             </Box>
-//                         </Stack>
-//                     </Box>
-//                     <Box>
-//                         <Box
-//                             direction="row"
-//                             align="center"
-//                             margin={{ bottom: 'medium' }}>
-//                             <User
-//                                 size="medium"
-//                                 color="brand"
-//                                 style={{ marginRight: '0.5em' }}
-//                             />
-//                             <Text size="medium">Daniel France</Text>
-//                         </Box>
-//                         <Box
-//                             direction="row"
-//                             align="center"
-//                             margin={{ bottom: 'medium' }}>
-//                             <Mail
-//                                 size="medium"
-//                                 color="brand"
-//                                 style={{ marginRight: '0.5em' }}
-//                             />
-//                             <Text size="medium">dan@sparkbooks.io</Text>
-//                         </Box>
-//                     </Box>
-//                     <Box>
-//                         <Box
-//                             direction="row"
-//                             align="center"
-//                             margin={{ bottom: 'medium' }}>
-//                             <Phone
-//                                 size="medium"
-//                                 color="brand"
-//                                 style={{ marginRight: '0.5em' }}
-//                             />
-//                             <Text size="medium">123-456-7890</Text>
-//                         </Box>
-//                         <Box
-//                             direction="row"
-//                             align="center"
-//                             margin={{ bottom: 'medium' }}>
-//                             <Lock
-//                                 size="medium"
-//                                 color="brand"
-//                                 style={{ marginRight: '0.5em' }}
-//                             />
-//                             <Text size="medium">********</Text>
-//                         </Box>
-//                     </Box>
-//                     <Box>
-//                         <Card background="brand" elevation="medium">
-//                             <CardBody pad="medium">
-//                                 <Grid pad="none" columns={['xsmall', 'large']}>
-//                                     <Box>
-//                                         <Achievement
-//                                             color="white"
-//                                             size="large"
-//                                         />
-//                                     </Box>
-//                                     <Box margin={{ left: '-1em' }}>
-//                                         <Text
-//                                             color="white"
-//                                             size="xlarge"
-//                                             weight="bold">
-//                                             Gold Plan
-//                                         </Text>
-//                                         <List
-//                                             align="start"
-//                                             data={[
-//                                                 { users: '5 Users' },
-//                                                 { storage: '5GB Storage' },
-//                                                 { support: '24/7 Support' },
-//                                                 { files: '1000 Files' },
-//                                             ]}
-//                                         />
-//                                     </Box>
-//                                 </Grid>
-//                             </CardBody>
-//                             <CardFooter justify="center" pad="small">
-//                                 <Button
-//                                     label="Change Plan"
-//                                     color="white"
-//                                     href="https://stripe.com"
-//                                 />
-//                             </CardFooter>
-//                         </Card>
-//                     </Box>
-//                 </Grid>

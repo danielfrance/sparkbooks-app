@@ -1,5 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
-
+import { useEffect, useState } from 'react'
 import { Close, StatusGood } from 'grommet-icons'
 import {
     Box,
@@ -14,85 +13,81 @@ import {
     Spinner,
     Notification,
 } from 'grommet'
-import { useUIContext } from '@/contexts/ui'
 
 import axios from '@/lib/axios'
 
-const UploadFilesLayer = ({ onClose }) => {
-    const [selectedClient, setSelectedClient] = useState()
-    const [selectedFiles, setSelectedFiles] = useState(null)
+const InviteUser = ({ isNew, onClose, oldName, oldEmail, oldRole }) => {
+    const [selectedRole, setSelectedRole] = useState()
+    const [name, setName] = useState(oldName)
+    const [email, setEmail] = useState(oldEmail)
+    const [invitaion, setInvitation] = useState({
+        name: oldName,
+        email: oldEmail,
+        role: oldRole,
+    })
+
+    console.log({ invitaion })
     const [show, setShow] = useState(false)
     const [visible, setVisible] = useState(false)
     const [error, setError] = useState()
-    const [clients, setClients] = useState([])
 
+    const handleChange = event => {
+        const { name, value } = event.target
 
-    // const { workSpace, setWorkSpace } = useUIContext()
+        if (name === 'name') setName(value)
+        if (name === 'email') setEmail(value)
 
-    // const { clients } = workSpace
+        setInvitation(currentValue => {
+            return { ...currentValue, [name]: value }
+        })
+    }
 
-    const selectOptions = clients.map(client => {
-        const { id, name } = client
-
-        return { id, name }
-    })
+    const handleSelection = option => {
+        setSelectedRole(option)
+        setInvitation(currentValue => {
+            return { ...currentValue, role: option.toLowerCase() }
+        })
+    }
 
     const submit = async event => {
         event.preventDefault()
 
-        if (selectedClient.id && selectedFiles?.length) {
+        const { name, email, role } = invitaion
+        if (name && email && role) {
             setShow(true)
 
-            const formData = new FormData()
+            const data = new FormData()
 
-            formData.append('client_id', selectedClient.id)
-            selectedFiles.forEach(file => {
-                formData.append('files[]', file)
-            })
+            for (const [key, value] of Object.entries(invitaion))
+                data.append(key, value)
+
+            console.log(data)
 
             try {
-                const uploadFiles = await axios.post('/upload/new', formData, {
+                const res = await axios.post('/account/invite', data, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
                 })
 
-                //  refresh work space data after upload
-                const res = await axios.get('/dashboardData')
-
-                setWorkSpace(res.data.workSpace)
+                // console.log(res.data)
 
                 setShow(false)
                 onClose()
                 setVisible(true)
             } catch (error) {
-                // console.log(error)
+                setError(
+                    error?.response?.data?.message ||
+                        "We couldn't send invitation",
+                )
                 setShow(false)
-                setError("We couldn't save files, try again")
                 setVisible(true)
             }
         } else {
-            setError('Please select both the client and files')
+            setError('Please fill all the fields')
             setVisible(true)
         }
     }
-
-
-    const getClients = async () => {
-        try {
-            const res = await axios.get('/clients')
-            setClients(res.data)
-        } catch (error) {
-            setError("We couldn't load your clients")
-
-        }
-    }
-
-    useEffect(() => {
-
-        getClients()
-
-    }, [])
 
     return (
         <>
@@ -124,41 +119,48 @@ const UploadFilesLayer = ({ onClose }) => {
                     >
                         <Box flex={false} direction="row" justify="between">
                             <Heading level={2} margin="none">
-                                Upload New Files
+                                Invite member
                             </Heading>
                             <Button icon={<Close />} onClick={onClose} />
                         </Box>
                         <FormField
-                            name="name"
-                            label="Client Name"
+                            label="Team member name"
+                            // required
+                            margin={{ top: 'medium', bottom: 'medium' }}>
+                            <TextInput
+                                name="name"
+                                value={name}
+                                onChange={handleChange}
+                                aria-label="team member name"
+                            />
+                        </FormField>
+                        <FormField
+                            label="Email"
+                            // required
+                            margin={{ top: 'medium', bottom: 'medium' }}>
+                            <TextInput
+                                name="email"
+                                value={email}
+                                onChange={handleChange}
+                                aria-label="team member email"
+                            />
+                        </FormField>
+                        <FormField
+                            name="role"
+                            label="Team member role"
                             // required
                             margin={{ top: 'medium', bottom: 'medium' }}>
                             <Select
                                 required
-                                value={selectedClient}
-                                valueKey={{ key: 'id' }}
-                                labelKey="name"
-                                options={selectOptions}
+                                name="role"
+                                value={selectedRole}
+                                // valueKey={{ key: 'id' }}
+                                // labelKey="Role"
+                                options={['Admin', 'Editor']}
                                 onChange={({ option }) =>
-                                    setSelectedClient(option)
+                                    handleSelection(option)
                                 }
-                                onSearch={text => console.log(text)}
-                            />
-                        </FormField>
-                        <FormField
-                            htmlFor="uploadFilesContainer"
-                            name="files"
-                            label="Upload Files"
-                            // required
-                            margin={{ top: 'medium', bottom: 'medium' }}>
-                            <FileInput
-                                id="uploadFilesContainer"
-                                multiple
-                                pad="large"
-                                name="files"
-                                onChange={(event, { files }) =>
-                                    setSelectedFiles(files)
-                                }
+                                // onSearch={text => console.log(text)}
                             />
                         </FormField>
                         <Box fill="horizontal" align="center" gap="medium">
@@ -179,7 +181,7 @@ const UploadFilesLayer = ({ onClose }) => {
                                 className="btn primary"
                                 style={{ width: '100%' }}
                                 onClick={submit}>
-                                Upload
+                                {isNew ? 'Send invitation' : 'Save'}
                             </button>
                         </Box>
                     </Form>
@@ -189,4 +191,4 @@ const UploadFilesLayer = ({ onClose }) => {
     )
 }
 
-export default UploadFilesLayer
+export default InviteUser
