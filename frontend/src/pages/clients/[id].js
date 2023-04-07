@@ -19,7 +19,7 @@ import {
     Menu,
     Notification,
 } from 'grommet'
-import { SettingsOption } from 'grommet-icons'
+import { SettingsOption, More, Trash, Edit } from 'grommet-icons'
 
 import { useEffect, useState } from 'react'
 import DataTable from '@/components/Layouts/DataTable'
@@ -188,7 +188,7 @@ export default function ClientEdit({ data, status, statusText }) {
                                 level="3"
                                 color="brand"
                                 className="ff-sans-serif">
-                                Edit Client NAME
+                                Edit Client
                             </Heading>
                         </Box>
                         <div className="flex client-details">
@@ -277,22 +277,33 @@ export default function ClientEdit({ data, status, statusText }) {
                                         direction="row"
                                         justify="end"
                                         margin={{ top: '6rem' }}>
-                                        <Button
-                                            type="submit"
-                                            label="Save"
-                                            secondary
-                                        />
+                                        <button className="btn primary inverse">
+                                            Save
+                                        </button>
                                     </Box>
                                 </Form>
                             </div>
                             <div className="panel">
-                                <Box margin={{ bottom: 'small' }}>
+                                <Box
+                                    margin={{ bottom: 'small' }}
+                                    direction="row"
+                                    justify="between">
                                     <Text>Chart of Accounts</Text>
+                                    <div>
+                                        <button className="btn secondary inverse small">
+                                            Edit
+                                        </button>
+                                        <button
+                                            className="btn secondary inverse small"
+                                            onClick={onOpen}>
+                                            Upload
+                                        </button>
+                                    </div>
                                 </Box>
                                 <Data data={chartData}>
                                     <Toolbar>
                                         <DataSearch />
-                                        <Menu
+                                        {/* <Menu
                                             label={<SettingsOption />}
                                             items={[
                                                 {
@@ -300,12 +311,23 @@ export default function ClientEdit({ data, status, statusText }) {
                                                     onClick: onOpen,
                                                 },
                                             ]}
-                                        />
+                                        /> */}
                                     </Toolbar>
                                     <DataSummary />
                                     <List
                                         primaryKey="name"
                                         secondaryKey="code"
+                                        action={(item, index) => (
+                                            <Menu
+                                                key={index}
+                                                icon={<More />}
+                                                hoverIndicator
+                                                items={[
+                                                    { label: <Edit /> },
+                                                    { label: <Trash /> },
+                                                ]}
+                                            />
+                                        )}
                                         style={{
                                             maxHeight: '300px',
                                             overflow: 'scroll',
@@ -324,32 +346,6 @@ export default function ClientEdit({ data, status, statusText }) {
                         actions={actions}
                     />
 
-                    {/* <Box
-                className="box_container"
-                fill
-                margin={{ top: '3em' }}
-                height={{ min: '650px' }}>
-                <Box
-                    direction="row"
-                    justify="between"
-                    margin={{ bottom: 'medium' }}>
-                    <Heading margin="none" level="3" color="brand">
-                        Recent Uploads
-                    </Heading>
-                    <FileInput
-                        name="file"
-                        multiple
-                        onChange={event => {
-                            const fileList = event.target.files
-                            for (let i = 0; i < fileList.length; i += 1) {
-                                const file = fileList[i]
-                            }
-                        }}
-                    />
-                </Box>
-
-                
-            </Box> */}
                     {isOpen && (
                         <ChartOfAccountsImport onClose={onClose} isOpen />
                     )}
