@@ -77,12 +77,11 @@ const InviteUser = ({
                         'Content-Type': 'multipart/form-data',
                     },
                 })
-
+                // TODO/FIXME: Editing/updating an account
                 console.log(res.data)
 
                 setShow(false)
                 onClose()
-                setVisible(true)
             } catch (error) {
                 setError(
                     error?.response?.data?.message ||
