@@ -2,7 +2,6 @@ import AppBar from '@/components/Layouts/AppBar'
 import AppLayout from '@/components/Layouts/AppLayout'
 import {
     Box,
-    Button,
     Form,
     FormField,
     Grid,
@@ -19,7 +18,7 @@ import {
     Menu,
     Notification,
 } from 'grommet'
-import { SettingsOption, More, Trash, Edit } from 'grommet-icons'
+import { More, Trash, Edit } from 'grommet-icons'
 
 import { useEffect, useState } from 'react'
 import DataTable from '@/components/Layouts/DataTable'
@@ -45,27 +44,6 @@ const clientRender = property => datum => (
 //         <Text>{datum[property]}</Text>
 //     </Box>
 // )
-
-// [
-//         { id: 1, name: 'Repairs and Maintenance', code: '6110' },
-//         { id: 2, name: 'Gasoline, Fuel and Oil', code: '63200' },
-//         { id: 3, name: 'Small Tools and Equipment', code: '67800' },
-//         { id: 4, name: 'Inventory Grow Supplies', code: '5609' },
-//         { id: 5, name: 'Ask My Accountant', code: '8400' },
-//         { id: 6, name: 'Office Supplies', code: '64900' },
-//         { id: 7, name: 'Rental Equipment', code: '5611' },
-//         { id: 8, name: 'Chemicals Purchased', code: '61500' },
-//         { id: 9, name: 'Car and Truck Expenses', code: '61100' },
-//         { id: 10, name: 'Soil and Nutrients', code: '5614' },
-//         { id: 11, name: 'Non Deductible Expenses', code: '9000' },
-//         { id: 12, name: 'Fertilizers and Lime', code: '63000' },
-//         { id: 13, name: 'Security', code: '5612' },
-//         { id: 14, name: 'Garbage Expense', code: '6101' },
-//         { id: 15, name: 'Utilities', code: '68600' },
-//         { id: 16, name: 'Postage and Shipping', code: '6440' },
-//         { id: 17, name: 'Parking and other', code: '6610' },
-//         { id: 18, name: 'Uniforms', code: '6620' },
-//     ]
 
 const processingDataRender = property => datum => (
     <Box
@@ -131,7 +109,6 @@ const columns = [
 
 export default function ClientEdit({ data, status, statusText }) {
     const router = useRouter()
-    // const [value, setValue] = useState(data.client.state)
     const [isOpen, setIsOpen] = useState(false)
     const onOpen = () => setIsOpen(true)
     const onClose = () => setIsOpen(false)
@@ -192,12 +169,11 @@ export default function ClientEdit({ data, status, statusText }) {
             for (const [key, value] of Object.entries(accountData))
                 data.append(key, value)
 
-            console.log({ data })
             let url
             if (accountData.id) url = `category/${account.id}`
             if (!accountData.id) url = `category`
 
-            const res = await axios.post(url, data)
+            await axios.post(url, data)
 
             setAccount(null)
             setAdd(false)
@@ -217,24 +193,16 @@ export default function ClientEdit({ data, status, statusText }) {
         if (!id || !name || !email) return
 
         try {
-            console.log({ client })
-
             const data = new FormData()
 
             for (const [key, value] of Object.entries(client))
                 if (key !== 'categories' && key !== 'id')
                     data.append(key, value)
 
-            console.log({ data })
+            await axios.post(`clients/${id}`, data)
 
-            // FIXME: Returning 422 ??
-            const res = await axios.put(`clients/${id}`, data)
-
-            console.log({ res })
             router.replace(router.asPath)
-        } catch (error) {
-            console.log({ error })
-        }
+        } catch (error) {}
     }
 
     const onClickRow = ({ datum }) => {
@@ -391,7 +359,7 @@ export default function ClientEdit({ data, status, statusText }) {
                                     </Box>
                                 </Form>
                             </div>
-                            <div className="panel">
+                            <div className="panel coa-container">
                                 <Box
                                     margin={{ bottom: 'small' }}
                                     direction="row"

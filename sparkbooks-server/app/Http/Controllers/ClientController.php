@@ -123,11 +123,17 @@ class ClientController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'name' => 'required'
+            'name' => 'required',
+            'email' => 'required'
         ]);
 
         $client = Client::find($id);
         $client->name = $request->name;
+        $client->email = $request->email;
+        $client->phone = $request->phone;
+        $client->point_of_contact = $request->point_of_contact;
+        $client->state = $request->state;
+        $client->city = $request->city;
         $client->address = $request->address;
 
         $client->save();
