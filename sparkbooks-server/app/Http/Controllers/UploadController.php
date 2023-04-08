@@ -83,8 +83,6 @@ class UploadController extends Controller
         $upload = Upload::find($id);
 
         //TODO: categories will need to pull from workspace chart of accounts;
-        $categories = config('global.qb_categories');
-
 
         $check = $user->workspace->clients->contains($upload->client->id);
         // $this->getResults($upload);
