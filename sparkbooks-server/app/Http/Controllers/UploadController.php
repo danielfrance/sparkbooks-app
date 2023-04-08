@@ -69,7 +69,7 @@ class UploadController extends Controller
                 }
                 $this->dispatch(new ProcessUploadedFiles($client->id, $upload->id));
             });
-            return response()->json(['status' => 'Files uploaded & processing. Check your email shortly'], 200);
+            return ['status' => 'Files uploaded & processing. Check your email shortly'];
         } catch (\Throwable $th) {
             return
                 response()->json(['status' => 'Something went wrong. Try uploading your files again'], 200);
