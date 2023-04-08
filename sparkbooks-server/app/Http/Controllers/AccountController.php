@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\User;
 use App\Models\Workspace;
 use Illuminate\Http\Request;
@@ -75,12 +76,19 @@ class AccountController extends Controller
         $user = User::find($id);
 
         $this->validate($request, [
+            'email' => 'required|email',
+            'name' => 'required',
             'role' => 'required',
         ]);
 
-        $user->update([
-            'role' => $request->role,
+
+        $role = Role::where('name', strtolower($request->role))->first();
+
+        $user->update(['name' => $request->name,
+            'email' => $request->email
         ]);
+
+        $user->syncRoles($role);
 
         return response()->json([
             'message' => 'User updated successfully',

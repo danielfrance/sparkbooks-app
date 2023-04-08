@@ -24,7 +24,7 @@ const InviteUser = ({
     oldEmail,
     oldRole,
 }) => {
-    const [selectedRole, setSelectedRole] = useState()
+    const [selectedRole, setSelectedRole] = useState(oldRole)
     const [name, setName] = useState(oldName)
     const [email, setEmail] = useState(oldEmail)
     const [invitaion, setInvitation] = useState({
@@ -163,7 +163,7 @@ const InviteUser = ({
                                 value={selectedRole}
                                 // valueKey={{ key: 'id' }}
                                 // labelKey="Role"
-                                options={['Admin', 'Editor']}
+                                options={['admin', 'editor']}
                                 onChange={({ option }) =>
                                     handleSelection(option)
                                 }
