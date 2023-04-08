@@ -20,10 +20,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return ['Laravel' => app()->version()];
-});
-
+Route::get('/excel/{id}', [UploadController::class, 'downloadResults']);
 Route::middleware(["auth:sanctum"])->post('/workspace', [WorkspaceController::class, 'store']);
 // Route::middleware(['auth:sanctum'])->post('/workspace', [WorkspaceController::class . 'store']);
 

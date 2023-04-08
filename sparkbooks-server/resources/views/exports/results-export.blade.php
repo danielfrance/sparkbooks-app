@@ -27,23 +27,23 @@
                   <td></td>
 
               </tr>
-              @foreach ($result['line_items'] as $lineItem)
+              @foreach ($result->resultItems as $lineItem)
                   <tr>
                       <td></td>
                       <td>
-                          <div> {{ $lineItem['description'] }}</div>
+                          <div> {{ $lineItem->item }}</div>
                           {{-- <div class="text-sm leading-5 text-gray-500">Web dev</div> --}}
                       </td>
 
                       <td>
-                          {{ $lineItem['code'] }}
+                          {{ $lineItem->sku }}
                       </td>
 
                       <td>
-                          {{ $lineItem['category'] }}
+                          {{ $lineItem->category->name . ' - ' . $lineItem->category->detail}}
                       </td>
                       <td>
-                          {{ $lineItem['amount'] }}
+                          {{ $lineItem->amount }}
                       </td>
                   </tr>
               @endforeach
