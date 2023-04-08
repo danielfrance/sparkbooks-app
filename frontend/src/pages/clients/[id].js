@@ -423,7 +423,7 @@ export default function ClientEdit({ data, status, statusText }) {
                                             }}>
                                             <FormField
                                                 name="account-name"
-                                                label="Account name">
+                                                label="Category name">
                                                 <TextInput
                                                     name="name"
                                                     value={account?.name || ''}
@@ -436,7 +436,7 @@ export default function ClientEdit({ data, status, statusText }) {
                                             </FormField>
                                             <FormField
                                                 name="account-detail"
-                                                label="Account code">
+                                                label="Category code">
                                                 <TextInput
                                                     name="detail"
                                                     value={
