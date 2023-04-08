@@ -365,7 +365,15 @@ form {
 } */
 
 .coa-container {
-    width: 5rem;
+    min-width: 40%;
+    /* max-width: 40%; */
+}
+
+@media screen and (max-width: 960px) {
+  .coa-container {
+    min-width: 95%;
+
+}
 }
 
 

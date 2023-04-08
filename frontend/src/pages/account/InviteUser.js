@@ -85,7 +85,6 @@ const InviteUser = ({ isNew, onClose, oldName, oldEmail, oldRole }) => {
             }
         } else {
             setError('Please fill all the fields')
-
             setVisible(true)
         }
     }
