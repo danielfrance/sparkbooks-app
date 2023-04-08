@@ -53,6 +53,8 @@ class OAuthProviderController extends Controller
                 'provider' => $provider,
                 'provider_id' => $socialite->getId(),
             ]);
+
+            $user->attachRole('admin');
         } 
 
         
