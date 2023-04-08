@@ -33,6 +33,9 @@ If you're using a database GUI (which I recommend) you can connect to the docker
 - if you have trouble spinning up the docker container, cd into `sparkbooks-server` and run `sail build --no-cache` (Sail is just a Laravel wrapper for Docker)
 - make sure all the composer and npm packages are installed
  
+## PR Template
+- testing
+
 ## Resources
 
 -   [Laravel](https://laravel.com/docs/9.x/)
