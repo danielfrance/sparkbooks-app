@@ -32,7 +32,7 @@ class Result extends Model
 
     public function resultItems()
     {
-        return $this->hasMany(ResultItem::class);
+        return $this->hasMany(ResultItem::class)->orderBy('id', 'asc');
     }
 
     public function getContentEntities()

@@ -20,7 +20,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/excel/{id}', [UploadController::class, 'downloadResults']);
 Route::middleware(["auth:sanctum"])->post('/workspace', [WorkspaceController::class, 'store']);
 // Route::middleware(['auth:sanctum'])->post('/workspace', [WorkspaceController::class . 'store']);
 
@@ -42,6 +41,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('uploads', [UploadController::class, 'store']);
     Route::put('uploads/{upload}', [UploadController::class, 'update']);
     Route::delete('uploads/{upload}', [UploadController::class, 'destroy']);
+    Route::get('uploads/{upload}/results', [UploadController::class, 'downloadResults']);
 
 
     Route::post('/results/{upload_id}/details/{result_detail_id}', [ResultsController::class, 'updateDetail']);

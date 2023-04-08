@@ -17,7 +17,7 @@
                       <div>
                           <div>
                               <div>
-                                  {{ $result['name'] }}</div>
+                                  {{ $result->resultDetails->supplier_name }}</div>
                           </div>
                       </div>
                   </td>
@@ -32,7 +32,7 @@
                       <td></td>
                       <td>
                           <div> {{ $lineItem->item }}</div>
-                          {{-- <div class="text-sm leading-5 text-gray-500">Web dev</div> --}}
+                          
                       </td>
 
                       <td>
@@ -40,7 +40,7 @@
                       </td>
 
                       <td>
-                          {{ $lineItem->category->name . ' - ' . $lineItem->category->detail}}
+                          {{ $lineItem->category?->name . ' - ' . $lineItem->category?->detail ?? ''}}
                       </td>
                       <td>
                           {{ $lineItem->amount }}
@@ -53,12 +53,32 @@
                   </td>
                   <td></td>
                   <td></td>
-                  <td>Total Amount w/ tax</td>
+                  <td>Subtotal:</td>
                   <td>
-                      {{ $result['total'] }}
+                      {{ $result->resultDetails->net_amount }}
                   </td>
+              </tr>
+              <tr>
+                  <td>
 
+                  </td>
+                  <td></td>
+                  <td></td>
+                  <td>Total Amount w/ tax:</td>
+                  <td>
+                      {{ $result->resultDetails->total_tax_amount }}
+                  </td>
+              </tr>
+              <tr>
+                  <td>
 
+                  </td>
+                  <td></td>
+                  <td></td>
+                  <td>Total:</td>
+                  <td>
+                      {{ $result->resultDetails->total }}
+                  </td>
               </tr>
           @endforeach
 

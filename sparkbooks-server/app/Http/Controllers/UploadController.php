@@ -145,21 +145,14 @@ class UploadController extends Controller
     public function downloadResults($uploadID)
     {
 
-        // $user = Auth::user();
-        // $inputs = $request->all();
+        $user = Auth::user();
         $upload = Upload::find($uploadID);
 
-
-        return view('exports.results-export', [
-            'results' => $upload->results
-        ]);
-
-        // $check = $user->workspace->clients->contains($upload->client->id);
-        // // $this->getResults($upload);
-        // if ($check) {
-        //     return Excel::download(new ResultsExport($inputs['results']),  $upload->name . '-results.xlsx');
-        // } else {
-        //     abort(403);
-        // }
+        $check = $user->workspace->clients->contains($upload->client->id);
+        if ($check) {
+            return Excel::download(new ResultsExport($upload->results),  $upload->name . '-results.xlsx');
+        } else {
+            abort(403);
+        }
     }
 }
