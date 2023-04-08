@@ -3,7 +3,6 @@ import { Close, StatusGood } from 'grommet-icons'
 import {
     Box,
     Button,
-    FileInput,
     Form,
     FormField,
     Heading,
@@ -16,11 +15,20 @@ import {
 
 import axios from '@/lib/axios'
 
-const InviteUser = ({ isNew, onClose, oldName, oldEmail, oldRole }) => {
+const InviteUser = ({
+    action,
+    remove,
+    onClose,
+    accountId,
+    oldName,
+    oldEmail,
+    oldRole,
+}) => {
     const [selectedRole, setSelectedRole] = useState()
     const [name, setName] = useState(oldName)
     const [email, setEmail] = useState(oldEmail)
     const [invitaion, setInvitation] = useState({
+        id: accountId,
         name: oldName,
         email: oldEmail,
         role: oldRole,
@@ -51,6 +59,9 @@ const InviteUser = ({ isNew, onClose, oldName, oldEmail, oldRole }) => {
     const submit = async event => {
         event.preventDefault()
 
+        const url = accountId
+            ? `account/team/user/${accountId}`
+            : '/account/invite'
         const { name, email, role } = invitaion
         if (name && email && role) {
             setShow(true)
@@ -61,13 +72,13 @@ const InviteUser = ({ isNew, onClose, oldName, oldEmail, oldRole }) => {
                 data.append(key, value)
 
             try {
-                const res = await axios.post('/account/invite', data, {
+                const res = await axios.post(url, data, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
                 })
 
-                // console.log(res.data)
+                console.log(res.data)
 
                 setShow(false)
                 onClose()
@@ -174,12 +185,26 @@ const InviteUser = ({ isNew, onClose, oldName, oldEmail, oldRole }) => {
                                 />
                             )}
 
-                            <button
-                                className="btn primary"
-                                style={{ width: '100%' }}
-                                onClick={submit}>
-                                {isNew ? 'Send invitation' : 'Save'}
-                            </button>
+                            <Box gap="medium" direction="row">
+                                <button className="btn" onClick={onClose}>
+                                    Cancel
+                                </button>
+
+                                <button
+                                    className="btn primary"
+                                    // style={{ width: '100%' }}
+                                    onClick={
+                                        action !== 'remove'
+                                            ? submit
+                                            : () => remove(accountId)
+                                    }>
+                                    {action !== 'remove'
+                                        ? `${action
+                                              .charAt(0)
+                                              .toUpperCase()}${action.slice(1)}`
+                                        : 'Confirm removal'}
+                                </button>
+                            </Box>
                         </Box>
                     </Form>
                 </Box>
