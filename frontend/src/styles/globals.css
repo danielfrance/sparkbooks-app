@@ -365,9 +365,21 @@ form {
 } */
 
 .coa-container {
-    width: 5rem;
+    min-width: 40%;
+    /* max-width: 40%; */
 }
 
+@media screen and (max-width: 960px) {
+  .coa-container {
+    min-width: 95%;
+
+}
+}
+
+.inviteUserForm input[disabled]{
+    color: #7D4CDB !important;
+    opacity: 1 !important;
+}
 
 /* .box_container {
    background: #FFFFFF;

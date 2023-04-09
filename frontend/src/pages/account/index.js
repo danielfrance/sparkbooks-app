@@ -42,13 +42,22 @@ export default function Account({ data }) {
     const [edit, setEdit] = useState(false)
     const [names, setNames] = useState(name)
     const [userEmail, setUserEmail] = useState(email)
-    const [isNew, setIsNew] = useState(true)
+    const [action, setAction] = useState()
+    const [accountId, setAccountId] = useState(null)
     const [oldName, setOldName] = useState('')
     const [oldEmail, setOldEmail] = useState('')
     const [oldRole, setOldRole] = useState('')
     const { filterQuery } = useUIContext()
 
-    const actions = [{ label: 'Invite', onClick: () => setOnOpen(true) }]
+    const actions = [
+        {
+            label: 'Invite',
+            onClick: () => {
+                setAction('send invitation')
+                setOnOpen(true)
+            },
+        },
+    ]
 
     const onClose = () => {
         router.replace(router.asPath)
@@ -56,6 +65,7 @@ export default function Account({ data }) {
         setOldName('')
         setOldEmail('')
         setOldRole('')
+        setAccountId(null)
     }
 
     const handleChange = event => {
@@ -80,21 +90,28 @@ export default function Account({ data }) {
         }
     }
 
-    const onClickRow = ({ datum }) => {
-        setIsNew(false)
+    const onClickRow = datum => {
+        setAction('edit')
+        setAccountId(datum.id)
         setOldName(datum.name)
         setOldEmail(datum.email)
         setOldRole(datum.role)
         setOnOpen(true)
     }
 
-    const onRemove = async datum => {
-        try {
-            await axios.delete(`/account/delete/${datum.id}`)
+    const onRemove = datum => {
+        setAction('remove')
+        setAccountId(datum.id)
+        setOldName(datum.name)
+        setOldEmail(datum.email)
+        setOldRole(datum.role)
+        setOnOpen(true)
+    }
 
-            setUsers(current => current.filter(user => user.id !== datum.id))
+    const remove = async accountId => {
+        try {
+            await axios.delete(`/account/delete/${accountId}`)
         } catch (error) {
-            // console.log({ error })
             setErrorMessage("Sorry, we couldn't remove it, try again")
         }
     }
@@ -112,18 +129,27 @@ export default function Account({ data }) {
         </Box>
     )
 
+    const defaultRender = property => datum => (
+        <Box onClick={() => onClickRow(datum)}>
+            <Text>{datum[property]}</Text>
+        </Box>
+    )
+
     const columns = [
         {
             property: 'name',
             header: <Text>Name</Text>,
+            render: defaultRender('name'),
         },
         {
             property: 'email',
             header: <Text>Email</Text>,
+            render: defaultRender('email'),
         },
         {
             property: 'role',
             header: <Text>Role</Text>,
+            render: defaultRender('role'),
         },
         {
             property: 'active',
@@ -267,15 +293,15 @@ export default function Account({ data }) {
                         title="Users"
                         columns={columns}
                         data={filtered}
-                        // setSelected={setSelected}
-                        onClickRow={onClickRow}
                         actions={actions}
                     />
                 )}
                 {onOpen && (
                     <InviteUser
                         onClose={onClose}
-                        isNew={isNew}
+                        action={action}
+                        remove={remove}
+                        accountId={accountId}
                         oldName={oldName}
                         oldEmail={oldEmail}
                         oldRole={oldRole}

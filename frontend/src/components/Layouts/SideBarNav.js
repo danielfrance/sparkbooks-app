@@ -161,17 +161,7 @@ const SidebarFooter = () => {
                                 style={{
                                     marginTop: '5px',
                                 }}>
-                                @ 2022.
-                            </Text>
-                            <Text
-                                className="fs-100 text-white ff-sans-serif"
-                                style={{
-                                    marginTop: '-10px',
-                                }}
-
-                                //
-                            >
-                                ver. 1.0
+                                @ 2023.
                             </Text>
                         </Box>
                     </Box>
