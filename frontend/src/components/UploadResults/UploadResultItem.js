@@ -6,42 +6,16 @@ import { useEffect, useState } from 'react'
 let timer
 const timeout = 2 * 1000
 
-const chartOfAccounts = [
-    { id: 1, name: '6110 Repairs and Maintenance' },
-    { id: 2, name: '63200 Gasoline, Fuel and Oil' },
-    { id: 3, name: '67800 Small Tools and Equipment' },
-    { id: 4, name: '5609 Inventory Grow Supplies' },
-    { id: 5, name: '8400 Ask My Accountant' },
-    { id: 6, name: '64900 Office Supplies' },
-    { id: 7, name: '5611 Rental Equipment' },
-    { id: 8, name: '61500 Chemicals Purchased' },
-    { id: 9, name: '61100 Car and Truck Expenses' },
-    { id: 10, name: '5614 Soil and Nutrients' },
-    { id: 11, name: '9000 Non Deductible Expenses' },
-    { id: 12, name: '63000 Fertilizers and Lime' },
-    { id: 13, name: '5612 Security' },
-    { id: 14, name: '6101 Garbage Expense' },
-    { id: 15, name: '68600 Utilities' },
-    { id: 16, name: '6440 Postage and Shipping' },
-    { id: 17, name: '6610 Parking and other' },
-    { id: 18, name: '6620 Uniforms' },
-]
-
-const border = [
-    {
-        side: 'all',
-        color: '#C767F5',
-        size: 'medium',
-        style: 'dotted',
-    },
-]
-export default function UploadResultItem({ item: data, updateItems, index }) {
-    // console.log(data)
+export default function UploadResultItem({
+    item: data,
+    updateItems,
+    index,
+    categories,
+}) {
     const [isUpdating, setIsUpdating] = useState(false)
-    const [itemData, setItemData] = useState(data)
-    const [selectValue, setSelectValue] = useState(() =>
-        chartOfAccounts.find(account => account.id === itemData.category_id),
-    )
+    const [itemData, setItemData] = useState([])
+    const [options, setOptions] = useState([])
+    const [selectValue, setSelectValue] = useState([])
 
     const handleInputChange = (event, index) => {
         const { name, value } = event.target
@@ -82,7 +56,8 @@ export default function UploadResultItem({ item: data, updateItems, index }) {
 
     useEffect(() => {
         setItemData(data)
-    }, [data])
+        setOptions(categories)
+    }, [data, categories])
 
     return (
         <TableRow key={index}>
@@ -103,11 +78,28 @@ export default function UploadResultItem({ item: data, updateItems, index }) {
             <TableCell scope="row">
                 <Select
                     name="category_id"
-                    labelKey="name"
+                    labelKey={option =>
+                        `${option.detail.trim()} ${option.name.trim()}`
+                    }
                     value={selectValue}
                     valueKey={{ key: 'id' }}
-                    options={chartOfAccounts}
+                    options={options}
                     onChange={({ option }) => handleSelection(option)}
+                    onClose={() => setOptions(categories)}
+                    onSearch={text => {
+                        const escapedText = text.replace(
+                            /[-\\^$*+?.()|[\]{}]/g,
+                            '\\$&',
+                        )
+                        const exp = new RegExp(escapedText, 'i')
+                        setOptions(
+                            categories.filter(
+                                category =>
+                                    exp.test(category.name) ||
+                                    exp.test(category.detail),
+                            ),
+                        )
+                    }}
                 />
             </TableCell>
             <TableCell scope="row">
@@ -119,14 +111,12 @@ export default function UploadResultItem({ item: data, updateItems, index }) {
             </TableCell>
             <TableCell scope="row" pad="small">
                 {!isUpdating && (
-
                     <Trash color="status-error" size="small" onClick={remove} />
                 )}
                 {isUpdating && (
                     // <Spinner size="5px" margin="0" border={border} />
                     <Actions size="small" color="#C767F5" />
                 )}
-
             </TableCell>
         </TableRow>
     )

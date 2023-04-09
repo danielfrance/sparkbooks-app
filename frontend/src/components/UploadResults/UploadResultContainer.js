@@ -13,7 +13,6 @@ import {
     Notification,
 } from 'grommet'
 
-
 import { Actions, Checkmark, StatusWarning } from 'grommet-icons'
 
 import { v4 as uuidv4 } from 'uuid'
@@ -36,6 +35,7 @@ const border = [
 
 export default function UploadResultContainer({ data, index }) {
     const { result_items, result_details, imageURL } = data
+    const [categories, setCategories] = useState([])
     const [isUpdating, setIsUpdating] = useState(false)
     const [lineItems, setLineItems] = useState(result_items)
     const [currentTotal, setCurrentTotal] = useState(0)
@@ -218,6 +218,19 @@ export default function UploadResultContainer({ data, index }) {
         details.supplier_name,
     ])
 
+    const getClientCategories = async clientId => {
+        try {
+            const res = await axios.get(`client/${clientId}/category`)
+            setCategories(res.data)
+        } catch (error) {
+            console.log({ error })
+        }
+    }
+
+    useEffect(() => {
+        getClientCategories(result_details.client_id)
+    }, [])
+
     return (
         <>
             {errorMessage.length > 0 && (
@@ -243,7 +256,6 @@ export default function UploadResultContainer({ data, index }) {
                             onChange={e => handleInputChange(e)}
                             width="medium"
                             margin="none"
-
                             reverse
                             icon={
                                 isUpdating && (
@@ -264,7 +276,6 @@ export default function UploadResultContainer({ data, index }) {
                                 
                             />
                         )} */}
-
                     </Box>
 
                     <button
@@ -306,6 +317,7 @@ export default function UploadResultContainer({ data, index }) {
                                         item={item}
                                         index={index}
                                         updateItems={updateLinesItems}
+                                        categories={categories}
                                         key={index}
                                     />
                                 ))}
@@ -328,7 +340,6 @@ export default function UploadResultContainer({ data, index }) {
                                     </TableCell>
                                     <TableCell scope="row">
                                         {isUpdating && (
-
                                             // <Spinner
                                             //     size="xsmall"
                                             //     border={border}
@@ -336,7 +347,6 @@ export default function UploadResultContainer({ data, index }) {
                                             <Actions
                                                 size="small"
                                                 color="#C767F5"
-
                                             />
                                         )}
                                         {correctSubtotal &&
@@ -374,7 +384,6 @@ export default function UploadResultContainer({ data, index }) {
                                     </TableCell>
                                     <TableCell scope="row">
                                         {isUpdating && (
-
                                             // <Spinner
                                             //     size="xsmall"
                                             //     border={border}
@@ -382,7 +391,6 @@ export default function UploadResultContainer({ data, index }) {
                                             <Actions
                                                 size="small"
                                                 color="#C767F5"
-
                                             />
                                         )}
                                     </TableCell>
@@ -406,7 +414,6 @@ export default function UploadResultContainer({ data, index }) {
                                     </TableCell>
                                     <TableCell scope="row">
                                         {isUpdating && (
-
                                             <Actions
                                                 size="small"
                                                 color="#C767F5"
@@ -415,7 +422,6 @@ export default function UploadResultContainer({ data, index }) {
                                             //     size="xsmall"
                                             //     border={border}
                                             // />
-
                                         )}
                                         {correctSubtotal &&
                                             correctTotal &&
