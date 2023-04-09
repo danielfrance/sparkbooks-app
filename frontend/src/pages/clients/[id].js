@@ -17,6 +17,7 @@ import {
     Data,
     Menu,
     Notification,
+    Layer,
 } from 'grommet'
 import { More, Trash, Edit } from 'grommet-icons'
 
@@ -110,8 +111,12 @@ const columns = [
 export default function ClientEdit({ data, status, statusText }) {
     const router = useRouter()
     const [isOpen, setIsOpen] = useState(false)
+    const [layerOpen, setLayerOpen] = useState('')
+
     const onOpen = () => setIsOpen(true)
     const onClose = () => setIsOpen(false)
+    const onLayerOpen = () => setLayerOpen(true)
+    const onLayerClose = () => setLayerOpen(false)
 
     const [chartData, setChartData] = useState([])
     const [add, setAdd] = useState(false)
@@ -218,6 +223,15 @@ export default function ClientEdit({ data, status, statusText }) {
         // { label: 'Add', onClick: e => console.log(e) },
         // { label: 'Edit', onClick: e => console.log(e) },
     ]
+
+    const submitClientDelete = async id => {
+        try {
+            const res = await axios.delete(`/clients/${id}`)
+            router.push('/clients')
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     useEffect(() => {
         setClient(data.client)
@@ -347,15 +361,21 @@ export default function ClientEdit({ data, status, statusText }) {
                                             </FormField>
                                         </Box>
                                     </Grid>
+
                                     <Box
                                         direction="row"
-                                        justify="end"
+                                        justify="between"
                                         margin={{ top: '6rem' }}>
-                                        <button
-                                            className="btn primary inverse"
-                                            onClick={submitClientData}>
-                                            Save
-                                        </button>
+                                        <Button
+                                            color="status-critical"
+                                            label="Delete"
+                                            onClick={onLayerOpen}
+                                        />
+                                        <Button
+                                            type="submit"
+                                            label="Save"
+                                            secondary
+                                        />
                                     </Box>
                                 </Form>
                             </div>
@@ -505,6 +525,40 @@ export default function ClientEdit({ data, status, statusText }) {
                         <ChartOfAccountsImport onClose={onClose} isOpen />
                     )}
                 </AppLayout>
+            )}
+            {layerOpen && (
+                <Layer
+                    id="deleteClient"
+                    position="center"
+                    onClickOutside={onLayerClose}
+                    onEsc={onLayerClose}>
+                    <Box pad="medium" gap="small" width="medium">
+                        <Heading level={3} margin="none">
+                            Confirm Delete
+                        </Heading>
+                        <Text>
+                            Are you sure you want to delete this client?
+                            Deleting a client also deletes <strong>all </strong>
+                            associated data.
+                        </Text>
+                        <Text>This action cannot be undone.</Text>
+                        <Box
+                            as="footer"
+                            gap="small"
+                            direction="row"
+                            align="center"
+                            justify="between"
+                            pad={{ top: 'medium', bottom: 'small' }}>
+                            <Button label="Cancel" onClick={onLayerClose} />
+                            <Button
+                                primary
+                                label="Delete"
+                                color="status-critical"
+                                onClick={() => submitClientDelete(client.id)}
+                            />
+                        </Box>
+                    </Box>
+                </Layer>
             )}
         </>
     )
