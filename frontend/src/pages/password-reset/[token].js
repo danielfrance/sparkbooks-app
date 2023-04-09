@@ -1,15 +1,16 @@
-import ApplicationLogo from '@/components/ApplicationLogo'
-import AuthCard from '@/components/AuthCard'
-import AuthSessionStatus from '@/components/AuthSessionStatus'
-import Button from '@/components/Button'
-import GuestLayout from '@/components/Layouts/GuestLayout'
-import Input from '@/components/Input'
-import InputError from '@/components/InputError'
-import Label from '@/components/Label'
-import Link from 'next/link'
+import { Anchor, Box, Button, Form, FormField, Grid, TextInput } from 'grommet'
+
 import { useAuth } from '@/hooks/auth'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+
+const backgroundStyles = {
+    background: 'linear-gradient(180deg, #3b86d8 0%, #9881eb 100%)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100vh',
+}
 
 const PasswordReset = () => {
     const router = useRouter()
@@ -39,81 +40,72 @@ const PasswordReset = () => {
     }, [router.query.email])
 
     return (
-        <GuestLayout>
-            <AuthCard
-                logo={
-                    <Link href="/">
-                        <ApplicationLogo className="w-20 h-20 fill-current text-gray-500" />
-                    </Link>
-                }>
-                {/* Session Status */}
-                <AuthSessionStatus className="mb-4" status={status} />
-
-                <form onSubmit={submitForm}>
-                    {/* Email Address */}
-                    <div>
-                        <Label htmlFor="email">Email</Label>
-
-                        <Input
-                            id="email"
-                            type="email"
-                            value={email}
-                            className="block mt-1 w-full"
-                            onChange={event => setEmail(event.target.value)}
-                            required
-                            autoFocus
-                        />
-
-                        <InputError messages={errors.email} className="mt-2" />
-                    </div>
-
-                    {/* Password */}
-                    <div className="mt-4">
-                        <Label htmlFor="password">Password</Label>
-                        <Input
-                            id="password"
-                            type="password"
-                            value={password}
-                            className="block mt-1 w-full"
-                            onChange={event => setPassword(event.target.value)}
-                            required
-                        />
-
-                        <InputError
-                            messages={errors.password}
-                            className="mt-2"
-                        />
-                    </div>
-
-                    {/* Confirm Password */}
-                    <div className="mt-4">
-                        <Label htmlFor="passwordConfirmation">
-                            Confirm Password
-                        </Label>
-
-                        <Input
-                            id="passwordConfirmation"
-                            type="password"
-                            value={passwordConfirmation}
-                            className="block mt-1 w-full"
-                            onChange={event =>
-                                setPasswordConfirmation(event.target.value)
-                            }
-                            required
-                        />
-
-                        <InputError
-                            messages={errors.password_confirmation}
-                            className="mt-2"
-                        />
-                    </div>
-
-                    <div className="flex items-center justify-end mt-4">
-                        <Button>Reset Password</Button>
-                    </div>
-                </form>
-            </AuthCard>
-        </GuestLayout>
+        <>
+            <div style={backgroundStyles}>
+                <Box
+                    alignContent="center"
+                    justifyContent="center"
+                    background={{ color: '#EBF1F3' }}
+                    pad="medium"
+                    width="large"
+                    round="small">
+                    <Form onSubmit={submitForm}>
+                        <FormField
+                            name="email"
+                            label="Email"
+                            error={errors.email}>
+                            <TextInput
+                                id="email"
+                                name="email"
+                                value={email}
+                                onChange={event => setEmail(event.target.value)}
+                                required
+                            />
+                        </FormField>
+                        <FormField
+                            name="password"
+                            label="Password"
+                            error={errors.password}>
+                            <TextInput
+                                id="password"
+                                name="password"
+                                type="password"
+                                value={password}
+                                onChange={event =>
+                                    setPassword(event.target.value)
+                                }
+                                required
+                            />
+                        </FormField>
+                        <FormField
+                            name="passwordConfirmation"
+                            label="Confirm Password"
+                            error={errors.password_confirmation}>
+                            <TextInput
+                                id="passwordConfirmation"
+                                name="passwordConfirmation"
+                                type="password"
+                                value={passwordConfirmation}
+                                onChange={event =>
+                                    setPasswordConfirmation(event.target.value)
+                                }
+                                required
+                            />
+                        </FormField>
+                        <Box
+                            direction="row"
+                            justify="between"
+                            margin={{ top: 'medium' }}>
+                            <Button
+                                type="submit"
+                                label="Reset Password"
+                                primary
+                            />
+                        </Box>
+                    </Form>
+                </Box>
+            </div>
+        </>
     )
 }
 
