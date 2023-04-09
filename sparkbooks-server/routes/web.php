@@ -22,13 +22,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/test', function () {
-    return view('emails.invite_user');
-});
-
-Route::get('/', function () {
-    return ['Laravel' => app()->version()];
-});
 
 Route::get('invite/{invite_token}', [InviteController::class, 'show']);
 
@@ -53,6 +46,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('uploads', [UploadController::class, 'store']);
     Route::put('uploads/{upload}', [UploadController::class, 'update']);
     Route::delete('uploads/{upload}', [UploadController::class, 'destroy']);
+    Route::get('uploads/{upload}/results', [UploadController::class, 'downloadResults']);
 
 
     Route::post('/results/{upload_id}/details/{result_detail_id}', [ResultsController::class, 'updateDetail']);

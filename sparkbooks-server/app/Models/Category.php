@@ -21,4 +21,9 @@ class Category extends Model
     {
         return $this->hasMany(ResultItem::class);
     }
+
+    public function resultItems()
+    {
+        return $this->hasMany(ResultItem::class);
+    }
 }
