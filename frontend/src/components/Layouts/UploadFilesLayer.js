@@ -1,6 +1,6 @@
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import { Close, StatusGood } from 'grommet-icons'
+import { Close } from 'grommet-icons'
 import {
     Box,
     Button,
@@ -10,26 +10,21 @@ import {
     Heading,
     Layer,
     Select,
-    TextInput,
     Spinner,
     Notification,
 } from 'grommet'
-import { useUIContext } from '@/contexts/ui'
 
 import axios from '@/lib/axios'
+import { useRouter } from 'next/router'
 
 const UploadFilesLayer = ({ onClose }) => {
+    const router = useRouter()
     const [selectedClient, setSelectedClient] = useState()
     const [selectedFiles, setSelectedFiles] = useState(null)
     const [show, setShow] = useState(false)
     const [visible, setVisible] = useState(false)
     const [error, setError] = useState()
     const [clients, setClients] = useState([])
-
-
-    // const { workSpace, setWorkSpace } = useUIContext()
-
-    // const { clients } = workSpace
 
     const selectOptions = clients.map(client => {
         const { id, name } = client
@@ -51,20 +46,15 @@ const UploadFilesLayer = ({ onClose }) => {
             })
 
             try {
-                const uploadFiles = await axios.post('/upload/new', formData, {
+                await axios.post('/upload/new', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
                 })
 
-                //  refresh work space data after upload
-                const res = await axios.get('/dashboardData')
-
-                setWorkSpace(res.data.workSpace)
-
+                router.replace(router.asPath)
                 setShow(false)
                 onClose()
-                setVisible(true)
             } catch (error) {
                 // console.log(error)
                 setShow(false)
@@ -77,21 +67,17 @@ const UploadFilesLayer = ({ onClose }) => {
         }
     }
 
-
     const getClients = async () => {
         try {
             const res = await axios.get('/clients')
             setClients(res.data)
         } catch (error) {
             setError("We couldn't load your clients")
-
         }
     }
 
     useEffect(() => {
-
         getClients()
-
     }, [])
 
     return (
