@@ -17,16 +17,24 @@ class ResultItem extends Model
 
     public function result()
     {
-        $this->belongsTo(Result::class);
+        return $this->belongsTo(Result::class);
     }
 
     public function upload()
     {
-        $this->belongsTo(Upload::class);
+        return $this->belongsTo(Upload::class);
     }
 
     public function category()
     {
-        $this->hasOne(Category::class);
+        return $this->hasOne(Category::class, 'id', 'category_id');
+    }
+
+    public function getCategoryName()
+    {
+        if ($this->category) {
+            return $this->category->name;
+        }
+        return null;
     }
 }

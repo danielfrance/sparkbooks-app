@@ -4,10 +4,17 @@ import UploadResultContainer from '@/components/UploadResults/UploadResultContai
 import AppLayout from '@/components/Layouts/AppLayout'
 import ErrorMessage from '@/components/ErrorMessage'
 import axios from '@/lib/axios'
+import { downloader } from '@/lib/download'
 
 function UploadDetails({ data, status, statusText }) {
     // console.log(data)
     // const [fileData, setFileData] = useState([])
+
+    const downloadFile = () => {
+        const url = `uploads/${data[0].upload_id}/results`
+        downloader(url, `${data[0].upload.name}.xlsx`)
+    }
+
     return (
         <>
             {status !== 200 && (
@@ -26,7 +33,9 @@ function UploadDetails({ data, status, statusText }) {
                                 View Upload Details
                             </Heading>
 
-                            <button className="btn primary inverse">
+                            <button
+                                onClick={downloadFile}
+                                className="btn primary inverse">
                                 Export Results
                             </button>
                         </Box>

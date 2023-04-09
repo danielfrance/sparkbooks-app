@@ -2,7 +2,6 @@ import AppBar from '@/components/Layouts/AppBar'
 import AppLayout from '@/components/Layouts/AppLayout'
 import {
     Box,
-    Button,
     Form,
     FormField,
     Grid,
@@ -20,7 +19,7 @@ import {
     Notification,
     Layer,
 } from 'grommet'
-import { SettingsOption } from 'grommet-icons'
+import { More, Trash, Edit } from 'grommet-icons'
 
 import { useEffect, useState } from 'react'
 import DataTable from '@/components/Layouts/DataTable'
@@ -111,7 +110,6 @@ const columns = [
 
 export default function ClientEdit({ data, status, statusText }) {
     const router = useRouter()
-    const [value, setValue] = useState(data.client.state)
     const [isOpen, setIsOpen] = useState(false)
     const [layerOpen, setLayerOpen] = useState('')
 
@@ -120,34 +118,97 @@ export default function ClientEdit({ data, status, statusText }) {
     const onLayerOpen = () => setLayerOpen(true)
     const onLayerClose = () => setLayerOpen(false)
 
-    const chartData = [
-        { id: 1, name: 'Repairs and Maintenance', code: '6110' },
-        { id: 2, name: 'Gasoline, Fuel and Oil', code: '63200' },
-        { id: 3, name: 'Small Tools and Equipment', code: '67800' },
-        { id: 4, name: 'Inventory Grow Supplies', code: '5609' },
-        { id: 5, name: 'Ask My Accountant', code: '8400' },
-        { id: 6, name: 'Office Supplies', code: '64900' },
-        { id: 7, name: 'Rental Equipment', code: '5611' },
-        { id: 8, name: 'Chemicals Purchased', code: '61500' },
-        { id: 9, name: 'Car and Truck Expenses', code: '61100' },
-        { id: 10, name: 'Soil and Nutrients', code: '5614' },
-        { id: 11, name: 'Non Deductible Expenses', code: '9000' },
-        { id: 12, name: 'Fertilizers and Lime', code: '63000' },
-        { id: 13, name: 'Security', code: '5612' },
-        { id: 14, name: 'Garbage Expense', code: '6101' },
-        { id: 15, name: 'Utilities', code: '68600' },
-        { id: 16, name: 'Postage and Shipping', code: '6440' },
-        { id: 17, name: 'Parking and other', code: '6610' },
-        { id: 18, name: 'Uniforms', code: '6620' },
-    ]
-
+    const [chartData, setChartData] = useState([])
+    const [add, setAdd] = useState(false)
+    const [account, setAccount] = useState(null)
     const [client, setClient] = useState()
     const [uploads, setUploads] = useState([])
     const { filterQuery } = useUIContext()
-
-    const [selected, setSelected] = useState()
-
     const [isUnvailable, setIsUnvailable] = useState(false)
+
+    const addAccount = () => {
+        setAccount({
+            detail: '',
+            name: '',
+        })
+        setAdd(true)
+    }
+
+    const handleAccountInput = event => {
+        const { name, value } = event.target
+        setAccount(currentValue => ({ ...currentValue, [name]: value }))
+    }
+
+    const handleClientInput = event => {
+        const { name, value } = event.target
+
+        setClient(currentValue => ({ ...currentValue, [name]: value }))
+    }
+
+    const editAccount = item => {
+        setAccount(item)
+        setAdd(true)
+    }
+
+    const removeAccount = async item => {
+        try {
+            await axios.delete(`category/${item.id}`)
+            router.replace(router.asPath)
+        } catch (error) {}
+    }
+
+    const handleClientCitySelection = option =>
+        setClient(currentValue => ({ ...currentValue, state: option }))
+
+    const submitAccountData = async () => {
+        if (!account.name) return
+
+        const accountData = {
+            ...account,
+            client_id: client.id,
+            workspace_id: client.workspace_id,
+        }
+
+        try {
+            const data = new FormData()
+            for (const [key, value] of Object.entries(accountData))
+                data.append(key, value)
+
+            let url
+            if (accountData.id) url = `category/${account.id}`
+            if (!accountData.id) url = `category`
+
+            await axios.post(url, data)
+
+            setAccount(null)
+            setAdd(false)
+            router.replace(router.asPath)
+        } catch (error) {
+            console.log({ error })
+        }
+    }
+
+    const cancelAddAccount = () => {
+        setAccount(null)
+        setAdd(false)
+    }
+
+    const submitClientData = async () => {
+        const { id, name, email } = client
+        if (!id || !name || !email) return
+
+        try {
+            const data = new FormData()
+
+            for (const [key, value] of Object.entries(client))
+                if (key !== 'categories' && key !== 'id')
+                    data.append(key, value)
+
+            await axios.post(`clients/${id}`, data)
+
+            router.replace(router.asPath)
+        } catch (error) {}
+    }
 
     const onClickRow = ({ datum }) => {
         if (datum.processed) router.push(`/uploads/${datum.id}`)
@@ -175,6 +236,13 @@ export default function ClientEdit({ data, status, statusText }) {
     useEffect(() => {
         setClient(data.client)
         setUploads(data.uploads)
+        setChartData(
+            data.chart.map(el => ({
+                id: el.id,
+                name: el.name,
+                detail: el.detail,
+            })),
+        )
     }, [data])
 
     return (
@@ -200,7 +268,7 @@ export default function ClientEdit({ data, status, statusText }) {
                                 level="3"
                                 color="brand"
                                 className="ff-sans-serif">
-                                Edit {client?.name}
+                                Edit Client
                             </Heading>
                         </Box>
                         <div className="flex client-details">
@@ -211,6 +279,7 @@ export default function ClientEdit({ data, status, statusText }) {
                                             <TextInput
                                                 name="name"
                                                 value={client?.name || ''}
+                                                onChange={handleClientInput}
                                             />
                                         </FormField>
                                     </Box>
@@ -226,6 +295,7 @@ export default function ClientEdit({ data, status, statusText }) {
                                                 <TextInput
                                                     name="email"
                                                     value={client?.email || ''}
+                                                    onChange={handleClientInput}
                                                 />
                                             </FormField>
                                             <FormField
@@ -236,6 +306,7 @@ export default function ClientEdit({ data, status, statusText }) {
                                                     value={
                                                         client?.address || ''
                                                     }
+                                                    onChange={handleClientInput}
                                                 />
                                             </FormField>
                                             <FormField
@@ -247,6 +318,7 @@ export default function ClientEdit({ data, status, statusText }) {
                                                         client?.point_of_contact ||
                                                         ''
                                                     }
+                                                    onChange={handleClientInput}
                                                 />
                                             </FormField>
                                         </Box>
@@ -257,12 +329,14 @@ export default function ClientEdit({ data, status, statusText }) {
                                                 <TextInput
                                                     name="phone"
                                                     value={client?.phone || ''}
+                                                    onChange={handleClientInput}
                                                 />
                                             </FormField>
                                             <FormField name="city" label="City">
                                                 <TextInput
                                                     name="city"
                                                     value={client?.city || ''}
+                                                    onChange={handleClientInput}
                                                 />
                                             </FormField>
                                             <FormField
@@ -277,9 +351,11 @@ export default function ClientEdit({ data, status, statusText }) {
                                                         'TX',
                                                         'WY',
                                                     ]}
-                                                    value={value}
+                                                    value={client?.state}
                                                     onChange={({ option }) =>
-                                                        setValue(option)
+                                                        handleClientCitySelection(
+                                                            option,
+                                                        )
                                                     }
                                                 />
                                             </FormField>
@@ -303,33 +379,137 @@ export default function ClientEdit({ data, status, statusText }) {
                                     </Box>
                                 </Form>
                             </div>
-                            <div className="panel">
-                                <Box margin={{ bottom: 'small' }}>
+                            <div className="panel coa-container">
+                                <Box
+                                    margin={{ bottom: 'small' }}
+                                    direction="row"
+                                    justify="between">
                                     <Text>Chart of Accounts</Text>
+                                    {!add && (
+                                        <div>
+                                            <button
+                                                className="btn secondary inverse small"
+                                                onClick={addAccount}>
+                                                Add
+                                            </button>
+                                            {/* <button
+                                            className="btn secondary inverse small"
+                                            onClick={onOpen}>
+                                            Upload
+                                        </button> */}
+                                        </div>
+                                    )}
                                 </Box>
-                                <Data data={chartData}>
-                                    <Toolbar>
-                                        <DataSearch />
-                                        <Menu
-                                            label={<SettingsOption />}
-                                            items={[
-                                                {
-                                                    label: 'Import',
-                                                    onClick: onOpen,
-                                                },
-                                            ]}
+                                {add && (
+                                    <Form>
+                                        <Box
+                                            margin={{ top: '3em' }}
+                                            pad="small"
+                                            style={{
+                                                // border: 'red 1px solid',
+                                                borderRadius: '7px',
+                                            }}>
+                                            <FormField
+                                                name="account-name"
+                                                label="Category name">
+                                                <TextInput
+                                                    name="name"
+                                                    value={account?.name || ''}
+                                                    onChange={event =>
+                                                        handleAccountInput(
+                                                            event,
+                                                        )
+                                                    }
+                                                />
+                                            </FormField>
+                                            <FormField
+                                                name="account-detail"
+                                                label="Category code">
+                                                <TextInput
+                                                    name="detail"
+                                                    value={
+                                                        account?.detail || ''
+                                                    }
+                                                    onChange={event =>
+                                                        handleAccountInput(
+                                                            event,
+                                                        )
+                                                    }
+                                                />
+                                            </FormField>
+                                            <Box
+                                                direction="row"
+                                                gap="medium"
+                                                alignSelf="end"
+                                                margin={{ top: '1em' }}>
+                                                <button
+                                                    className="btn  inverse small"
+                                                    onClick={cancelAddAccount}>
+                                                    Cancel
+                                                </button>
+                                                <button
+                                                    className="btn primary inverse small"
+                                                    onClick={submitAccountData}>
+                                                    Save
+                                                </button>
+                                            </Box>
+                                        </Box>
+                                    </Form>
+                                )}
+                                {!add && (
+                                    <Data data={chartData}>
+                                        <Toolbar>
+                                            <DataSearch />
+                                        </Toolbar>
+                                        <DataSummary />
+                                        <List
+                                            primaryKey="name"
+                                            secondaryKey="detail"
+                                            pad={{
+                                                right: '0px',
+                                                top: '10px',
+                                                bottom: '10px',
+                                                left: '0px',
+                                            }}
+                                            action={(item, index) => (
+                                                <Menu
+                                                    key={index}
+                                                    icon={<More />}
+                                                    hoverIndicator
+                                                    // margin={{ right: '0px' }}
+                                                    items={[
+                                                        {
+                                                            label: (
+                                                                <Edit
+                                                                    onClick={() =>
+                                                                        editAccount(
+                                                                            item,
+                                                                        )
+                                                                    }
+                                                                />
+                                                            ),
+                                                        },
+                                                        {
+                                                            label: (
+                                                                <Trash
+                                                                    onClick={() =>
+                                                                        removeAccount(
+                                                                            item,
+                                                                        )
+                                                                    }
+                                                                />
+                                                            ),
+                                                        },
+                                                    ]}
+                                                />
+                                            )}
+                                            style={{
+                                                maxHeight: '300px',
+                                                overflow: 'scroll',
+                                            }}
                                         />
-                                    </Toolbar>
-                                    <DataSummary />
-                                    <List
-                                        primaryKey="name"
-                                        secondaryKey="code"
-                                        style={{
-                                            maxHeight: '300px',
-                                            overflow: 'scroll',
-                                        }}
-                                    />
-                                </Data>
+                                    </Data>
+                                )}
                             </div>
                         </div>
                     </Box>
@@ -337,7 +517,6 @@ export default function ClientEdit({ data, status, statusText }) {
                         title="Recent Uploads"
                         columns={columns}
                         data={filtered}
-                        setSelected={setSelected}
                         onClickRow={onClickRow}
                         actions={actions}
                     />
@@ -415,4 +594,3 @@ export async function getServerSideProps(context) {
         }
     }
 }
-

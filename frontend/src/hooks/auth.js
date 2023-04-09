@@ -20,7 +20,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
     const csrf = () => axios.get('/sanctum/csrf-cookie')
 
     const register = async ({ setErrors, ...props }) => {
-        console.log(props);
+        console.log(props)
         await csrf()
 
         setErrors([])
@@ -29,7 +29,24 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
             .post('/register', props)
             .then(() => mutate())
             .catch(error => {
-              console.log(error.response);
+                console.log(error.response)
+                // if (error.response.status !== 422) throw error
+
+                // setErrors(error.response.data.errors)
+            })
+    }
+
+    const registerNewUser = async ({ setErrors, ...props }) => {
+        console.log(props)
+        await csrf()
+
+        setErrors([])
+
+        axios
+            .post('/register/invite', props)
+            .then(() => mutate())
+            .catch(error => {
+                console.log(error.response)
                 // if (error.response.status !== 422) throw error
 
                 // setErrors(error.response.data.errors)
@@ -93,7 +110,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
     }
 
     const logout = async () => {
-        if (! error) {
+        if (!error) {
             await axios.post('/logout').then(() => mutate())
         }
 
@@ -119,5 +136,6 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
         resetPassword,
         resendEmailVerification,
         logout,
+        registerNewUser,
     }
 }

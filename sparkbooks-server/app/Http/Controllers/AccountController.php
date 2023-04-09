@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\User;
 use App\Models\Workspace;
 use Illuminate\Http\Request;
@@ -69,31 +70,25 @@ class AccountController extends Controller
         ]);
     }
 
-    public function inviteUser(Request $request)
-    {
-        $this->validate($request, [
-            'email' => 'required|email|unique:users',
-            'role' => 'required',
-        ]);
-
-        // TODO: create Invite Capabilities
-
-        return response()->json([
-            'message' => 'User invited successfully',
-        ]);
-    }
 
     public function updateTeamMember(Request $request, $id)
     {
         $user = User::find($id);
 
         $this->validate($request, [
+            'email' => 'required|email',
+            'name' => 'required',
             'role' => 'required',
         ]);
 
-        $user->update([
-            'role' => $request->role,
+
+        $role = Role::where('name', strtolower($request->role))->first();
+
+        $user->update(['name' => $request->name,
+            'email' => $request->email
         ]);
+
+        $user->syncRoles($role);
 
         return response()->json([
             'message' => 'User updated successfully',
@@ -105,12 +100,26 @@ class AccountController extends Controller
         $user = User::find($request->id);
 
         //TODO: make sure user is not the last admin
+        $workspace = $user->workspace;
 
-        $user->delete();
+        $users = $workspace->users;
+        //count the number of admins in the workspace
+        $adminCount = $users->filter(function ($user) {
+            return $user->hasRole('admin');
+        })->count();
 
-        return response()->json([
-            'message' => 'User removed successfully',
-        ]);
+        if ($adminCount <= 1 && $user->hasRole('admin')) {
+            return response()->json([
+                'message' => 'You cannot delete the last admin',
+            ]);
+        } else {
+            $user->delete();
+            return response()->json([
+                'message' => 'User removed successfully',
+            ]);
+        }
+
+        
     }
 
 

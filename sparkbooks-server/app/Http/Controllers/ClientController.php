@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ClientCreated;
 use App\Models\Client;
 use App\Models\Upload;
 use Carbon\Carbon;
@@ -69,7 +70,6 @@ class ClientController extends Controller
         $disk->makeDirectory($client->gcs_directory);
 
         return response()->json(['id' => $client->id, 'message' => 'Client created']);
-        // return redirect('clients')->with('status', 'Client created');
     }
 
     public function show($id)
@@ -82,9 +82,12 @@ class ClientController extends Controller
         if ($check) {
             $uploads = Upload::where('client_id', $client->id)->get();
 
-            return ['client' => $client, 'uploads' => $uploads];
+            return [
+                'client' => $client,
+                'uploads' => $uploads,
+                'chart' => $client->categories,
+            ];
 
-            // return view('components.client.edit')->with(['client' => $client, 'uploads' => $uploads]);
         }
     }
 
@@ -106,7 +109,7 @@ class ClientController extends Controller
 
             return ['client' => $client, 'uploads' => $uploads];
 
-            // return view('components.client.edit')->with(['client' => $client, 'uploads' => $uploads]);
+           
         }
     }
 
@@ -120,18 +123,23 @@ class ClientController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'name' => 'required'
+            'name' => 'required',
+            'email' => 'required'
         ]);
 
         $client = Client::find($id);
         $client->name = $request->name;
+        $client->email = $request->email;
+        $client->phone = $request->phone;
+        $client->point_of_contact = $request->point_of_contact;
+        $client->state = $request->state;
+        $client->city = $request->city;
         $client->address = $request->address;
 
         $client->save();
 
         return response()->json(['message' => 'Client updated']);
 
-        // return redirect('clients')->with('status', 'Client updated');
     }
 
     /**

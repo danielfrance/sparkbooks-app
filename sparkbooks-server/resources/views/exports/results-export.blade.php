@@ -17,7 +17,7 @@
                       <div>
                           <div>
                               <div>
-                                  {{ $result['name'] }}</div>
+                                  {{ $result->resultDetails->supplier_name }}</div>
                           </div>
                       </div>
                   </td>
@@ -27,23 +27,23 @@
                   <td></td>
 
               </tr>
-              @foreach ($result['line_items'] as $lineItem)
+              @foreach ($result->resultItems as $lineItem)
                   <tr>
                       <td></td>
                       <td>
-                          <div> {{ $lineItem['description'] }}</div>
-                          {{-- <div class="text-sm leading-5 text-gray-500">Web dev</div> --}}
+                          <div> {{ $lineItem->item }}</div>
+                          
                       </td>
 
                       <td>
-                          {{ $lineItem['code'] }}
+                          {{ $lineItem->sku }}
                       </td>
 
                       <td>
-                          {{ $lineItem['category'] }}
+                          {{ $lineItem->category?->name . ' - ' . $lineItem->category?->detail ?? ''}}
                       </td>
                       <td>
-                          {{ $lineItem['amount'] }}
+                          {{ $lineItem->amount }}
                       </td>
                   </tr>
               @endforeach
@@ -53,12 +53,32 @@
                   </td>
                   <td></td>
                   <td></td>
-                  <td>Total Amount w/ tax</td>
+                  <td>Subtotal:</td>
                   <td>
-                      {{ $result['total'] }}
+                      {{ $result->resultDetails->net_amount }}
                   </td>
+              </tr>
+              <tr>
+                  <td>
 
+                  </td>
+                  <td></td>
+                  <td></td>
+                  <td>Total Amount w/ tax:</td>
+                  <td>
+                      {{ $result->resultDetails->total_tax_amount }}
+                  </td>
+              </tr>
+              <tr>
+                  <td>
 
+                  </td>
+                  <td></td>
+                  <td></td>
+                  <td>Total:</td>
+                  <td>
+                      {{ $result->resultDetails->total }}
+                  </td>
               </tr>
           @endforeach
 
