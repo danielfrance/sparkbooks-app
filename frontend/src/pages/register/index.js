@@ -24,6 +24,7 @@ const backgroundStyles = {
 }
 
 export default function Login() {
+    const router = useRouter()
     const { register } = useAuth({
         middleware: 'guest',
         redirectIfAuthenticated: '/dashboard',
@@ -39,7 +40,6 @@ export default function Login() {
 
     const submitForm = event => {
         event.preventDefault()
-        console.log('registration form submitted')
 
         register({
             name,
@@ -123,22 +123,26 @@ export default function Login() {
                             pad={{ top: 'large', bottom: 'large' }}
                             checked={termsAccepted}
                             label={
-                                <Text
-                                    onClick={console.log(
-                                        'Read our terms of service',
-                                    )}
-                                    style={{ cursor: 'pointer' }}>
+                                <Text>
                                     I agree to the{' '}
                                     <Text
+                                        onClick={() =>
+                                            window.open('/legal/tos', '_blank')
+                                        }
                                         style={{
                                             color: '#C767F5',
+                                            cursor: 'pointer',
                                         }}>
                                         Terms of Service
                                     </Text>{' '}
                                     and{' '}
                                     <Text
+                                        onClick={() =>
+                                            window.open('/legal/tos', '_blank')
+                                        }
                                         style={{
                                             color: '#C767F5',
+                                            cursor: 'pointer',
                                         }}>
                                         Privacy Policy
                                     </Text>
