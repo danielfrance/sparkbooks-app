@@ -46,6 +46,7 @@ export default function Login() {
             email,
             password,
             password_confirmation: passwordConfirmation,
+            termsAccepted,
             setErrors,
         })
     }
@@ -122,6 +123,7 @@ export default function Login() {
                         <CheckBox
                             pad={{ top: 'large', bottom: 'large' }}
                             checked={termsAccepted}
+                            name="termsAccepted"
                             label={
                                 <Text>
                                     I agree to the{' '}
@@ -138,7 +140,10 @@ export default function Login() {
                                     and{' '}
                                     <Text
                                         onClick={() =>
-                                            window.open('/legal/tos', '_blank')
+                                            window.open(
+                                                '/legal/privacy',
+                                                '_blank',
+                                            )
                                         }
                                         style={{
                                             color: '#C767F5',
