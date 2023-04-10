@@ -1,4 +1,14 @@
-import { Anchor, Box, Button, Form, FormField, Grid, TextInput } from 'grommet'
+import {
+    Anchor,
+    Box,
+    Button,
+    Form,
+    FormField,
+    Grid,
+    TextInput,
+    CheckBox,
+    Text,
+} from 'grommet'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/auth'
 import { useState } from 'react'
@@ -13,8 +23,8 @@ const backgroundStyles = {
     height: '100vh',
 }
 
-
 export default function Login() {
+    const router = useRouter()
     const { register } = useAuth({
         middleware: 'guest',
         redirectIfAuthenticated: '/dashboard',
@@ -26,16 +36,17 @@ export default function Login() {
     const [passwordConfirmation, setPasswordConfirmation] = useState('')
 
     const [errors, setErrors] = useState([])
+    const [termsAccepted, setTermsAccepted] = useState(false)
 
     const submitForm = event => {
         event.preventDefault()
-        console.log('registration form submitted');
 
         register({
             name,
             email,
             password,
             password_confirmation: passwordConfirmation,
+            termsAccepted,
             setErrors,
         })
     }
@@ -109,8 +120,50 @@ export default function Login() {
                                 required
                             />
                         </FormField>
+                        <CheckBox
+                            pad={{ top: 'large', bottom: 'large' }}
+                            checked={termsAccepted}
+                            name="termsAccepted"
+                            label={
+                                <Text>
+                                    I agree to the{' '}
+                                    <Text
+                                        onClick={() =>
+                                            window.open('/legal/tos', '_blank')
+                                        }
+                                        style={{
+                                            color: '#C767F5',
+                                            cursor: 'pointer',
+                                        }}>
+                                        Terms of Service
+                                    </Text>{' '}
+                                    and{' '}
+                                    <Text
+                                        onClick={() =>
+                                            window.open(
+                                                '/legal/privacy',
+                                                '_blank',
+                                            )
+                                        }
+                                        style={{
+                                            color: '#C767F5',
+                                            cursor: 'pointer',
+                                        }}>
+                                        Privacy Policy
+                                    </Text>
+                                </Text>
+                            }
+                            onChange={() =>
+                                setTermsAccepted(currentValue => !currentValue)
+                            }
+                        />
                         <Box direction="row" justify="between">
-                            <Button type="submit" primary label="Submit" />
+                            <Button
+                                type="submit"
+                                primary
+                                label="Submit"
+                                disabled={!termsAccepted}
+                            />
                             <Anchor
                                 size="small"
                                 weight="small"
