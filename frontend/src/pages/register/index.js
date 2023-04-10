@@ -1,4 +1,14 @@
-import { Anchor, Box, Button, Form, FormField, Grid, TextInput } from 'grommet'
+import {
+    Anchor,
+    Box,
+    Button,
+    Form,
+    FormField,
+    Grid,
+    TextInput,
+    CheckBox,
+    Text,
+} from 'grommet'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/auth'
 import { useState } from 'react'
@@ -13,7 +23,6 @@ const backgroundStyles = {
     height: '100vh',
 }
 
-
 export default function Login() {
     const { register } = useAuth({
         middleware: 'guest',
@@ -26,10 +35,11 @@ export default function Login() {
     const [passwordConfirmation, setPasswordConfirmation] = useState('')
 
     const [errors, setErrors] = useState([])
+    const [termsAccepted, setTermsAccepted] = useState(false)
 
     const submitForm = event => {
         event.preventDefault()
-        console.log('registration form submitted');
+        console.log('registration form submitted')
 
         register({
             name,
@@ -109,8 +119,42 @@ export default function Login() {
                                 required
                             />
                         </FormField>
+                        <CheckBox
+                            pad={{ top: 'large', bottom: 'large' }}
+                            checked={termsAccepted}
+                            label={
+                                <Text
+                                    onClick={console.log(
+                                        'Read our terms of service',
+                                    )}
+                                    style={{ cursor: 'pointer' }}>
+                                    I agree to the{' '}
+                                    <Text
+                                        style={{
+                                            color: '#C767F5',
+                                        }}>
+                                        Terms of Service
+                                    </Text>{' '}
+                                    and{' '}
+                                    <Text
+                                        style={{
+                                            color: '#C767F5',
+                                        }}>
+                                        Privacy Policy
+                                    </Text>
+                                </Text>
+                            }
+                            onChange={() =>
+                                setTermsAccepted(currentValue => !currentValue)
+                            }
+                        />
                         <Box direction="row" justify="between">
-                            <Button type="submit" primary label="Submit" />
+                            <Button
+                                type="submit"
+                                primary
+                                label="Submit"
+                                disabled={!termsAccepted}
+                            />
                             <Anchor
                                 size="small"
                                 weight="small"
