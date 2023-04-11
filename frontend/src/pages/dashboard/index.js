@@ -7,6 +7,8 @@ import { useUIContext } from '@/contexts/ui'
 import { useRouter } from 'next/router'
 import axios from '@/lib/axios'
 import ErrorMessage from '@/components/ErrorMessage'
+import Plans from '@/components/Layouts/Plans'
+import Plan from '@/components/Plan'
 
 const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
 
@@ -102,10 +104,8 @@ export default function Dashboard({ data, status, statusText }) {
     const [isUnvailable, setIsUnvailable] = useState(false)
 
     const onClickRow = ({ datum }) => {
-
         if (datum.percent) router.push(`/uploads/${datum.id}`)
         else setIsUnvailable(true)
-
     }
 
     const filtered = uploads
@@ -149,7 +149,6 @@ export default function Dashboard({ data, status, statusText }) {
 
     return (
         <>
-
             {isUnvailable && (
                 <Notification
                     toast
@@ -163,6 +162,14 @@ export default function Dashboard({ data, status, statusText }) {
             {status === 200 && (
                 <AppLayout>
                     <AppBar />
+                    {
+                        <Plans>
+                            <Plan name="starter" />
+                            <Plan name="basic" />
+                            <Plan name="standard" />
+                            <Plan name="primium" />
+                        </Plans>
+                    }
                     <div className="flex dashboard-header">
                         <div className="flex status bg-dark text-white">
                             <img src="/processed.png" />
