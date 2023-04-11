@@ -82,7 +82,7 @@ const Plan = ({ name }) => {
                 justify="center"
                 margin={{ top: '-20px', bottom: '-20px' }}>
                 {withDiscount && (
-                    <div className="fs-400 text-accent">
+                    <div className="fs-300 text-accent">
                         You save {parseFloat(discount * 100).toFixed(0)}%
                     </div>
                 )}
