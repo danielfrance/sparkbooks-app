@@ -5,13 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laratrust\Traits\LaratrustTeamTrait;
-
+use Laravel\Cashier\Billable;
+use Laravel\Cashier\Subscription;
 
 class Workspace extends Model
 {
-    use HasFactory, LaratrustTeamTrait;
+    use HasFactory, LaratrustTeamTrait, Billable;
 
-    protected $fillable = ['name', 'address', 'city', 'state', 'zip', 'phone', 'email'];
+    protected $fillable = ['name', 'address', 'city', 'state', 'zip', 'phone', 'email', 'stripe_id', 'pm_type', 'pm_last_four'];
 
     public function users()
     {
@@ -45,4 +46,15 @@ class Workspace extends Model
     {
         return $this->hasMany(File::class);
     }
+
+    public function subscription()
+    {
+        return $this->hasOne(Subscription::class);
+    }
+
+    public function subscriptionDetails()
+    {
+        return $this->hasOne(SubscriptionDetails::class);
+    }
+
 }

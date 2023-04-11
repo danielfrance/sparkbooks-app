@@ -31,7 +31,7 @@ class RegisteredUserController extends Controller
         ]);
 
         try {
-            $workSpace = Workspace::create(['name' => 'My Workspace']);
+            $workSpace = Workspace::create(['name' => 'My Workspace', 'email' => $request->email]);
 
             $user = User::create([
                 'name' => $request->name,
