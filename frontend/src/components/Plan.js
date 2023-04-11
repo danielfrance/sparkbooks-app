@@ -69,7 +69,7 @@ const Plan = ({ name }) => {
                 justify="center"
                 margin={{ top: '-20px', bottom: '-20px' }}>
                 <div>
-                    <span className="title fs-700">
+                    <span className="text-dark fs-700">
                         $
                         {withDiscount
                             ? `${parseFloat(price * discount).toFixed(0)}`
@@ -87,12 +87,12 @@ const Plan = ({ name }) => {
                     </div>
                 )}
             </CardHeader>
-            <CardBody pad={{ horizontal: 'small' }}>
+            <CardBody>
                 <ul style={{ listStyle: 'none' }}>
                     {plans[name].features.map(feature => (
                         <li
                             key={v4()}
-                            style={{ margin: '10px' }}
+                            style={{ marginBottom: '20px' }}
                             className="fs-400">
                             {feature}
                         </li>
