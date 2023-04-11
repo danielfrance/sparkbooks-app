@@ -2,18 +2,26 @@ import { Box } from 'grommet'
 import { useUIContext } from '@/contexts/ui'
 
 const Plans = ({ children }) => {
-    const { setWithDiscount } = useUIContext()
+    const { withDiscount, setWithDiscount } = useUIContext()
 
     return (
         <Box>
             <Box direction="row" justify="center" gap="small">
                 <button
-                    className="btn primary inverse"
+                    className={[
+                        'btn',
+                        'primary',
+                        withDiscount ? 'inverse' : '',
+                    ].join(' ')}
                     onClick={() => setWithDiscount(false)}>
                     Monthly
                 </button>
                 <button
-                    className="btn primary inverse"
+                    className={[
+                        'btn',
+                        'primary',
+                        withDiscount ? '' : 'inverse',
+                    ].join(' ')}
                     onClick={() => setWithDiscount(true)}>
                     Yearly
                 </button>
