@@ -167,7 +167,7 @@ export default function Dashboard({ data, status, statusText }) {
                             <Plan name="starter" />
                             <Plan name="basic" />
                             <Plan name="standard" />
-                            <Plan name="primium" />
+                            <Plan name="premium" />
                         </Plans>
                     }
                     <div className="flex dashboard-header">

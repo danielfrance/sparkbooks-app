@@ -1,6 +1,9 @@
+import { useUIContext } from '@/contexts/ui'
 import { Box, Card, CardBody, CardFooter, CardHeader } from 'grommet'
 import { v4 } from 'uuid'
-const Plan = ({ name, withDiscount }) => {
+const Plan = ({ name }) => {
+    const { withDiscount } = useUIContext()
+
     const plans = {
         starter: {
             name: 'Starter',
@@ -38,8 +41,8 @@ const Plan = ({ name, withDiscount }) => {
                 'Access to vault',
             ],
         },
-        primium: {
-            name: 'Primium',
+        premium: {
+            name: 'Premium',
             price: 1799,
             yearDiscount: 0.55,
             features: [
@@ -51,6 +54,8 @@ const Plan = ({ name, withDiscount }) => {
             ],
         },
     }
+
+    const { yearDiscount: discount, price } = plans[name]
     return (
         <Card
             pad="medium"
@@ -63,21 +68,22 @@ const Plan = ({ name, withDiscount }) => {
             <CardHeader
                 justify="center"
                 margin={{ top: '-20px', bottom: '-20px' }}>
-                <div className="">
+                <div>
                     <span className="title fs-700">
                         $
                         {withDiscount
-                            ? `${
-                                  (plans[name].price * 12) /
-                                  plans[name].yearDiscount
-                              }`
-                            : `${plans[name].price}`}
+                            ? `${parseFloat(price * discount).toFixed(0)}`
+                            : `${parseFloat(price).toFixed(0)}`}
                     </span>{' '}
-                    <span className="fs-300 text-accent">/month</span>
+                    <span className="fs-300 text-dark">/month</span>
                 </div>
+            </CardHeader>
+            <CardHeader
+                justify="center"
+                margin={{ top: '-20px', bottom: '-20px' }}>
                 {withDiscount && (
-                    <div className="fs-400">
-                        You save {plans[name].yearDiscount * 100}%
+                    <div className="fs-400 text-accent">
+                        You save {parseFloat(discount * 100).toFixed(0)}%
                     </div>
                 )}
             </CardHeader>
@@ -94,9 +100,7 @@ const Plan = ({ name, withDiscount }) => {
                 </ul>
             </CardBody>
             <CardFooter justify="center">
-                <button
-                    className="btn  primary inverse"
-                    style={{ width: '100%' }}>
+                <button className="btn  primary " style={{ width: '100%' }}>
                     Select
                 </button>
             </CardFooter>
