@@ -162,47 +162,59 @@ export default function Dashboard({ data, status, statusText }) {
             {status === 200 && (
                 <AppLayout>
                     <AppBar />
-                    {
+                    {!workSpace?.subscription && (
                         <Plans>
                             <Plan name="starter" />
                             <Plan name="basic" />
                             <Plan name="standard" />
                             <Plan name="premium" />
                         </Plans>
-                    }
-                    <div className="flex dashboard-header">
-                        <div className="flex status bg-dark text-white">
-                            <img src="/processed.png" />
-                            <div>
-                                <span className="fs-700">{processedFiles}</span>
-                                <span className="fs-300">Files processed</span>
+                    )}
+                    {workSpace?.subscription && (
+                        <>
+                            <div className="flex dashboard-header">
+                                <div className="flex status bg-dark text-white">
+                                    <img src="/processed.png" />
+                                    <div>
+                                        <span className="fs-700">
+                                            {processedFiles}
+                                        </span>
+                                        <span className="fs-300">
+                                            Files processed
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="flex status bg-dark text-white">
+                                    <img src="/pending.png" />
+                                    <div>
+                                        <span className="fs-700">
+                                            {remainingFiles}
+                                        </span>
+                                        <span className="fs-300">
+                                            Files remaining
+                                        </span>
+                                        <span
+                                            className="fs-300"
+                                            style={{
+                                                marginTop: '-0.213rem',
+                                                textDecoration: 'underline',
+                                            }}>
+                                            Upgrade
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div className="flex status bg-dark text-white">
-                            <img src="/pending.png" />
-                            <div>
-                                <span className="fs-700">{remainingFiles}</span>
-                                <span className="fs-300">Files remaining</span>
-                                <span
-                                    className="fs-300"
-                                    style={{
-                                        marginTop: '-0.213rem',
-                                        textDecoration: 'underline',
-                                    }}>
-                                    Upgrade
-                                </span>
-                            </div>
-                        </div>
-                    </div>
 
-                    <DataTable
-                        title="Recent Uploads"
-                        columns={columns}
-                        data={filtered}
-                        setSelected={setSelected}
-                        onClickRow={onClickRow}
-                        actions={actions}
-                    />
+                            <DataTable
+                                title="Recent Uploads"
+                                columns={columns}
+                                data={filtered}
+                                setSelected={setSelected}
+                                onClickRow={onClickRow}
+                                actions={actions}
+                            />
+                        </>
+                    )}
                 </AppLayout>
             )}
             {status !== 200 && (

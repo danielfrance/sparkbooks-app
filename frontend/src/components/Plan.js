@@ -25,7 +25,7 @@ const Plan = ({ name }) => {
                 '1000 Pages / Month',
                 '1 user',
                 '10 clients',
-                'Integrations: coming',
+                'Integrations: coming soon',
                 'Access to vault',
             ],
         },
@@ -37,7 +37,7 @@ const Plan = ({ name }) => {
                 '2500 Pages / Month',
                 '2 users',
                 '30 clients',
-                'Integrations: coming',
+                'Integrations: coming soon',
                 'Access to vault',
             ],
         },
@@ -49,7 +49,7 @@ const Plan = ({ name }) => {
                 '5000 Pages / Month',
                 '20 user',
                 'Unlimited clients',
-                'Integrations: coming',
+                'Integrations: coming soon',
                 'Access to vault',
             ],
         },
@@ -61,7 +61,7 @@ const Plan = ({ name }) => {
             pad="medium"
             gap="large"
             className="ff-sans-serif card"
-            style={{ minWidth: '25%' }}>
+            style={{ minWidth: '40%', maxWidth: '40%' }}>
             <CardHeader justify="center">
                 <div className=" fs-500 text-accent">{plans[name].name}</div>
             </CardHeader>
