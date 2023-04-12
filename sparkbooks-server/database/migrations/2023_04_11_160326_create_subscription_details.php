@@ -27,6 +27,10 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
+
+        Schema::table('workspaces', function (Blueprint $table) {
+            $table->integer('remaining_monthly_pages')->nullable();
+        });
     }
 
     /**
@@ -37,5 +41,8 @@ return new class extends Migration
     public function down()
     {
         Schema::dropIfExists('subscription_details');
+        Schema::table('workspaces', function (Blueprint $table) {
+            $table->dropColumn('remaining_monthly_pages');
+        });
     }
 };

@@ -30,10 +30,18 @@ Route::get('/testwebhook', [StripeController::class, 'test']);
 
 Route::get('invite/{invite_token}', [InviteController::class, 'show']);
 
-Route::post('/webhooks/stripe', [StripeController::class, 'handleWebhook']);
+Route::post('/webhooks/subscription', [StripeController::class, 'handleSubscription']);
+
+Route::post('/webhooks/renewal-failure', [StripeController::class, 'handleRenewalFailure']);
+
+Route::post('/webhooks/renewal-success', [StripeController::class, 'handleRenewalSuccess']);
+
+Route::post('/webhooks/subscription-deleted', [StripeController::class, 'handleSubscriptionDeleted']);
+
+Route::post('/webhooks/subscription-updated', [StripeController::class, 'handleSubscriptionUpdated']);
+
 
 Route::middleware(["auth:sanctum"])->post('/workspace', [WorkspaceController::class, 'store']);
-// Route::middleware(['auth:sanctum'])->post('/workspace', [WorkspaceController::class . 'store']);
 
 Route::middleware(["auth:sanctum"])->get('/dashboardData', [DashboardController::class, 'index']);
 

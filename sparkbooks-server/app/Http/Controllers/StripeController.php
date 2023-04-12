@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Workspace;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Stripe\Stripe;
 use Stripe\Webhook;
@@ -13,7 +15,62 @@ use Stripe\Product;
 
 class StripeController extends Controller
 {
-    public function handleWebhook(Request $request)
+
+    public function test()
+    {
+        Stripe::setApiKey(env('STRIPE_SECRET'));
+
+        // Retrieve the customer object
+        $customer = Customer::retrieve('cus_Nh7bqWfbBbxDBZ');
+
+        // Get the customer's email
+        $customerEmail = $customer->email;
+
+        // Retrieve the customer's subscriptions
+        $subscriptions = Subscription::all(['customer' => 'cus_Nh7bqWfbBbxDBZ']);
+
+
+        $subscriptionPlan = Product::retrieve($subscriptions->data[0]->items->data[0]->plan->product);
+
+        // Get the subscription ID
+        $subscriptionId = $subscriptions->data[0]->id;
+
+
+        $workspace = Workspace::where('email', $customerEmail)->first();
+
+        $items = $subscriptions->data[0]->items->data;
+        $seatQuantity = (count($items) > 1) ? $items[1]->quantity : 0;
+
+        $workspaceDetails = $this->computeWorkSpaceDetails($subscriptionPlan->name, $seatQuantity, $subscriptionId);
+
+
+
+        if ($workspace) {
+            // Save the workspace's subscription in the database
+            $workspace->subscriptions()->create([
+                'name' => $subscriptionPlan->name,
+                'workspace_id' => $workspace->id,
+                'stripe_id' => $subscriptionId,
+                'stripe_status' => $subscriptions->data[0]->status,
+                'stripe_price' => $subscriptions->data[0]->items->data[0]->price->unit_amount,
+                'quantity' => 1,
+            ]);
+
+            // $workspace->update([
+            //     'stripe_id' => $subscriptionId,
+            //     'pm_type' => $session->data[0]->payment_method_details->type,
+            //     'pm_last_four' => $session->data[0]->payment_method_details->card->last4,
+            // ]);
+
+
+            $workspace->subscriptionDetails()->create($workspaceDetails);
+
+
+
+            // You can update the user's role or any other attributes if necessary
+        }
+    }
+    public function handleSubscription(Request $request)
     {
         Log::info('handleWebhook');
         Stripe::setApiKey(env('STRIPE_SECRET'));
@@ -95,74 +152,88 @@ class StripeController extends Controller
                         'stripe_id' => $subscriptionId,
                         'pm_type' => $session->payment_method_details->type,
                         'pm_last_four' => $session->payment_method_details->card->last4,
+                        'remaining_monthly_pages' => $workspaceDetails['pages']
                     ]);
 
                     Log::info('creating workspace subscription details');
 
                     $workspace->subscriptionDetails()->create($workspaceDetails);
+
+                    return ['message' => 'Workspace subscription created'];
+
                     // You can update the user's role or any other attributes if necessary
                 }
             } catch (\Throwable $th) {
-                throw $th;
+                return ['message' => 'Error creating workspace subscription', 'error' => $th->getMessage()];
             }
         }
 
         return response('Webhook received', 200);
     }
 
-    public function test()
+    public function handleRenewalFailure(Request $request)
     {
+        Log::info('handleRenewalFailure');
         Stripe::setApiKey(env('STRIPE_SECRET'));
 
-        // Retrieve the customer object
-        $customer = Customer::retrieve('cus_Nh7bqWfbBbxDBZ');
+        $event = \Stripe\Event::constructFrom(
+            $request->all()
+        );
 
-        // Get the customer's email
-        $customerEmail = $customer->email;
+        return ["event" => $event, "hook" => "handleRenewalFailure"];
 
-        // Retrieve the customer's subscriptions
-        $subscriptions = Subscription::all(['customer' => 'cus_Nh7bqWfbBbxDBZ']);
+        // Get the customer ID from the event data
+        $customerId = $event->data->object->customer;
+
+        // Retrieve the user associated with the customer ID
+        $workspace = Workspace::where('stripe_id', $customerId)->first();
+    }
+
+    public function handleRenewalSuccess(Request $request)
+    {
+        Log::info('handleRenewalFailure');
+        Stripe::setApiKey(env('STRIPE_SECRET'));
+
+        $event = \Stripe\Event::constructFrom(
+            $request->all()
+        );
+
+        return ["event" => $event, "hook" => "handleRenewalSuccess"];
+    }
+
+    public function handleSubscriptionDeleted(Request $request)
+    {
+        Log::info('handleRenewalFailure');
+        Stripe::setApiKey(env('STRIPE_SECRET'));
+
+        $event = \Stripe\Event::constructFrom(
+            $request->all()
+        );
+
+        return ["event" => $event, "hook" => "handleSubscriptionDeleted"];
+        // Get the customer ID and subscription ID from the event data
+        // $customerId = $event->data->object->customer;
+        // $subscriptionId = $event->data->object->id;
+
+        // Retrieve the user associated with the customer ID
+        // $workspace = Workspace::where('stripe_customer_id', $customerId)->first();
+
+        // if ($user) {
+        //     // Handle the subscription cancellation, e.g., remove the subscription from the user, block access to resources, etc.
+        //     $user->subscriptions()->where('stripe_id', $subscriptionId)->update(['status' => 'canceled']);
+
+        //     // You can also send an email to notify the user or perform other actions as needed
+        //     // ...
+        // }
+
+        return response('Webhook Handled', 200);
+    }
+
+    public function handleSubscriptionUpdated(Request $request)
+    {
+        // handle subscription updated
 
 
-        $subscriptionPlan = Product::retrieve($subscriptions->data[0]->items->data[0]->plan->product);
-
-        // Get the subscription ID
-        $subscriptionId = $subscriptions->data[0]->id;
-
-
-        $workspace = Workspace::where('email', $customerEmail)->first();
-
-        $items = $subscriptions->data[0]->items->data;
-        $seatQuantity = (count($items) > 1) ? $items[1]->quantity : 0;
-
-        $workspaceDetails = $this->computeWorkSpaceDetails($subscriptionPlan->name, $seatQuantity, $subscriptionId);
-
-
-
-        if ($workspace) {
-            // Save the workspace's subscription in the database
-            $workspace->subscriptions()->create([
-                'name' => $subscriptionPlan->name,
-                'workspace_id' => $workspace->id,
-                'stripe_id' => $subscriptionId,
-                'stripe_status' => $subscriptions->data[0]->status,
-                'stripe_price' => $subscriptions->data[0]->items->data[0]->price->unit_amount,
-                'quantity' => 1,
-            ]);
-
-            // $workspace->update([
-            //     'stripe_id' => $subscriptionId,
-            //     'pm_type' => $session->data[0]->payment_method_details->type,
-            //     'pm_last_four' => $session->data[0]->payment_method_details->card->last4,
-            // ]);
-
-
-            $workspace->subscriptionDetails()->create($workspaceDetails);
-
-
-
-            // You can update the user's role or any other attributes if necessary
-        }
     }
 
     public function computeWorkSpaceDetails($planName, $additionalSeats, $subscriptionId)
