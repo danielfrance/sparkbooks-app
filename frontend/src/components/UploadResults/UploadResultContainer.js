@@ -9,32 +9,31 @@ import {
     TableBody,
     TextInput,
     Text,
-    Spinner,
     Notification,
 } from 'grommet'
 
-
-import { Actions, Checkmark, StatusWarning } from 'grommet-icons'
+import {
+    Actions,
+    Checkmark,
+    StatusWarning,
+    Down,
+    Search,
+    Up,
+    Close,
+} from 'grommet-icons'
 
 import { v4 as uuidv4 } from 'uuid'
 
 import UploadResultItem from './UploadResultItem'
 
 import axios from '@/lib/axios'
+import { useRouter } from 'next/router'
 
 let timer
 const timeout = 2 * 1000
 
-const border = [
-    {
-        side: 'all',
-        color: '#C767F5',
-        size: 'medium',
-        style: 'dotted',
-    },
-]
-
 export default function UploadResultContainer({ data, index }) {
+    const router = useRouter()
     const { result_items, result_details, imageURL } = data
     const [isUpdating, setIsUpdating] = useState(false)
     const [lineItems, setLineItems] = useState(result_items)
@@ -43,6 +42,23 @@ export default function UploadResultContainer({ data, index }) {
     const [correctSubtotal, setCorrectSubtotal] = useState(false)
     const [correctTotal, setCorrectTotal] = useState(false)
     const [errorMessage, setErrorMessage] = useState('')
+    const [showSearchInput, setShowSearchInput] = useState(false)
+    const [skuQuery, setSkuQuery] = useState('')
+    const [sortOrder, setSortOrder] = useState(null)
+
+    const searchBySku = event => {
+        setSortOrder(null)
+
+        let value = ''
+
+        if (event) value = event.target.value
+
+        setSkuQuery(value)
+
+        setLineItems(() =>
+            result_items.filter(item => item.sku.includes(value)),
+        )
+    }
 
     const computeCurrentTotal = () => {
         const total = lineItems.reduce(
@@ -218,6 +234,20 @@ export default function UploadResultContainer({ data, index }) {
         details.supplier_name,
     ])
 
+    useEffect(() => {
+        if (lineItems.length !== result_items.length)
+            router.replace(router.asPath)
+
+        setLineItems(values => {
+            if (!sortOrder) return result_items
+
+            return values.sort((a, b) => {
+                if (sortOrder !== 'asc') return b.sku - a.sku
+                return a.sku - b.sku
+            })
+        })
+    }, [sortOrder])
+
     return (
         <>
             {errorMessage.length > 0 && (
@@ -243,7 +273,6 @@ export default function UploadResultContainer({ data, index }) {
                             onChange={e => handleInputChange(e)}
                             width="medium"
                             margin="none"
-
                             reverse
                             icon={
                                 isUpdating && (
@@ -251,20 +280,6 @@ export default function UploadResultContainer({ data, index }) {
                                 )
                             }
                         />
-
-                        {/* {isUpdating && (
-                            // <Spinner
-                            //     size="xsmall"
-                            //     margin={{ top: 'xsmall' }}
-                            //     border={border}
-                            // />
-                            <Actions
-                                size="medium"
-                                color="#C767F5"
-                                
-                            />
-                        )} */}
-
                     </Box>
 
                     <button
@@ -290,7 +305,64 @@ export default function UploadResultContainer({ data, index }) {
                                         Line Item
                                     </TableCell>
                                     <TableCell scope="col" border="bottom">
-                                        SKU
+                                        <Box
+                                            direction="row"
+                                            // gap="medium"
+                                            justify="between">
+                                            <Box margin={{ right: 'small' }}>
+                                                {!showSearchInput && (
+                                                    <Text>SKU</Text>
+                                                )}
+                                                {showSearchInput && (
+                                                    <TextInput
+                                                        value={skuQuery}
+                                                        onChange={searchBySku}
+                                                    />
+                                                )}
+                                            </Box>
+
+                                            <Box
+                                                direction="row"
+                                                gap="medium"
+                                                pad="xsmall"
+                                                alignSelf="end">
+                                                <Box
+                                                    onClick={() => {
+                                                        searchBySku()
+                                                        setShowSearchInput(
+                                                            value => !value,
+                                                        )
+                                                    }}>
+                                                    {!showSearchInput && (
+                                                        <Search size="small" />
+                                                    )}
+                                                    {showSearchInput && (
+                                                        <Close
+                                                        // size="small"
+                                                        // color="#C767F5"
+                                                        />
+                                                    )}
+                                                </Box>
+                                                {!showSearchInput && (
+                                                    <Box
+                                                        onClick={() =>
+                                                            setSortOrder(
+                                                                value =>
+                                                                    value ===
+                                                                    'asc'
+                                                                        ? 'desc'
+                                                                        : 'asc',
+                                                            )
+                                                        }>
+                                                        {sortOrder !== 'asc' ? (
+                                                            <Down size="small" />
+                                                        ) : (
+                                                            <Up size="small" />
+                                                        )}
+                                                    </Box>
+                                                )}
+                                            </Box>
+                                        </Box>
                                     </TableCell>
                                     <TableCell scope="col" border="bottom">
                                         Category
@@ -328,7 +400,6 @@ export default function UploadResultContainer({ data, index }) {
                                     </TableCell>
                                     <TableCell scope="row">
                                         {isUpdating && (
-
                                             // <Spinner
                                             //     size="xsmall"
                                             //     border={border}
@@ -336,7 +407,6 @@ export default function UploadResultContainer({ data, index }) {
                                             <Actions
                                                 size="small"
                                                 color="#C767F5"
-
                                             />
                                         )}
                                         {correctSubtotal &&
@@ -374,7 +444,6 @@ export default function UploadResultContainer({ data, index }) {
                                     </TableCell>
                                     <TableCell scope="row">
                                         {isUpdating && (
-
                                             // <Spinner
                                             //     size="xsmall"
                                             //     border={border}
@@ -382,7 +451,6 @@ export default function UploadResultContainer({ data, index }) {
                                             <Actions
                                                 size="small"
                                                 color="#C767F5"
-
                                             />
                                         )}
                                     </TableCell>
@@ -406,7 +474,6 @@ export default function UploadResultContainer({ data, index }) {
                                     </TableCell>
                                     <TableCell scope="row">
                                         {isUpdating && (
-
                                             <Actions
                                                 size="small"
                                                 color="#C767F5"
@@ -415,7 +482,6 @@ export default function UploadResultContainer({ data, index }) {
                                             //     size="xsmall"
                                             //     border={border}
                                             // />
-
                                         )}
                                         {correctSubtotal &&
                                             correctTotal &&
