@@ -1,6 +1,6 @@
 import { Box, TextInput } from 'grommet'
 import { Search } from 'grommet-icons'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import UploadFilesLayer from '@/components/Layouts/UploadFilesLayer'
 import { useUIContext } from '@/contexts/ui'
 
@@ -30,6 +30,7 @@ const Filter = ({}) => {
 }
 
 const AppBar = () => {
+    const { workSpace, setWorkSpace } = useUIContext()
     const [isOpen, setIsOpen] = useState(false)
     const onOpen = () => {
         setIsOpen(true)
@@ -38,11 +39,31 @@ const AppBar = () => {
     const onClose = () => {
         setIsOpen(false)
     }
+
+    const loadWorkSpace = async () => {
+        try {
+            const res = await axios.get('/dashboardData')
+
+            setWorkSpace(res.data)
+        } catch (error) {}
+    }
+
+    useEffect(() => {
+        console.log({ workSpace })
+        if (!workSpace) loadWorkSpace()
+    }, [workSpace])
+
     return (
         <>
             <div className="flex appbar">
                 <Filter />
-                <button className="btn primary" onClick={onOpen}>
+                <button
+                    className={[
+                        'btn',
+                        workSpace?.subscription ? 'primary' : '',
+                    ].join(' ')}
+                    onClick={onOpen}
+                    disabled={workSpace?.subscription ? false : true}>
                     Upload New Files
                 </button>
             </div>
