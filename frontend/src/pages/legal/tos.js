@@ -5,7 +5,7 @@ const backgroundStyles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    height: '100vh',
+    // height: '100vh',
 }
 
 const TermsOfService = () => {
@@ -18,6 +18,7 @@ const TermsOfService = () => {
                     background={{ color: '#EBF1F3' }}
                     pad="medium"
                     width="large"
+                    margin={{ top: '1em', bottom: '1em' }}
                     round="small">
                     <Heading level="2" margin="none">
                         Terms of Service
