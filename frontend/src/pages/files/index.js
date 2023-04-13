@@ -20,6 +20,8 @@ const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
 function Files({ status, statusText, data }) {
     // console.log({ data })
     const router = useRouter()
+    const [files, setFiles] = useState([])
+    const [selected, setSelected] = useState([])
 
     const onClick = datum => {
         router.push(`/files/${datum.id}`)
@@ -32,12 +34,21 @@ function Files({ status, statusText, data }) {
         </Box>
     )
 
-    const fileNameRender = datum => (
+    const fileNameRender = callback => datum => (
         <CheckBox
             key={datum.id}
-            //  checked={checked.includes(item)}
             label={<Text>{datum.fileName}</Text>}
-            onChange={e => console.log(e, datum)}
+            onChange={event =>
+                callback(current => {
+                    const { checked } = event.target
+                    const unselected = current.find(c => c.id === datum.id)
+
+                    if (unselected)
+                        return current.filter(el => el.id !== unselected.id)
+
+                    if (checked && !unselected) return [...current, datum]
+                })
+            }
         />
     )
 
@@ -70,7 +81,7 @@ function Files({ status, statusText, data }) {
         {
             property: 'fileName',
             header: <Text>File Name</Text>,
-            render: fileNameRender,
+            render: fileNameRender(setSelected),
         },
         {
             property: 'clientName',
@@ -107,11 +118,11 @@ function Files({ status, statusText, data }) {
         { property: 'x', header: <Text>Details</Text>, render: viewFileRender },
     ]
 
-    const [files, setFiles] = useState([])
-    const [selected, setSelected] = useState()
-
     const actions = [
-        { label: 'Download selected', onClick: e => console.log(e) },
+        {
+            label: `Download selected (${selected.length})`,
+            onClick: () => console.log({ selected }),
+        },
     ]
 
     const { filterQuery, workSpace } = useUIContext()
@@ -148,6 +159,7 @@ function Files({ status, statusText, data }) {
     }
 
     useEffect(() => {
+        // setSelected([])
         if (data.length) extractFiles(data)
     }, [data])
 
