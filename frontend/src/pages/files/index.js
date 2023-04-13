@@ -9,7 +9,6 @@ import AppBar from '@/components/Layouts/AppBar'
 import DataTable from '@/components/Layouts/DataTable'
 import ErrorMessage from '@/components/ErrorMessage'
 import axios from '@/lib/axios'
-
 import { useUIContext } from '@/contexts/ui'
 
 const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
@@ -43,7 +42,7 @@ function Files({ status, statusText, data }) {
                     const { checked } = event.target
                     const unselected = current.find(c => c.id === datum.id)
 
-                    if (unselected)
+                    if (!checked && unselected)
                         return current.filter(el => el.id !== unselected.id)
 
                     if (checked && !unselected) return [...current, datum]
@@ -159,7 +158,6 @@ function Files({ status, statusText, data }) {
     }
 
     useEffect(() => {
-        // setSelected([])
         if (data.length) extractFiles(data)
     }, [data])
 
