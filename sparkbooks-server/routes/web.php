@@ -7,9 +7,12 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\InviteController;
 use App\Http\Controllers\ResultsController;
+use App\Http\Controllers\StripeController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\WorkspaceController;
 use Illuminate\Support\Facades\Route;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -22,11 +25,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/testwebhook', [StripeController::class, 'test']);
+
 
 Route::get('invite/{invite_token}', [InviteController::class, 'show']);
 
+Route::post('/webhooks/subscription', [StripeController::class, 'handleSubscription']);
+
+Route::post('/webhooks/renewal-failure', [StripeController::class, 'handleRenewalFailure']);
+
+Route::post('/webhooks/subscription-deleted', [StripeController::class, 'handleSubscriptionDeleted']);
+
+
 Route::middleware(["auth:sanctum"])->post('/workspace', [WorkspaceController::class, 'store']);
-// Route::middleware(['auth:sanctum'])->post('/workspace', [WorkspaceController::class . 'store']);
 
 Route::middleware(["auth:sanctum"])->get('/dashboardData', [DashboardController::class, 'index']);
 
