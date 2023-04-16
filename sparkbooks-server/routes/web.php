@@ -34,11 +34,7 @@ Route::post('/webhooks/subscription', [StripeController::class, 'handleSubscript
 
 Route::post('/webhooks/renewal-failure', [StripeController::class, 'handleRenewalFailure']);
 
-Route::post('/webhooks/renewal-success', [StripeController::class, 'handleRenewalSuccess']);
-
 Route::post('/webhooks/subscription-deleted', [StripeController::class, 'handleSubscriptionDeleted']);
-
-Route::post('/webhooks/subscription-updated', [StripeController::class, 'handleSubscriptionUpdated']);
 
 
 Route::middleware(["auth:sanctum"])->post('/workspace', [WorkspaceController::class, 'store']);

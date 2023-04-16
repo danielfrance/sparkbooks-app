@@ -12,7 +12,7 @@ class Workspace extends Model
 {
     use HasFactory, LaratrustTeamTrait, Billable;
 
-    protected $fillable = ['name', 'address', 'city', 'state', 'zip', 'phone', 'email', 'stripe_id', 'pm_type', 'pm_last_four'];
+    protected $fillable = ['name', 'address', 'city', 'state', 'zip', 'phone', 'email', 'stripe_id', 'pm_type', 'pm_last_four', 'remaining_monthly_pages'];
 
     public function users()
     {
