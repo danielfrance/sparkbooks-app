@@ -94,6 +94,7 @@ const columns = [
 ]
 
 export default function Dashboard({ data, status, statusText }) {
+    console.log(data)
     const router = useRouter()
     const { filterQuery, workSpace, setWorkSpace } = useUIContext()
     const [uploads, setUploads] = useState([])
@@ -142,8 +143,8 @@ export default function Dashboard({ data, status, statusText }) {
         if (status === 200) {
             setProcessedFiles(0)
             setRemainingFiles(0)
-            extractUploads(data.clients)
-            setWorkSpace(data)
+            extractUploads(data.workspace.clients)
+            setWorkSpace(data.workspace)
         }
     }, [data])
 
