@@ -1,0 +1,66 @@
+version: '3'
+services:
+  frontend:
+    container_name: sparkbooks-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      ENV_VARIABLE: ${ENV_VARIABLE}
+      NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+    restart: always
+    ports:
+      - 3000:3000
+  backend:
+    container_name: sparkbooks-backend
+    image: sparkbooks-server
+    build:
+      context: ./sparkbooks-server/
+      dockerfile: devDockerfile
+    ports:
+      - "${APP_PORT:-80}:80"
+    depends_on:
+      - pgsql
+    networks:
+      - sparkbooks
+    volumes:
+      - ".:/var/www/html"
+  pgsql:
+    image: "postgres:14"
+    ports:
+        - "${FORWARD_DB_PORT:-54320}:5432"
+    environment:
+        PGPASSWORD: "${DB_PASSWORD:-secret}"
+        POSTGRES_DB: "${DB_DATABASE}"
+        POSTGRES_USER: "${DB_USERNAME}"
+        POSTGRES_PASSWORD: "${DB_PASSWORD:-secret}"
+    volumes:
+        - "sparkbooks-pgsql:/var/lib/postgresql/data"
+    networks:
+        - sparkbooks
+    healthcheck:
+        test:
+            [
+              "CMD",
+              "pg_isready",
+              "-q",
+              "-d",
+              "${DB_DATABASE}",
+              "-U",
+              "${DB_USERNAME}",
+            ]
+        retries: 3
+        timeout: 5s
+networks:
+    sparkbooks:
+        driver: bridge
+volumes:
+    sparkbooks-pgsql:
+        driver: local
+  # Add more containers below (nginx, postgres, etc.)
+
+# Define a network, which allows containers to communicate
+# with each other, by using their container name as a hostname

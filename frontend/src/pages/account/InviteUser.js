@@ -199,8 +199,10 @@ const InviteUser = ({
                                     }>
                                     {action !== 'remove'
                                         ? `${action
-                                              .charAt(0)
-                                              .toUpperCase()}${action.slice(1)}`
+                                              ?.charAt(0)
+                                              .toUpperCase()}${action?.slice(
+                                              1,
+                                          )}`
                                         : 'Confirm removal'}
                                 </button>
                             </Box>

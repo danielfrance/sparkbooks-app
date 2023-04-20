@@ -1,0 +1,58 @@
+FROM php:8.1-apache 
+
+USER root
+
+WORKDIR /var/www/html
+
+RUN apt-get update && apt-get install -y \
+        libfreetype6-dev \
+        libjpeg62-turbo-dev \
+         libpq-dev \
+        libpng-dev \
+        zlib1g-dev \
+        libxml2-dev \
+        libzip-dev \
+        libonig-dev \
+        libfontconfig1-dev \
+        xclip \
+        libjpeg62 \
+        libonig-dev \
+        libxml2-dev \
+        zip \
+        curl \
+        php-bc-math \
+        unzip
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd \
+    && docker-php-ext-install sockets \
+    && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
+    && docker-php-ext-install pdo pdo_pgsql pgsql \
+    && docker-php-ext-install zip \
+    && docker-php-ext-install pcntl \
+    && docker-php-source delete
+
+COPY . .
+COPY composer.json composer.lock ./
+
+# RUN mv vhost.conf /etc/apache2/sites-available/000-default.conf
+#RUN cp .env.dev .env
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+RUN composer install
+
+RUN chown -R www-data:www-data /var/www/html \
+    && a2enmod rewrite
+
+COPY ./deployments/scheduler /etc/cron.d/scheduler
+RUN chmod 0644 /etc/cron.d/scheduler \
+    && crontab /etc/cron.d/scheduler
+
+COPY ./deployments/start-container /usr/local/bin/start-container
+COPY ./deployments/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY ./deployments/php.ini /etc/php/8.1/cli/conf.d/99-sail.ini
+RUN chmod +x /usr/local/bin/start-container
+
+EXPOSE 80
+
+ENTRYPOINT [ "./deployments/start-container" ]
