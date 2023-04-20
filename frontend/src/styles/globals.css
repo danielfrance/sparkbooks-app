@@ -390,3 +390,26 @@ form {
     min-height: auto !important;
     border: 1px solid rgba(51, 150, 242, 0.1);
 } */
+
+li::marker {
+  font-size: var(--fs-500);
+  font-weight: bold;
+  color: hsl(var(--clr-dark));
+}
+
+.plan {
+    margin-top: 30px;
+    width: 300px;
+    max-width: 300px;
+    min-width: 300px;
+    height: 520px;
+    max-height: 520px;
+    min-height: 520px;
+}
+.recommended {
+    border: hsl( var(--clr-light)) solid 2px;
+    border-top: hsl( var(--clr-light)) solid 10px;
+    height: 540px;
+    max-height: 540px;
+    min-height: 540px;
+}

@@ -47,69 +47,64 @@ const Plan = ({ plan }) => {
         <Card
             pad="medium"
             gap="large"
-            className="ff-sans-serif card"
-            style={{
-                maxHeight: '520px',
-                minHeight: '520px',
-                minWidth: '280px',
-                maxWidth: '280px',
-            }}>
+            className={[
+                'ff-sans-serif',
+                'card',
+                'plan',
+                name === 'Standard' ? 'recommended' : '',
+            ].join(' ')}>
             <CardHeader justify="center">
-                <div className=" fs-500 text-accent">{name}</div>
+                <div className=" fs-500 text-dark">{name}</div>
             </CardHeader>
             <CardHeader
                 justify="center"
                 margin={{ top: '-20px', bottom: '-20px' }}>
                 <div>
                     <span className="text-dark fs-700">
-                        ${withDiscount ? annual_price : monthly_price}
+                        $
+                        {withDiscount
+                            ? (
+                                  parseFloat(annual_price.replace(',', '')) / 12
+                              ).toFixed(2)
+                            : monthly_price}
                     </span>{' '}
-                    <span className="fs-300 text-dark">
-                        {withDiscount ? '/yr' : '/mo'}
-                    </span>
+                    <span className="fs-300 text-dark">/mo</span>
                 </div>
             </CardHeader>
-            {withDiscount && (
-                <CardHeader
-                    justify="center"
-                    margin={{ top: '-20px', bottom: '-20px' }}>
-                    <div className="fs-300 text-accent">
-                        You save {Math.abs(discount.toFixed(0))}%
-                    </div>
-                </CardHeader>
-            )}
+
+            <CardHeader
+                justify="center"
+                margin={{ top: '-20px', bottom: '-20px' }}>
+                <div className="fs-300 ">
+                    Billed {withDiscount ? 'annually' : 'monthly'}
+                </div>
+            </CardHeader>
+
+            <CardFooter justify="center">
+                <button
+                    className="btn  primary"
+                    style={{ width: '100%', fontWeight: 'bold' }}
+                    onClick={handleclick}>
+                    Buy Now
+                </button>
+            </CardFooter>
+
             <CardBody>
-                {/* <div
-                    className="fs-200"
-                    style={{
-                        border: 'solid #C767F5 2px',
-                        padding: '10px',
-                        borderRadius: '7px',
-                        fontWeight: 'bold',
-                    }}>
-                    {description}
-                </div> */}
-                <ul style={{ listStyle: 'none' }}>
+                <ul style={{ listStyle: 'circle inside none' }}>
                     {features
                         .filter(el => el.trim() !== '')
                         .map(feature => (
                             <li
                                 key={v4()}
-                                style={{ marginBottom: '20px' }}
+                                style={{
+                                    marginBottom: '10px',
+                                }}
                                 className="fs-400">
                                 {feature}
                             </li>
                         ))}
                 </ul>
             </CardBody>
-            <CardFooter justify="center">
-                <button
-                    className="btn  primary "
-                    style={{ width: '100%' }}
-                    onClick={handleclick}>
-                    Select
-                </button>
-            </CardFooter>
         </Card>
     )
 }
