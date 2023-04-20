@@ -15,7 +15,8 @@ class DashboardController extends Controller
         $user = Auth::user();
         $data = Workspace::where('id', $user->workspace->id)->with(['clients', 'clients.uploads', 'clients.uploads.files', 'subscription'])->first();
 
-        $plans = Plan::all();
+        $plans = Plan::orderBy('id', 'asc')->get();
+        
 
         return ["workspace" => $data, "plans" => $plans];
     }

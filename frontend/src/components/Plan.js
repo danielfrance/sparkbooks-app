@@ -65,7 +65,7 @@ const Plan = ({ plan }) => {
                         ${withDiscount ? annual_price : monthly_price}
                     </span>{' '}
                     <span className="fs-300 text-dark">
-                        {withDiscount ? '/year' : '/month'}
+                        {withDiscount ? '/yr' : '/mo'}
                     </span>
                 </div>
             </CardHeader>
