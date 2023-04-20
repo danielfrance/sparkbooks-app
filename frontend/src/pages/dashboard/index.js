@@ -167,9 +167,11 @@ export default function Dashboard({ data, status, statusText }) {
                     <AppBar />
                     {!workSpace?.subscription && (
                         <Plans>
-                            {plans.map(plan => (
-                                <Plan plan={plan} key={plan.id} />
-                            ))}
+                            {plans
+                                .filter(el => el.name !== 'Enterprise')
+                                .map(plan => (
+                                    <Plan plan={plan} key={plan.id} />
+                                ))}
                         </Plans>
                     )}
                     {workSpace?.subscription && (

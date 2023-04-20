@@ -32,7 +32,11 @@ const Plan = ({ plan }) => {
         `${reports_access ? 'Report access' : ''}`,
     ]
 
-    const discount = 100 - ((monthly_price * 12) / annual_price) * 100
+    const discount =
+        100 -
+        ((parseFloat(monthly_price.replace(',', '')) * 12) /
+            parseFloat(annual_price.replace(',', ''))) *
+            100
 
     const handleclick = () => {
         const url = withDiscount ? annual_payment_link : monthly_payment_link
@@ -45,8 +49,8 @@ const Plan = ({ plan }) => {
             gap="large"
             className="ff-sans-serif card"
             style={{
-                maxHeight: '650px',
-                minHeight: '650px',
+                maxHeight: '520px',
+                minHeight: '520px',
                 minWidth: '280px',
                 maxWidth: '280px',
             }}>
@@ -58,10 +62,7 @@ const Plan = ({ plan }) => {
                 margin={{ top: '-20px', bottom: '-20px' }}>
                 <div>
                     <span className="text-dark fs-700">
-                        $
-                        {withDiscount
-                            ? `${parseFloat(annual_price).toFixed(0)}`
-                            : `${parseFloat(monthly_price).toFixed(0)}`}
+                        ${withDiscount ? annual_price : monthly_price}
                     </span>{' '}
                     <span className="fs-300 text-dark">
                         {withDiscount ? '/year' : '/month'}
@@ -73,12 +74,12 @@ const Plan = ({ plan }) => {
                     justify="center"
                     margin={{ top: '-20px', bottom: '-20px' }}>
                     <div className="fs-300 text-accent">
-                        You save {parseFloat(discount).toFixed(0)}%
+                        You save {Math.abs(discount.toFixed(0))}%
                     </div>
                 </CardHeader>
             )}
             <CardBody>
-                <div
+                {/* <div
                     className="fs-200"
                     style={{
                         border: 'solid #C767F5 2px',
@@ -87,8 +88,8 @@ const Plan = ({ plan }) => {
                         fontWeight: 'bold',
                     }}>
                     {description}
-                </div>
-                <ul style={{ listStyle: 'none', marginTop: '20px' }}>
+                </div> */}
+                <ul style={{ listStyle: 'none' }}>
                     {features
                         .filter(el => el.trim() !== '')
                         .map(feature => (
