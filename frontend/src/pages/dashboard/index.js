@@ -227,29 +227,30 @@ export default function Dashboard({ data, status, statusText }) {
 export async function getServerSideProps(context) {
     const cookie = context.req.headers.cookie
 
-    if (!cookie)
-        return {
-            redirect: {
-                destination: '/login',
-                permanent: false,
-            },
-        }
+        if (!cookie)
+            return {
+                redirect: {
+                    destination: '/login',
+                    permanent: false,
+                },
+            }
 
-    try {
-        const res = await axios.get('/dashboardData', {
-            headers: {
-                cookie: cookie,
-            },
-        })
+        try {
+            const res = await axios.get('/dashboardData', {
+                headers: {
+                    cookie: cookie,
+                },
+            })
 
-        return {
-            props: { status: 200, data: res.data },
-        }
-    } catch (error) {
-        const { status, statusText } = error.response
+            return {
+                props: { data: res.data },
+            }
+        } catch (error) {
+            console.log('HERE', error)
+            const { status, statusText } = error.response
 
-        return {
-            props: { status, statusText },
+            return {
+                props: { status, statusText },
+            }
         }
-    }
 }

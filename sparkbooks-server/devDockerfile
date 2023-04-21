@@ -1,58 +1,68 @@
-FROM php:8.1-apache 
+FROM php:8.1-fpm
 
-USER root
-
+# Set working directory
 WORKDIR /var/www/html
 
+# Add docker php ext repo
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+
+# Install php extensions
+RUN chmod +x /usr/local/bin/install-php-extensions && sync && \
+    install-php-extensions mbstring pdo_mysql zip exif pcntl gd memcached
+
+# Install dependencies
 RUN apt-get update && apt-get install -y \
-        libfreetype6-dev \
-        libjpeg62-turbo-dev \
-         libpq-dev \
-        libpng-dev \
-        zlib1g-dev \
-        libxml2-dev \
-        libzip-dev \
-        libonig-dev \
-        libfontconfig1-dev \
-        xclip \
-        libjpeg62 \
-        libonig-dev \
-        libxml2-dev \
-        zip \
-        curl \
-        php-bc-math \
-        unzip
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-install sockets \
-    && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
-    && docker-php-ext-install pdo pdo_pgsql pgsql \
-    && docker-php-ext-install zip \
-    && docker-php-ext-install pcntl \
-    && docker-php-source delete
+    build-essential \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    locales \
+    zip \
+    jpegoptim optipng pngquant gifsicle \
+    unzip \
+    git \
+    curl \
+    lua-zlib-dev \
+    libmemcached-dev \
+    nginx \
+    && apt-get install -y postgresql-client libpq-dev \
+    && docker-php-ext-install pdo pdo_pgsql \
+    && docker-php-ext-install bcmath 
 
 COPY . .
 COPY composer.json composer.lock ./
 
-# RUN mv vhost.conf /etc/apache2/sites-available/000-default.conf
-#RUN cp .env.dev .env
+# Install supervisor
+RUN apt-get install -y supervisor
 
+# Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-RUN composer install
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN chown -R www-data:www-data /var/www/html \
-    && a2enmod rewrite
+# Add user for laravel application
+RUN groupadd -g 1000 www
+RUN useradd -u 1000 -ms /bin/bash -g www www
 
-COPY ./deployments/scheduler /etc/cron.d/scheduler
-RUN chmod 0644 /etc/cron.d/scheduler \
-    && crontab /etc/cron.d/scheduler
+# Copy code to /var/www
+COPY --chown=www:www-data . /var/www
 
-COPY ./deployments/start-container /usr/local/bin/start-container
-COPY ./deployments/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY ./deployments/php.ini /etc/php/8.1/cli/conf.d/99-sail.ini
-RUN chmod +x /usr/local/bin/start-container
+# add root to www group
+RUN chmod -R ug+w /var/www/storage
+
+# Copy nginx/php/supervisor configs
+COPY ./deployments/supervisord.conf /etc/supervisord.conf
+COPY ./deployments/php.ini /usr/local/etc/php/conf.d/app.ini
+COPY ./deployments/nginx.conf /etc/nginx/sites-enabled/default
+
+# PHP Error Log Files
+RUN mkdir /var/log/php
+RUN touch /var/log/php/errors.log && chmod 777 /var/log/php/errors.log
+
+# Deployment steps
+RUN composer install --optimize-autoloader --no-dev
+RUN chmod +x /var/www/deployments/run.sh
 
 EXPOSE 80
-
-ENTRYPOINT [ "./deployments/start-container" ]
+ENTRYPOINT ["/var/www/deployments/run.sh"]

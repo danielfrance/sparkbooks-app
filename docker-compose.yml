@@ -6,14 +6,19 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     environment:
-      ENV_VARIABLE: ${ENV_VARIABLE}
-      NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
+      ENV_VARIABLE: ${ENV_VARIABLE:-demo}
+      NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL:-http://localhost}
+      NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE:-demo}
     volumes:
       - ./frontend/src:/app/src
       - ./frontend/public:/app/public
     restart: always
     ports:
       - 3000:3000
+    networks:
+      - sparkbooks
+    depends_on:
+      - backend
   backend:
     container_name: sparkbooks-backend
     image: sparkbooks-server
@@ -27,18 +32,17 @@ services:
     networks:
       - sparkbooks
     volumes:
-      - ".:/var/www/html"
+      - "./sparkbooks-server:/var/www/html"
   pgsql:
     image: "postgres:14"
     ports:
         - "${FORWARD_DB_PORT:-54320}:5432"
     environment:
-        PGPASSWORD: "${DB_PASSWORD:-secret}"
-        POSTGRES_DB: "${DB_DATABASE}"
-        POSTGRES_USER: "${DB_USERNAME}"
-        POSTGRES_PASSWORD: "${DB_PASSWORD:-secret}"
+        POSTGRES_DB: "sparkbooks_demo_db"
+        POSTGRES_USER: "root"
+        POSTGRES_PASSWORD: "password"
     volumes:
-        - "sparkbooks-pgsql:/var/lib/postgresql/data"
+        - "dbdata:/var/lib/postgresql/data"
     networks:
         - sparkbooks
     healthcheck:
@@ -48,19 +52,15 @@ services:
               "pg_isready",
               "-q",
               "-d",
-              "${DB_DATABASE}",
+              "sparkbooks_demo_db",
               "-U",
-              "${DB_USERNAME}",
+              "root",
             ]
         retries: 3
         timeout: 5s
 networks:
     sparkbooks:
+        name: sparkbooks
         driver: bridge
 volumes:
-    sparkbooks-pgsql:
-        driver: local
-  # Add more containers below (nginx, postgres, etc.)
-
-# Define a network, which allows containers to communicate
-# with each other, by using their container name as a hostname
+    dbdata:

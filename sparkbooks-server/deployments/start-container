@@ -1,9 +1,4 @@
 #!/usr/bin/env bash
-
-if [ ! -z "$WWWUSER" ]; then
-    usermod -u $WWWUSER sail
-fi
-
 if [ ! -d /.composer ]; then
     mkdir /.composer
 fi
@@ -14,4 +9,21 @@ if [ $# -gt 0 ]; then
     exec gosu $WWWUSER "$@"
 else
     /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
+
+
+echo "🚀 Dump Autoloader"
+composer dumpautoload
+
+
+echo "🚀 Clearing Cache/Views/Configs"
+php artisan view:clear
+php artisan config:clear
+php artisan cache:clear
+php artisan migrate
+php artisan db:seed --class=DatabaseSeeder
+
+if [ -n "$RUNNING_IN_VOYAGE" ] || [ -n "$CIRCLECI" ] || [ "$APP_ENV" = "local" ]; then
+echo "🚀 Running migrations & Seeder"
+  php artisan migrate --force
+  php artisan db:seed --class=DatabaseSeeder
 fi

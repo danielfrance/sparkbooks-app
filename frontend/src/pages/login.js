@@ -37,7 +37,7 @@ export default function Login() {
 
     const { login } = useAuth({
         middleware: 'guest',
-        redirectIfAuthenticated: '/dashboard',
+        // redirectIfAuthenticated: '/dashboard',
     })
 
     const [email, setEmail] = useState('')
@@ -56,7 +56,6 @@ export default function Login() {
 
     const submitForm = async event => {
         event.preventDefault()
-
         login({
             email,
             password,

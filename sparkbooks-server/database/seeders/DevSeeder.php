@@ -18,6 +18,7 @@ use Faker\Generator;
 
 class DevSeeder extends Seeder
 {
+    public $faker;
 
     function __construct(Generator $faker)
     {
@@ -32,18 +33,7 @@ class DevSeeder extends Seeder
     public function run()
     {
         $faker = $this->faker;
-        // create dev root info
-        $root = Workspace::create([
-            'name' => 'CannaParser',
-            'address' => $faker->streetAddress(),
-        ]);
 
-
-        $this->call(LaratrustSeeder::class);
-
-        User::factory(3)->create(['workspace_id' => 1])->each(function ($user) {
-            $user->attachRole(Role::find(1));
-        });
 
 
         $adminRole = Role::find(2);
@@ -71,4 +61,5 @@ class DevSeeder extends Seeder
 
         });
     }
+
 }
