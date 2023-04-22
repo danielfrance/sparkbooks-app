@@ -37,7 +37,7 @@ export default function Login() {
 
     const { login } = useAuth({
         middleware: 'guest',
-        // redirectIfAuthenticated: '/dashboard',
+        redirectIfAuthenticated: '/dashboard',
     })
 
     const [email, setEmail] = useState('')

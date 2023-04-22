@@ -7,7 +7,7 @@ import AppLayout from '@/components/Layouts/AppLayout'
 import AppBar from '@/components/Layouts/AppBar'
 import { Box, Meter, Text, Notification } from 'grommet'
 import DataTable from '@/components/Layouts/DataTable'
-import axios from '@/lib/axios'
+import axios from 'axios'
 import ErrorMessage from '@/components/ErrorMessage'
 
 const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
@@ -188,10 +188,12 @@ export async function getServerSideProps(context) {
         }
 
     try {
-        const res = await axios.get(`/clients`, {
+        const res = await axios.get(`http://backend/clients`, {
             headers: {
                 cookie: cookie,
+                'X-Requested-With': 'XMLHttpRequest',
             },
+            withCredentials: true,
         })
         const { data } = res
 
