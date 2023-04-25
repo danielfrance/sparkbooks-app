@@ -1,0 +1,11 @@
+# Read more at https://cloud.google.com/kubernetes-engine/docs/how-to/managed-certs#gcloud
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: sparksbook-server-managed-crt
+  namespace: web
+spec:
+  domains:
+    - sparksbook-app.net
+    - api.sparksbook-app.net
+    - www.sparksbook-app.net

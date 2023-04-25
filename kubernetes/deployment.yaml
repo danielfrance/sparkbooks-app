@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sparksbooks-server
+  namespace: web
+spec:
+  selector:
+    matchLabels:
+      run: sparksbooks-server
+  template:
+    metadata:
+      labels:
+        run: sparksbooks-server
+    spec:
+      containers:
+      - image: gcr.io/sparksbook-app/sparksbook-app-backend:latest
+        imagePullPolicy: IfNotPresent
+        name: sparksbooks-server
+        env:
+        - name: "APP_PORT"
+          value: "8080"
+        ports:
+        - containerPort: 8080
+          protocol: TCP
