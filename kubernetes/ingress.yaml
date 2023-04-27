@@ -11,11 +11,18 @@ spec:
   rules:
   - http:
       paths:
-      - path: /*
+      - path: /api/*
         pathType: ImplementationSpecific
         backend:
           service:
             name: sparksbook-server
             port:
               number: 8080
+      - path: /*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: sparksbook-frontend
+            port:
+              number: 8081
 ---

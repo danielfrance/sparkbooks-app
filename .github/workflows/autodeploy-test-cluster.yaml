@@ -16,7 +16,8 @@ env:
   PROJECT_NUMBER: "1085421326309"
   REGION: us-central1
   REPOSITORY: sparksbook-app
-  SERVICE: sparksbooks-server
+  SERVICE_BACKEND: sparksbooks-server
+  SERVICE_FRONTEND: sparksbooks-frontend
 
 jobs:
   build_deploy_test:
@@ -57,8 +58,12 @@ jobs:
       - name: Build and Push Container
         working-directory: sparkbooks-server
         run: |-
-          docker build -f Dockerfile -t "${{ env.IMAGE_NAME }}/${{ env.SERVICE }}:${{ github.sha }}" ./
-          docker push "${{ env.IMAGE_NAME }}/${{ env.SERVICE }}:${{ github.sha }}"
+          docker build -f Dockerfile -t "${{ env.IMAGE_NAME }}/${{ env.SERVICE_BACKEND }}:${{ github.sha }}" ./
+          docker push "${{ env.IMAGE_NAME }}/${{ env.SERVICE_BACKEND }}:${{ github.sha }}"
+
+          docker build -f Dockerfile -t "${{ env.IMAGE_NAME }}/${{ env.SERVICE_FRONTEND }}:${{ github.sha }}" ./
+          docker push "${{ env.IMAGE_NAME }}/${{ env.SERVICE_FRONTEND }}:${{ github.sha }}"
+
 
       - name: 'Get GKE Credentials'
         id: 'get-credentials'
@@ -72,4 +77,5 @@ jobs:
         id: 'update-deployment'
         # if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/feature/deploy' || github.ref == 'refs/head/github-actions-deploy'
         run: |
-          kubectl set image deployment/${{ env.SERVICE }} ${{ env.SERVICE }}=${{ env.IMAGE_NAME }}/${{ env.SERVICE }}:${{ github.sha }} -n ${{ env.K8S_NAMESPACE }}
+          kubectl set image deployment/${{ env.SERVICE_BACKEND }} ${{ env.SERVICE_BACKEND }}=${{ env.IMAGE_NAME }}/${{ env.SERVICE_BACKEND }}:${{ github.sha }} -n ${{ env.K8S_NAMESPACE }}
+          kubectl set image deployment/${{ env.SERVICE_FRONTEND }} ${{ env.SERVICE_FRONTEND }}=${{ env.IMAGE_NAME }}/${{ env.SERVICE_FRONTEND }}:${{ github.sha }} -n ${{ env.K8S_NAMESPACE }}

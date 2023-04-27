@@ -13,7 +13,7 @@ spec:
         run: sparksbooks-server
     spec:
       containers:
-      - image: gcr.io/sparksbook-app/sparksbook-app-backend:latest
+      - image: gcr.io/pdf-scanner-346920/sparksbook-app/sparksbooks-server:1c634af1ad6b24acd214b2cd269a0d72a3ff7261
         imagePullPolicy: IfNotPresent
         name: sparksbooks-server
         env:
@@ -21,4 +21,31 @@ spec:
           value: "8080"
         ports:
         - containerPort: 8080
+          protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sparksbooks-frontend
+  namespace: web
+spec:
+  selector:
+    matchLabels:
+      run: sparksbooks-frontend
+  template:
+    metadata:
+      labels:
+        run: sparksbooks-frontend
+    spec:
+      containers:
+      - image: gcr.io/pdf-scanner-346920/sparksbook-app/sparksbooks-frontend:1c634af1ad6b24acd214b2cd269a0d72a3ff7261
+        imagePullPolicy: IfNotPresent
+        name: sparksbooks-server
+        env:
+        - name: "APP_PORT"
+          value: "8081"
+        - name: "PORT"
+          value: "8081"
+        ports:
+        - containerPort: 8081
           protocol: TCP

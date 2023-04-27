@@ -17,5 +17,3 @@ php artisan cache:clear
 echo "🚀 Running migrations & Seeder"
 php artisan migrate:fresh
 php artisan db:seed --class=DatabaseSeeder
-
-
