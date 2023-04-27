@@ -29,9 +29,9 @@ Route::get('/welcome', function () {
     return 'welcome';
 });
 
-Route::get('/testwebhook', [StripeController::class, 'test']);
-
-
+Route::get('/health', function () {
+    return response()->json(['status' => 200, 'message' => 'OK']);
+});
 
 Route::get('invite/{invite_token}', [InviteController::class, 'show']);
 

@@ -9,6 +9,7 @@ import { Box, Meter, Text, Notification } from 'grommet'
 import DataTable from '@/components/Layouts/DataTable'
 import axios from 'axios'
 import ErrorMessage from '@/components/ErrorMessage'
+import { axiosBackEnd } from '@/lib/axios'
 
 const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
 
@@ -188,13 +189,12 @@ export async function getServerSideProps(context) {
         }
 
     try {
-        const res = await axios.get(`http://backend/clients`, {
+        const res = await axiosBackEnd.get(`clients`, {
             headers: {
                 cookie: cookie,
-                'X-Requested-With': 'XMLHttpRequest',
             },
-            withCredentials: true,
         })
+
         const { data } = res
 
         return {
