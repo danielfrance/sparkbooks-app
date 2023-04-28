@@ -9,3 +9,5 @@
 - Setup GCP cli Github Action https://github.com/google-github-actions/setup-gcloud
 - Troubleshooth GCP auth https://github.com/google-github-actions/auth/blob/db6919d07466cc48f0294f11cd9b28bb8d3130d2/docs/TROUBLESHOOTING.md#troubleshooting
 - GKE authentication for Github Actions https://github.com/google-github-actions/get-gke-credentials
+- secrets https://cloud.google.com/kubernetes-engine/docs/tutorials/workload-identity-secrets?hl=en#local-shell
+  - https://github.com/kubernetes-sigs/external-dns/blob/master/docs/tutorials/gke.md

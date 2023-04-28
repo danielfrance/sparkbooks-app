@@ -3,13 +3,15 @@ SERVICE_ACCOUNT="github-actions-deployer"
 GITHUB_REPO=danielfrance/sparkbooks-app
 OIDC_POOL="automations-pool"
 OIDC_PROVIDER="github-provider"
+NAMESPACE=web
 
 gcloud services enable \
     artifactregistry.googleapis.com \
-    iamcredentials.googleapis.com \
-    containerregistry.googleapis.com \
-    run.googleapis.com \
     container.googleapis.com \
+    containerregistry.googleapis.com \
+    iamcredentials.googleapis.com \
+    run.googleapis.com \
+    secretmanager.googleapis.com \
     --project $PROJECT_ID
 
 
@@ -101,3 +103,30 @@ gcloud dns managed-zones create app-sparkbooks-io \
 
 cloud compute addresses create sparksbook-app-server-static-ip \
     --project=pdf-scanner-346920 --global
+
+#####
+
+# managing ecrets
+
+
+gcloud services enable container.googleapis.com secretmanager.googleapis.com
+
+gcloud secrets create test-cluster-db-secrets \
+    --data-file=secrets/test-cluster-db-secrets
+
+gcloud iam service-accounts create sparksbook-backend-sa --display-name="Read secrets" --project $PROJECT_ID
+
+gcloud secrets add-iam-policy-binding test-cluster-db-secrets \
+    --member=serviceAccount:sparksbook-backend-sa@$PROJECT_ID.iam.gserviceaccount.com \
+    --role='roles/secretmanager.secretAccessor'
+
+kubectl apply -f kubernetes/serviceAccount.yaml
+
+gcloud iam service-accounts add-iam-policy-binding sparksbook-backend-sa@$PROJECT_ID.iam.gserviceaccount.com \
+    --member="serviceAccount:$PROJECT_ID.svc.id.goog[$NAMESPACE/sparksbook-backend]" \
+    --role='roles/iam.workloadIdentityUser' --project $PROJECT_ID
+
+kubectl annotate serviceaccount sparksbook-backend \
+    --namespace=web \
+    iam.gke.io/gcp-service-account=sparksbook-backend-sa@$PROJECT_ID.iam.gserviceaccount.com
+

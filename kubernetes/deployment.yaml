@@ -12,8 +12,23 @@ spec:
       labels:
         run: sparksbooks-server
     spec:
+      serviceAccountName: sparksbook-backend
+      volumes:
+        - name: secrets
+          emptyDir: { }
+      initContainers:
+        - name: secrets-init
+          image: google/cloud-sdk:slim
+          command:
+            - sh
+          args:
+            - -c
+            - "gcloud secrets versions access 1 --secret=test-cluster-db-secrets > /secrets/env"
+          volumeMounts:
+            - mountPath: /secrets/
+              name: secrets
       containers:
-      - image: gcr.io/pdf-scanner-346920/sparksbook-app/sparksbooks-server:b47a39b6a56aef035dc21b6be67201b95c18a0da
+      - image: gcr.io/pdf-scanner-346920/sparksbook-app/sparksbooks-server:a5457aec22e928a2d8fc7b35c6484be9e0e12e64
         imagePullPolicy: IfNotPresent
         name: sparksbooks-server
         livenessProbe:
@@ -26,6 +41,9 @@ spec:
         ports:
         - containerPort: 8080
           protocol: TCP
+        volumeMounts:
+          - mountPath: /secrets/
+            name: secrets
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -42,7 +60,7 @@ spec:
         run: sparksbooks-frontend
     spec:
       containers:
-      - image: gcr.io/pdf-scanner-346920/sparksbook-app/sparksbooks-frontend:1c634af1ad6b24acd214b2cd269a0d72a3ff7261
+      - image: gcr.io/pdf-scanner-346920/sparksbook-app/sparksbooks-frontend:a5457aec22e928a2d8fc7b35c6484be9e0e12e64
         imagePullPolicy: IfNotPresent
         name: sparksbooks-frontend
         livenessProbe:
