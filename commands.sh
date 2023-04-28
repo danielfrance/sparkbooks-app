@@ -87,3 +87,17 @@ WORKLOAD_IDENTITY_PROVIDER_LOCATION=$(gcloud iam workload-identity-pools provide
     --location="global" \
     --workload-identity-pool=$OIDC_POOL \
     --format="value(name)")
+
+#####
+
+
+gcloud dns managed-zones create app-sparkbooks-io \
+    --description="Example zone for app.sparkbooks.io" \
+    --dns-name=app.sparkbooks.io. \
+    --visibility=public
+
+########
+
+
+cloud compute addresses create sparksbook-app-server-static-ip \
+    --project=pdf-scanner-346920 --global

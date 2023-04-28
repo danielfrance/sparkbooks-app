@@ -6,23 +6,26 @@ metadata:
   annotations:
     kubernetes.io/ingress.global-static-ip-name: "sparksbook-app-server-static-ip"
     networking.gke.io/managed-certificates: sparksbook-server-managed-crt
+    ingress.gcp.kubernetes.io/pre-shared-cert: 	mcrt-eaf06fdd-0003-436e-8761-191194daa5d2
+    ingress.kubernetes.io/ssl-cert: 	mcrt-eaf06fdd-0003-436e-8761-191194daa5d2
     kubernetes.io/ingress.class: "gce"
 spec:
   rules:
-  - http:
+  - host: "app.sparkbooks.io"
+    http:
       paths:
       - path: /api/*
         pathType: ImplementationSpecific
         backend:
           service:
-            name: sparksbook-server
+            name: sparksbooks-server
             port:
               number: 8080
       - path: /*
         pathType: ImplementationSpecific
         backend:
           service:
-            name: sparksbook-frontend
+            name: sparksbooks-frontend
             port:
               number: 8081
 ---

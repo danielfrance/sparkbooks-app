@@ -13,7 +13,7 @@ spec:
         run: sparksbooks-server
     spec:
       containers:
-      - image: gcr.io/pdf-scanner-346920/sparksbook-app/sparksbooks-server:1c634af1ad6b24acd214b2cd269a0d72a3ff7261
+      - image: gcr.io/pdf-scanner-346920/sparksbook-app/sparksbooks-server:b47a39b6a56aef035dc21b6be67201b95c18a0da
         imagePullPolicy: IfNotPresent
         name: sparksbooks-server
         livenessProbe:

@@ -6,6 +6,5 @@ metadata:
   namespace: web
 spec:
   domains:
-    - sparksbook-app.net
-    - api.sparksbook-app.net
-    - www.sparksbook-app.net
+    - app.sparkbooks.io
+    - www.app.sparkbooks.io
