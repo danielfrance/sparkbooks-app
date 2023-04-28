@@ -44,7 +44,7 @@ spec:
       containers:
       - image: gcr.io/pdf-scanner-346920/sparksbook-app/sparksbooks-frontend:1c634af1ad6b24acd214b2cd269a0d72a3ff7261
         imagePullPolicy: IfNotPresent
-        name: sparksbooks-server
+        name: sparksbooks-frontend
         livenessProbe:
           httpGet:
             path: /healthz

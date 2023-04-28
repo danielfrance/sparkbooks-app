@@ -1,4 +1,4 @@
-name: Auto Deploy Test
+name: Auto Deploy Frontend Test
 on:
   push:
     branches:
