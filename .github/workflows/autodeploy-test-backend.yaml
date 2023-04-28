@@ -1,0 +1,75 @@
+name: Auto Deploy Test
+on:
+  push:
+    branches:
+      - main
+      - feat/deploy
+      - github-actions-deploy
+
+env:
+  CLUSTER_NAME: sparkbooks-app-test
+  GAR_LOCATION: us-central1
+  IMAGE_NAME: gcr.io/pdf-scanner-346920/sparksbook-app
+  K8S_NAMESPACE: web
+  OIDC_POOL_NAME: "automations-pool"
+  PROJECT_ID: pdf-scanner-346920
+  PROJECT_NUMBER: "1085421326309"
+  REGION: us-central1
+  REPOSITORY: sparksbook-app
+  SERVICE_BACKEND: sparksbooks-server
+
+jobs:
+  build_deploy_test:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+    
+      # Clone the source code from your GitHub repository.
+      - uses: actions/checkout@v3
+
+      # Authenticate using Workload Identities
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v1.1.0'
+        with:
+          workload_identity_provider: 'projects/1085421326309/locations/global/workloadIdentityPools/${{ env.OIDC_POOL_NAME }}/providers/github-provider'
+          service_account: 'github-actions-deployer@pdf-scanner-346920.iam.gserviceaccount.com'
+          token_format: 'access_token'
+          access_token_lifetime: '900s'
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v1'
+
+      - name: 'Test gcloud CLI'
+        run: |
+          gcloud info
+          gcloud storage buckets list
+        
+      - name: 'Docker login'
+        run: |
+          gcloud auth configure-docker
+          echo "${{ steps.auth.outputs.access_token }}" | docker login -u oauth2accesstoken --password-stdin https://gcr.io
+
+      - name: Build and Push Container
+        working-directory: sparkbooks-server
+        run: |-
+          docker build -f Dockerfile -t "${{ env.IMAGE_NAME }}/${{ env.SERVICE_BACKEND }}:${{ github.sha }}" ./
+          docker push "${{ env.IMAGE_NAME }}/${{ env.SERVICE_BACKEND }}:${{ github.sha }}"
+
+      - name: 'Get GKE Credentials'
+        id: 'get-credentials'
+        uses: 'google-github-actions/get-gke-credentials@v1'
+        with:
+          cluster_name: ${{ env.CLUSTER_NAME }}
+          location: ${{ env.REGION }}
+
+      # Deploy the backend service to Google Cloud's Autopilot service.
+      - name: 'Update deployment'
+        id: 'update-deployment'
+        # if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/feature/deploy' || github.ref == 'refs/head/github-actions-deploy'
+        run: |
+          kubectl set image deployment/${{ env.SERVICE_BACKEND }} ${{ env.SERVICE_BACKEND }}=${{ env.IMAGE_NAME }}/${{ env.SERVICE_BACKEND }}:${{ github.sha }} -n ${{ env.K8S_NAMESPACE }}
