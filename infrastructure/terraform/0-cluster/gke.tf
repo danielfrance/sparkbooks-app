@@ -37,3 +37,21 @@ resource "google_container_cluster" "default" {
     }
   }
 }
+
+resource "google_compute_firewall" "admission-webhooks" {
+  name        = "admission-webhooks"
+  description = "Allow master to hit pods for admission controllers/webhooks"
+  project     = var.project_id
+  network     = google_compute_network.default.name
+  # priority    = var.firewall_priority
+  direction = "INGRESS"
+
+  source_ranges = ["10.2.0.0/28"]
+  # source_tags   = []
+  # target_tags   = [local.cluster_network_tag]
+
+  allow {
+    protocol = "tcp"
+    ports    = [8443]
+  }
+}
