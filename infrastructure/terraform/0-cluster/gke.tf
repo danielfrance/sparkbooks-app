@@ -3,22 +3,6 @@ provider "google-beta" {
   region  = var.region
 }
 
-resource "google_compute_network" "default" {
-  name                    = var.network_name
-  auto_create_subnetworks = "false"
-  project                 = var.project_id
-  routing_mode            = "REGIONAL"
-}
-
-resource "google_compute_subnetwork" "default" {
-  depends_on    = [google_compute_network.default]
-  name          = "${var.gke_cluster_name}-subnet"
-  project       = google_compute_network.default.project
-  region        = var.region
-  network       = google_compute_network.default.name
-  ip_cidr_range = "10.1.0.0/20"
-}
-
 resource "google_container_cluster" "default" {
   provider                 = google-beta
   project                  = var.project_id
@@ -45,10 +29,6 @@ resource "google_container_cluster" "default" {
     cluster_ipv4_cidr_block  = "10.3.0.0/18"
     services_ipv4_cidr_block = "10.4.0.0/20"
   }
-
-  # default_snat_status {
-  #   disabled = true
-  # }
 
   master_authorized_networks_config {
     cidr_blocks {

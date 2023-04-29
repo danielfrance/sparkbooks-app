@@ -35,7 +35,7 @@ jobs:
             type=sha
             type=ref,event=branch
           images: |
-            ghcr.io/${{ github.repository }}
+            ghcr.io/sparkbooks-ui
 
       - name: Build and push Docker images
         uses: docker/build-push-action@v4
