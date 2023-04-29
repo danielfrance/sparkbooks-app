@@ -3,6 +3,7 @@ name: Build & Publish Server Docker Image
 on:
   push:
     paths:
+      - ".github/workflows/build-push-server.yaml"
       - "sparkbooks-server/**"
     branches:
       # @TODO update branch

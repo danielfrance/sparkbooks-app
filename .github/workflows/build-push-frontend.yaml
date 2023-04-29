@@ -3,6 +3,7 @@ name: Build & Publish Front-End Docker Image
 on:
   push:
     paths:
+      - ".github/workflows/build-push-frontend.yaml"
       - "frontend/**"
     branches:
       # @TODO update branch
