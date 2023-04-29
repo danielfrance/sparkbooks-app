@@ -38,6 +38,16 @@ spec:
         env:
         - name: "APP_PORT"
           value: "8080"
+        - name: KEY1
+          valueFrom:
+            configMapKeyRef:
+              name: sparksbook-backend-config
+              key: key1
+        - name: KEY2
+          valueFrom:
+            configMapKeyRef:
+              name: sparksbook-backend-config
+              key: key2
         ports:
         - containerPort: 8080
           protocol: TCP
@@ -72,6 +82,16 @@ spec:
           value: "8081"
         - name: "PORT"
           value: "8081"
+        - name: KEY1
+          valueFrom:
+            configMapKeyRef:
+              name: sparksbook-frontend-config
+              key: key1
+        - name: KEY2
+          valueFrom:
+            configMapKeyRef:
+              name: sparksbook-frontend-config
+              key: key2
         ports:
         - containerPort: 8081
           protocol: TCP
