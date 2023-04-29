@@ -101,12 +101,12 @@ gcloud dns managed-zones create app-sparkbooks-io \
 ########
 
 
-cloud compute addresses create sparksbook-app-server-static-ip \
+gcloud compute addresses create sparksbook-app-server-static-ip \
     --project=pdf-scanner-346920 --global
 
 #####
 
-# managing ecrets
+# managing secrets
 
 
 gcloud services enable container.googleapis.com secretmanager.googleapis.com
@@ -130,3 +130,7 @@ kubectl annotate serviceaccount sparksbook-backend \
     --namespace=web \
     iam.gke.io/gcp-service-account=sparksbook-backend-sa@$PROJECT_ID.iam.gserviceaccount.com
 
+## Add document AI access to backen service account
+gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+--member="serviceAccount:sparksbook-backend-sa@${PROJECT_ID}.iam.gserviceaccount.com" \
+--role="roles/documentai.apiUser"

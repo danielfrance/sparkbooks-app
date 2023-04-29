@@ -11,3 +11,4 @@
 - GKE authentication for Github Actions https://github.com/google-github-actions/get-gke-credentials
 - secrets https://cloud.google.com/kubernetes-engine/docs/tutorials/workload-identity-secrets?hl=en#local-shell
   - https://github.com/kubernetes-sigs/external-dns/blob/master/docs/tutorials/gke.md
+- K8s examples for later https://github.com/GoogleCloudPlatform/kubernetes-engine-samples
