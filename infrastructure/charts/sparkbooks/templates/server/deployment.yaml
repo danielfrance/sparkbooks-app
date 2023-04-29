@@ -17,8 +17,27 @@ spec:
         - name: ghcr-pull-secret
       serviceAccountName: {{ include "sparkbooks.serviceAccountName" . }}
       containers:
+        - name: cloud-sql-proxy
+          # It is recommended to use the latest version of the Cloud SQL Auth Proxy
+          # Make sure to update on a regular schedule!
+          image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.1.0
+          args:
+            # If connecting from a VPC-native GKE cluster, you can use the
+            # following flag to have the proxy connect over private IP
+            - "--private-ip"
+            # Enable structured logging with LogEntry format:
+            - "--structured-logs"
+            - "--port=5432"
+            - "sparkbooks-app:us-south1:sparkbooks-c0ac7ceb"
+          securityContext:
+            # The default Cloud SQL Auth Proxy image runs as the
+            # "nonroot" user and group (uid: 65532) by default.
+            runAsNonRoot: true
         - name: sparkbooks-server
           image: "{{ .Values.server.image }}"
+          envFrom:
+            - secretRef:
+                name: sparkbook-env
           ports:
             - name: http
               containerPort: 80

@@ -53,7 +53,8 @@ server:
   #   memory: 128Mi
 
 serviceAccount:
-  annotations: {}
+  annotations:
+    iam.gke.io/gcp-service-account: sparkbooks@sparkbooks-app.iam.gserviceaccount.com
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: "sparkbooks"

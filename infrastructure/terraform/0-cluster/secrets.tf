@@ -5,3 +5,11 @@ resource "google_secret_manager_secret" "ghcr-token" {
     automatic = true
   }
 }
+
+resource "google_secret_manager_secret" "sparkbooks-env" {
+  secret_id = "sparkbooks_env"
+
+  replication {
+    automatic = true
+  }
+}

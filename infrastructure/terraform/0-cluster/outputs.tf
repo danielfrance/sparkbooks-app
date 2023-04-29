@@ -23,3 +23,7 @@ output "external_dns_gcp_service_account_email" {
 output "external_secrets_gcp_service_account_email" {
   value = module.workload-identity-external-secrets.gcp_service_account_email
 }
+
+output "sparkbooks_gcp_service_account_email" {
+  value = module.workload-identity-cloud-sql.gcp_service_account_email
+}
