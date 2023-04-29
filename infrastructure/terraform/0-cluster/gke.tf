@@ -46,9 +46,9 @@ resource "google_container_cluster" "default" {
     services_ipv4_cidr_block = "10.4.0.0/20"
   }
 
-  default_snat_status {
-    disabled = true
-  }
+  # default_snat_status {
+  #   disabled = true
+  # }
 
   master_authorized_networks_config {
     cidr_blocks {

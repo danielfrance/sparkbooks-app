@@ -22,6 +22,10 @@ resource "google_container_node_pool" "default" {
     disk_type    = "pd-standard"
     spot         = false
 
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/cloud-platform",
+    ]
+
     workload_metadata_config {
       mode = "GKE_METADATA"
     }
