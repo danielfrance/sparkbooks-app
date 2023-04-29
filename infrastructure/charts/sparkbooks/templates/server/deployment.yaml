@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "sparkbooks.fullname" . }}-server
+  labels:
+    {{- include "sparkbooks.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: server
+  template:
+    metadata:
+      labels:
+        app: server
+    spec:
+      imagePullSecrets:
+        - name: ghcr-pull-secret
+      serviceAccountName: {{ include "sparkbooks.serviceAccountName" . }}
+      containers:
+        - name: sparkbooks-server
+          image: "{{ .Values.server.image }}"
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          # livenessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          resources:
+            {{- toYaml .Values.server.resources | nindent 12 }}
