@@ -1,15 +1,14 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useUIContext } from '@/contexts/ui'
-import { StatusGood, CircleAlert, FormEdit, Trash } from 'grommet-icons'
+import { StatusGood, CircleAlert, Trash } from 'grommet-icons'
 import NewClientLayer from './NewClientLayer'
 import AppLayout from '@/components/Layouts/AppLayout'
 import AppBar from '@/components/Layouts/AppBar'
-import { Box, Meter, Text, Notification } from 'grommet'
+import { Box, Text, Notification } from 'grommet'
 import DataTable from '@/components/Layouts/DataTable'
-import axios from 'axios'
 import ErrorMessage from '@/components/ErrorMessage'
-import { axiosBackEnd } from '@/lib/axios'
+import { useAxios } from '@/hooks/use-axios'
 
 const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
 
@@ -20,6 +19,7 @@ export default function Clients({ data, status, statusText }) {
     const [selected, setSelected] = useState()
     const { filterQuery } = useUIContext()
     const [removeError, setRemoveError] = useState('')
+    const axios = useAxios()
 
     const onClose = () => setIsOpen(false)
 
@@ -178,6 +178,7 @@ export default function Clients({ data, status, statusText }) {
 }
 
 export async function getServerSideProps(context) {
+    const axios = useAxios()
     const cookie = context.req.headers.cookie
 
     if (!cookie)
@@ -189,7 +190,7 @@ export async function getServerSideProps(context) {
         }
 
     try {
-        const res = await axiosBackEnd.get(`clients`, {
+        const res = await axios.get(`clients`, {
             headers: {
                 cookie: cookie,
             },

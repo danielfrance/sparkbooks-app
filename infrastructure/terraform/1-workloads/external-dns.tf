@@ -25,8 +25,4 @@ resource "helm_release" "external-dns" {
     name  = "serviceAccount.annotations.iam\\.gke\\.io/gcp-service-account"
     value = data.terraform_remote_state.cluster.outputs.external_dns_gcp_service_account_email
   }
-
-  values = [
-    # Add any values you want to set for the Helm chart here
-  ]
 }

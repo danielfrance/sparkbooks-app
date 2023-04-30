@@ -10,8 +10,4 @@ resource "helm_release" "cert_manager" {
     name  = "installCRDs"
     value = "true"
   }
-
-  # values = [
-  #   # Add any values you want to set for the Helm chart here
-  # ]
 }

@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 frontend:
-  image: ghcr.io/danielfrance/sparkbooks-ui:sha-3403acf
+  image: ghcr.io/danielfrance/sparkbooks-ui:sha-e60d703
   ingress:
     enabled: true
     className: ""

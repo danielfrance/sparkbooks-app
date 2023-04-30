@@ -6,9 +6,4 @@ resource "helm_release" "ingress_nginx" {
 
   repository = "https://kubernetes.github.io/ingress-nginx"
   chart      = "ingress-nginx"
-
-  # set {
-  #   name  = "controller.setAsDefaultIngress"
-  #   value = true
-  # }
 }

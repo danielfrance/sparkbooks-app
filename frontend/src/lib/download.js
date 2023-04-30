@@ -1,6 +1,7 @@
-import axios from './axios'
+import { useAxios } from '@/hooks/use-axios'
 
 export const downloader = async (url, filename) => {
+    const axios = useAxios()
     const response = await axios.get(url, {
         responseType: 'blob',
     })

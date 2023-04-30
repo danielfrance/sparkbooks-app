@@ -8,7 +8,7 @@ import { useRouter } from 'next/router'
 import ErrorMessage from '@/components/ErrorMessage'
 import Plans from '@/components/Layouts/Plans'
 import Plan from '@/components/Plan'
-import axios from 'axios'
+import { useAxios } from '@/hooks/use-axios'
 
 const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
 
@@ -94,9 +94,7 @@ const columns = [
 ]
 
 export default function Dashboard({ data, status, statusText }) {
-    console.log(data)
     const router = useRouter()
-    console.log('here', useUIContext)
     const { filterQuery, workSpace, setWorkSpace } = useUIContext()
     const [uploads, setUploads] = useState([])
 
@@ -227,6 +225,7 @@ export default function Dashboard({ data, status, statusText }) {
 }
 
 export async function getServerSideProps(context) {
+    const axios = useAxios()
     const cookie = context.req.headers.cookie
 
     if (!cookie)
@@ -238,7 +237,7 @@ export async function getServerSideProps(context) {
         }
 
     try {
-        const res = await axios.get('http://backend/dashboardData', {
+        const res = await axios.get('/dashboardData', {
             headers: {
                 cookie: cookie,
                 'X-Requested-With': 'XMLHttpRequest',

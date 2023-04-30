@@ -3,8 +3,8 @@ import { Box, Button, Heading } from 'grommet'
 import UploadResultContainer from '@/components/UploadResults/UploadResultContainer'
 import AppLayout from '@/components/Layouts/AppLayout'
 import ErrorMessage from '@/components/ErrorMessage'
-import axios from '@/lib/axios'
 import { downloader } from '@/lib/download'
+import { useAxios } from '@/hooks/use-axios'
 
 function UploadDetails({ data, status, statusText }) {
     // console.log(data)
@@ -54,6 +54,7 @@ function UploadDetails({ data, status, statusText }) {
 }
 
 export async function getServerSideProps(context) {
+    const axios = useAxios()
     const cookie = context.req.headers.cookie
 
     try {

@@ -3,22 +3,17 @@ import { View } from 'grommet-icons'
 
 import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
-import getConfig from 'next/config'
 import AppLayout from '@/components/Layouts/AppLayout'
 import AppBar from '@/components/Layouts/AppBar'
 import DataTable from '@/components/Layouts/DataTable'
 import ErrorMessage from '@/components/ErrorMessage'
-import axios from '@/lib/axios'
 
 import { useUIContext } from '@/contexts/ui'
+import { useAxios } from '@/hooks/use-axios'
 
 const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
 
-// const { publicRuntimeConfig } = getConfig()
-// const { apiURL } = publicRuntimeConfig
-
 function Files({ status, statusText, data }) {
-    // console.log({ data })
     const router = useRouter()
 
     const onClick = datum => {
@@ -175,6 +170,7 @@ function Files({ status, statusText, data }) {
 export default Files
 
 export async function getServerSideProps(context) {
+    const axios = useAxios()
     const cookie = context.req.headers.cookie
 
     if (!cookie)

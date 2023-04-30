@@ -7,6 +7,4 @@ resource "helm_release" "sparkbooks" {
   values = [
     "${file("${path.module}/../../charts/sparkbooks/values.yaml")}"
   ]
-
-  # Add any required configuration for your chart using set, set_sensitive, or values attributes
 }

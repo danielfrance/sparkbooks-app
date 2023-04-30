@@ -31,9 +31,9 @@ import {
     Organization,
     Trash,
 } from 'grommet-icons'
-import axios from '@/lib/axios'
 
 export default function Account({ data }) {
+    const axios = useAxios()
     const { id, name, email, is_admin, workspaceInfo, team } = data
     const router = useRouter()
     const [users, setUsers] = useState(team || [])

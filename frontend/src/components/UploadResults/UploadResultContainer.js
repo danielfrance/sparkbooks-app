@@ -26,13 +26,14 @@ import { v4 as uuidv4 } from 'uuid'
 
 import UploadResultItem from './UploadResultItem'
 
-import axios from '@/lib/axios'
 import { useRouter } from 'next/router'
+import { useAxios } from '@/hooks/use-axios'
 
 let timer
 const timeout = 2 * 1000
 
 export default function UploadResultContainer({ data, index }) {
+    const axios = useAxios()
     const router = useRouter()
     const { result_items, result_details, imageURL } = data
     const [isUpdating, setIsUpdating] = useState(false)

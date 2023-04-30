@@ -6,8 +6,8 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     environment:
-      NEXT_PUBLIC_BACKEND_URL: http://localhost:8081
-      NEXT_PUBLIC_PRIVATE_BACKEND_URL: http://backend
+      BACKEND_URL: http://localhost:8081
+      PRIVATE_BACKEND_URL: http://backend
     # volumes:
     #   - ./frontend/src:/app/src
     #   - ./frontend/public:/app/public

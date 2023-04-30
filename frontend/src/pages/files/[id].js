@@ -4,9 +4,10 @@ import { Box, Heading, Button } from 'grommet'
 import UploadResultContainer from '@/components/UploadResults/UploadResultContainer'
 import AppLayout from '@/components/Layouts/AppLayout'
 import ErrorMessage from '@/components/ErrorMessage'
-import axios from '@/lib/axios'
+import { useAxios } from '@/hooks/use-axios'
 
 export default function File({ status, statusText, data }) {
+    const axios = useAxios()
     const [fileData, setFileData] = useState([])
 
     const extractFileData = clients => {
@@ -50,6 +51,7 @@ export default function File({ status, statusText, data }) {
 }
 
 export async function getServerSideProps(context) {
+    const axios = useAxios()
     const cookie = context.req.headers.cookie
 
     if (!cookie)
