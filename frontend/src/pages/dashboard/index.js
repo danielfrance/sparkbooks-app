@@ -94,7 +94,9 @@ const columns = [
 ]
 
 export default function Dashboard({ data, status, statusText }) {
+    console.log(data)
     const router = useRouter()
+    console.log('here', useUIContext)
     const { filterQuery, workSpace, setWorkSpace } = useUIContext()
     const [uploads, setUploads] = useState([])
 

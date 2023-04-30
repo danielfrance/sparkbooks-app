@@ -1,7 +1,12 @@
 import Axios from 'axios'
+import getConfig from 'next/config'
+
+const { serverRuntimeConfig, publicRuntimeConfig } = getConfig()
+
+console.log(serverRuntimeConfig, publicRuntimeConfig)
 
 const axios = Axios.create({
-    baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
+    baseURL: publicRuntimeConfig.backendUrl,
     headers: {
         'X-Requested-With': 'XMLHttpRequest',
     },
@@ -9,12 +14,11 @@ const axios = Axios.create({
 })
 
 export const axiosBackEnd = Axios.create({
-    baseURL: process.env.NEXT_PUBLIC_PRIVATE_BACKEND_URL,
+    baseURL: serverRuntimeConfig.backendUrl,
     headers: {
         'X-Requested-With': 'XMLHttpRequest',
     },
     withCredentials: true,
 })
-
 
 export default axios
