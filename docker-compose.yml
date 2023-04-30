@@ -6,12 +6,11 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     environment:
-      ENV_VARIABLE: ${ENV_VARIABLE:-demo}
       NEXT_PUBLIC_BACKEND_URL: http://localhost:8081
       NEXT_PUBLIC_PRIVATE_BACKEND_URL: http://backend
-    volumes:
-      - ./frontend/src:/app/src
-      - ./frontend/public:/app/public
+    # volumes:
+    #   - ./frontend/src:/app/src
+    #   - ./frontend/public:/app/public
     restart: always
     ports:
       - 3000:3000

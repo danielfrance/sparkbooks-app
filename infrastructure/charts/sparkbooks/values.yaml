@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 frontend:
-  image: ghcr.io/danielfrance/sparkbooks-ui
+  image: ghcr.io/danielfrance/sparkbooks-ui:sha-3403acf
   ingress:
     enabled: true
     className: ""
@@ -28,7 +28,8 @@ frontend:
   #   memory: 128Mi
 
 server:
-  image: ghcr.io/danielfrance/sparkbooks-server
+  image: ghcr.io/danielfrance/sparkbooks-server:sha-3403acf
+  externalUrl: api.sparkbooks.io
   ingress:
     enabled: true
     className: ""
