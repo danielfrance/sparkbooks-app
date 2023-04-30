@@ -19,10 +19,10 @@ spec:
       containers:
         - name: sparkbooks-frontend
           env:
-            - name: NEXT_PUBLIC_BACKEND_URL
+            - name: BACKEND_URL
               value: "https://{{ .Values.server.externalUrl }}"
-            - name: NEXT_PUBLIC_PRIVATE_BACKEND_URL
-              value: "{{ include "sparkbooks.fullname" . }}-server"
+            - name: PRIVATE_BACKEND_URL
+              value: "http://{{ include "sparkbooks.fullname" . }}-server"
           image: "{{ .Values.frontend.image }}"
           ports:
             - name: http

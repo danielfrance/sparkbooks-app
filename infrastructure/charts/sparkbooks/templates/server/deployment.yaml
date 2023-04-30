@@ -35,6 +35,13 @@ spec:
             runAsNonRoot: true
         - name: sparkbooks-server
           image: "{{ .Values.server.image }}"
+          env:
+            - name: APP_URL
+              value: "{{ .Values.frontend.externalUrl }}"
+            - name: FRONTEND_URL
+              value: "https://{{ .Values.frontend.externalUrl }}"
+            - name: SESSION_DOMAIN
+              value: ".sparkbooks.io"
           envFrom:
             - secretRef:
                 name: sparkbook-env

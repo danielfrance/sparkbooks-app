@@ -1,9 +1,10 @@
 # Default values for sparkbooks.
 # This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+# Declare variables to be passed into your templates
 
 frontend:
-  image: ghcr.io/danielfrance/sparkbooks-ui:sha-e60d703
+  image: ghcr.io/danielfrance/sparkbooks-ui:sha-3c404fc
+  externalUrl: app.sparkbooks.io
   ingress:
     enabled: true
     className: ""
