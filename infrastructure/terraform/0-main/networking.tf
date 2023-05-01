@@ -11,7 +11,7 @@ resource "google_compute_subnetwork" "default" {
   project       = google_compute_network.default.project
   region        = var.region
   network       = google_compute_network.default.name
-  ip_cidr_range = "10.1.0.0/20"
+  ip_cidr_range = var.cidr_ranges["subnet"]
 }
 
 resource "google_compute_global_address" "private_ip_range" {

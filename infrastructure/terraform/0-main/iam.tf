@@ -60,11 +60,6 @@ resource "google_project_iam_member" "gke_helm_deploy_container_admin" {
   member  = "serviceAccount:${google_service_account.gke_helm_deploy.email}"
 }
 
-output "gke_helm_deploy_sa_key" {
-  value     = base64decode(google_service_account_key.gke_helm_deploy_key.private_key)
-  sensitive = true
-}
-
 resource "google_service_account_key" "gke_helm_deploy_key" {
   service_account_id = google_service_account.gke_helm_deploy.name
 }

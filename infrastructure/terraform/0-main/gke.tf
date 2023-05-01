@@ -1,8 +1,3 @@
-provider "google-beta" {
-  project = var.project_id
-  region  = var.region
-}
-
 resource "google_container_cluster" "default" {
   provider                 = google-beta
   project                  = var.project_id
@@ -22,14 +17,15 @@ resource "google_container_cluster" "default" {
   private_cluster_config {
     enable_private_nodes    = true
     enable_private_endpoint = false
-    master_ipv4_cidr_block  = "10.2.0.0/28"
+    master_ipv4_cidr_block  = var.cidr_ranges["gke_master_ipv4_cidr_block"]
   }
 
   ip_allocation_policy {
-    cluster_ipv4_cidr_block  = "10.3.0.0/18"
-    services_ipv4_cidr_block = "10.4.0.0/20"
+    cluster_ipv4_cidr_block  = var.cidr_ranges["gke_cluster_ipv4_cidr_block"]
+    services_ipv4_cidr_block = var.cidr_ranges["gke_services_ipv4_cidr_block"]
   }
 
+  // Cluster is a private cluster but the control plane is accessible from anywhere currently
   master_authorized_networks_config {
     cidr_blocks {
       cidr_block   = "0.0.0.0/0"

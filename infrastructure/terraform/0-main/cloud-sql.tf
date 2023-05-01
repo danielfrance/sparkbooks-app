@@ -5,7 +5,7 @@ module "postgresql" {
   version = "~> 15.0.0"
 
   project_id           = var.project_id
-  name                 = "sparkbooks"
+  name                 = var.name
   random_instance_name = true
   database_version     = "POSTGRES_14"
   region               = var.region
@@ -21,10 +21,10 @@ module "postgresql" {
     authorized_networks = []
   }
 
-  db_name         = "sparkbooks"
+  db_name         = var.name
   disk_size       = 20
   disk_autoresize = true
   disk_type       = "PD_SSD"
-  user_name       = "sparkbooks"
+  user_name       = var.name
 }
 

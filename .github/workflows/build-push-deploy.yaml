@@ -33,7 +33,7 @@ jobs:
         with:
           tags: |
             type=raw,value=latest
-            type=sha
+            type=sha,prefix=
             type=ref,event=branch
           images: |
             ghcr.io/danielfrance/sparkbooks-ui
@@ -68,8 +68,8 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           tags: |
-            type=raw,value=$(git rev-parse --short=7 "$GITHUB_SHA")
-            type=sha
+            type=raw,value=latest
+            type=sha,prefix=
             type=ref,event=branch
           images: |
             ghcr.io/danielfrance/sparkbooks-server

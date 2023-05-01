@@ -7,13 +7,18 @@ terraform {
   }
   backend "gcs" {
     bucket = "sparkbooks-terraform-state"
-    prefix = "cluster"
+    prefix = "main"
   }
 }
 
 provider "google" {
-  project = "sparkbooks-app"
-  region  = "us-south1" # Dallas
+  project = var.project_id
+  region  = var.region
+}
+
+provider "google-beta" {
+  project = var.project_id
+  region  = var.region
 }
 
 data "google_client_config" "default" {}

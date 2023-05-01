@@ -1,5 +1,6 @@
 output "cluster_endpoint" {
-  value = google_container_cluster.default.endpoint
+  value       = google_container_cluster.default.endpoint
+  description = "The public cluster endpoint"
 }
 
 output "client_certificate" {
@@ -26,4 +27,10 @@ output "external_secrets_gcp_service_account_email" {
 
 output "sparkbooks_gcp_service_account_email" {
   value = module.workload-identity-cloud-sql.gcp_service_account_email
+}
+
+output "gke_helm_deploy_sa_key" {
+  value       = base64decode(google_service_account_key.gke_helm_deploy_key.private_key)
+  sensitive   = true
+  description = "Used in GitHub Actions to authenticate to GKE"
 }

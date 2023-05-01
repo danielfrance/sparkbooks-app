@@ -1,3 +1,8 @@
+variable "name" {
+  description = "General name"
+  default     = "sparkbooks"
+}
+
 variable "project_id" {
   description = "The project ID to host the cluster in"
   default     = "sparkbooks-app"
@@ -21,4 +26,13 @@ variable "network_name" {
 variable "gke_cluster_name" {
   description = "The name of the cluster"
   default     = "sparkbooks-cluster"
+}
+
+variable "cidr_ranges" {
+  default = {
+    "subnet"                       = "10.1.0.0/20"
+    "gke_master_ipv4_cidr_block"   = "10.2.0.0/28"
+    "gke_cluster_ipv4_cidr_block"  = "10.3.0.0/18"
+    "gke_services_ipv4_cidr_block" = "10.4.0.0/20"
+  }
 }

@@ -3,6 +3,6 @@ module "public-zone" {
   version    = "4.2.1"
   project_id = var.project_id
   type       = "public"
-  name       = "sparkbooks-public-zone"
-  domain     = "sparkbooks.io."
+  name       = "${var.name}-public-zone"
+  domain     = "${var.name}.io."
 }
