@@ -111,5 +111,5 @@ jobs:
           helm upgrade --install sparkbooks --namespace sparkbooks \
             --create-namespace \
             --set frontend.image=ghcr.io/danielfrance/sparkbooks-ui:$TAG \
-            --set frontend.image=ghcr.io/danielfrance/sparkbooks-server:$TAG \
+            --set server.image=ghcr.io/danielfrance/sparkbooks-server:$TAG \
             ./infrastructure/charts/sparkbooks
