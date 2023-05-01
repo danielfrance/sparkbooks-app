@@ -15,3 +15,5 @@ RUN npm prune --production
 EXPOSE 3000
 
 ENTRYPOINT [ "scripts/entrypoint.sh" ]
+
+CMD ["npm", "start"]

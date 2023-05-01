@@ -39,3 +39,5 @@
 **/vendor
 
 .terraform
+
+frontend/public/__ENV.js
