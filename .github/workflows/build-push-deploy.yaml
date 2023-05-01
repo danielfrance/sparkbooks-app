@@ -93,22 +93,23 @@ jobs:
         with:
           version: "3.7.1"
 
-      # @TODO Need to add the GOOGLE_CREDENTIALS secret to the repo
-      # - name: "gcp-auth"
-      #   uses: "google-github-actions/auth@v1"
-      #   with:
-      #     credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
+      - name: GCP Auth
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
 
-      # - name: "gke-get-credentials"
-      #   uses: "google-github-actions/get-gke-credentials@v1"
-      #   with:
-      #     cluster_name: "sparkbooks-cluster"
-      #     location: "us-south1-a"
+      - name: GKE Get Credentials
+        uses: google-github-actions/get-gke-credentials@v1
+        with:
+          cluster_name: "sparkbooks-cluster"
+          location: "us-south1-a"
 
       - name: Deploy Chart
         run: |
           TAG=$(git rev-parse --short=7 "$GITHUB_SHA")
 
-          helm template infrastructure/charts/sparkbooks \
+          helm upgrade --install sparkbooks --namespace sparkbooks \
+            --create-namespace infrastructure/charts/sparkbooks \
             --set frontend.image=ghcr.io/danielfrance/sparkbooks-ui:$TAG \
-            --set frontend.image=ghcr.io/danielfrance/sparkbooks-server:$TAG
+            --set frontend.image=ghcr.io/danielfrance/sparkbooks-server:$TAG \ 
+            ./infrastructure/charts/sparkbooks
