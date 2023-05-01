@@ -4,13 +4,13 @@ services:
     container_name: sparkbooks-frontend
     build:
       context: ./frontend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     environment:
       BACKEND_URL: http://localhost:8081
       PRIVATE_BACKEND_URL: http://backend
-    # volumes:
-    #   - ./frontend/src:/app/src
-    #   - ./frontend/public:/app/public
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
     restart: always
     ports:
       - 3000:3000
@@ -30,8 +30,8 @@ services:
       - pgsql
     networks:
       - sparkbooks
-    # volumes:
-    #   - "./sparkbooks-server:/var/www/html"
+    volumes:
+      - "./sparkbooks-server:/var/www/html"
   pgsql:
     image: "postgres:14"
     ports:
