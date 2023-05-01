@@ -13,7 +13,7 @@ import { useAuth } from '@/hooks/auth'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { Google } from 'grommet-icons'
-import axios from '@/lib/axios'
+import { useAxios } from '@/hooks/use-axios'
 
 const backgroundStyles = {
     background: 'linear-gradient(180deg, #3b86d8 0%, #9881eb 100%)',
@@ -143,6 +143,7 @@ export default function RegisterNewInvite({ invite }) {
 }
 
 export async function getServerSideProps(context) {
+    const axios = useAxios()
     const { token } = context.query
     const data = await axios.get(`/invite/${token}`)
 

@@ -26,7 +26,7 @@ import { useEffect, useState } from 'react'
 import DataTable from '@/components/Layouts/DataTable'
 import { useUIContext } from '@/contexts/ui'
 import ChartOfAccountsImport from './chartOfAccountsModal'
-import axios from '@/lib/axios'
+import { useAxios } from '@/hooks/use-axios'
 import { useRouter } from 'next/router'
 import ErrorMessage from '@/components/ErrorMessage'
 
@@ -110,6 +110,7 @@ const columns = [
 ]
 
 export default function ClientEdit({ data, status, statusText }) {
+    const axios = useAxios()
     const router = useRouter()
     const [isOpen, setIsOpen] = useState(false)
     const [layerOpen, setLayerOpen] = useState('')

@@ -14,18 +14,17 @@ import {
     Spinner,
     Notification,
 } from 'grommet'
-import { useUIContext } from '@/contexts/ui'
 
-import axios from '@/lib/axios'
+import { useAxios } from '@/hooks/use-axios'
 
 const UploadFilesLayer = ({ onClose }) => {
+    const axios = useAxios()
     const [selectedClient, setSelectedClient] = useState()
     const [selectedFiles, setSelectedFiles] = useState(null)
     const [show, setShow] = useState(false)
     const [visible, setVisible] = useState(false)
     const [error, setError] = useState()
     const [clients, setClients] = useState([])
-
 
     // const { workSpace, setWorkSpace } = useUIContext()
 
@@ -77,21 +76,17 @@ const UploadFilesLayer = ({ onClose }) => {
         }
     }
 
-
     const getClients = async () => {
         try {
             const res = await axios.get('/clients')
             setClients(res.data)
         } catch (error) {
             setError("We couldn't load your clients")
-
         }
     }
 
     useEffect(() => {
-
         getClients()
-
     }, [])
 
     return (

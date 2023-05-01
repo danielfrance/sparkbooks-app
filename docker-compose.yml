@@ -1,0 +1,57 @@
+version: "3"
+services:
+  frontend:
+    container_name: sparkbooks-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    environment:
+      BACKEND_URL: http://localhost:8081
+      PRIVATE_BACKEND_URL: http://backend
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+    restart: always
+    ports:
+      - 3000:3000
+    networks:
+      - sparkbooks
+    depends_on:
+      - backend
+  backend:
+    container_name: sparkbooks-backend
+    image: sparkbooks-server
+    build:
+      context: ./sparkbooks-server
+      dockerfile: Dockerfile
+    ports:
+      - "8081:80"
+    depends_on:
+      - pgsql
+    networks:
+      - sparkbooks
+    volumes:
+      - "./sparkbooks-server:/var/www/html"
+  pgsql:
+    image: "postgres:14"
+    ports:
+      - "${FORWARD_DB_PORT:-54320}:5432"
+    environment:
+      POSTGRES_DB: "sparkbooks_demo_db"
+      POSTGRES_USER: "root"
+      POSTGRES_PASSWORD: "password"
+    volumes:
+      - "dbdata:/var/lib/postgresql/data"
+    networks:
+      - sparkbooks
+    healthcheck:
+      test:
+        ["CMD", "pg_isready", "-q", "-d", "sparkbooks_demo_db", "-U", "root"]
+      retries: 3
+      timeout: 5s
+networks:
+  sparkbooks:
+    name: sparkbooks
+    driver: bridge
+volumes:
+  dbdata:

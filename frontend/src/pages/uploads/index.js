@@ -5,8 +5,8 @@ import AppLayout from '@/components/Layouts/AppLayout'
 import AppBar from '@/components/Layouts/AppBar'
 import { Box, Meter, Text, Avatar, Notification } from 'grommet'
 import DataTable from '@/components/Layouts/DataTable'
-import axios from '@/lib/axios'
 import ErrorMessage from '@/components/ErrorMessage'
+import { useAxios } from '@/hooks/use-axios'
 
 const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
 
@@ -154,6 +154,7 @@ function Uploads({ data, status, statusText }) {
 }
 
 export async function getServerSideProps(context) {
+    const axios = useAxios()
     const cookie = context.req.headers.cookie
 
     if (!cookie)

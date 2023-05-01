@@ -1,10 +1,10 @@
-import { Box, Button, Form, FormField, TextInput, Text, Layer } from "grommet";
-import { useState } from "react";
-import axios from '@/lib/axios'
-
+import { Box, Button, Form, FormField, TextInput, Text, Layer } from 'grommet'
+import { useState } from 'react'
+import { useAxios } from '@/hooks/use-axios'
 
 export default function WorkSpaceRegistrationLayer({ onClose }) {
     const [workspaceName, setWorkspaceName] = useState('')
+    const axios = useAxios()
     const submitForm = event => {
         event.preventDefault()
         axios

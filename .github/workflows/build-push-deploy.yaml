@@ -1,0 +1,115 @@
+name: Build, Publish & Deploy
+
+on:
+  push:
+    paths:
+      - ".github/workflows/build-push-deploy.yaml"
+      - "frontend/**"
+      - "sparkbooks-server/**"
+    branches:
+      # @TODO update branch
+      - jaden
+jobs:
+  build_push_frontend:
+    name: Push Docker image to GHCR
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          tags: |
+            type=raw,value=latest
+            type=sha,prefix=
+            type=ref,event=branch
+          images: |
+            ghcr.io/danielfrance/sparkbooks-ui
+
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v4
+        with:
+          context: frontend
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  build_push_server:
+    name: Push Docker image to GHCR
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          tags: |
+            type=raw,value=latest
+            type=sha,prefix=
+            type=ref,event=branch
+          images: |
+            ghcr.io/danielfrance/sparkbooks-server
+
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v4
+        with:
+          context: sparkbooks-server
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build_push_frontend, build_push_server]
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: "3.7.1"
+
+      - name: GCP Auth
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
+
+      - name: GKE Get Credentials
+        uses: google-github-actions/get-gke-credentials@v1
+        with:
+          cluster_name: "sparkbooks-cluster"
+          location: "us-south1-a"
+
+      - name: Deploy Chart
+        run: |
+          TAG=$(git rev-parse --short=7 "$GITHUB_SHA")
+
+          helm upgrade --install sparkbooks --namespace sparkbooks \
+            --create-namespace \
+            --set frontend.image=ghcr.io/danielfrance/sparkbooks-ui:$TAG \
+            --set server.image=ghcr.io/danielfrance/sparkbooks-server:$TAG \
+            ./infrastructure/charts/sparkbooks

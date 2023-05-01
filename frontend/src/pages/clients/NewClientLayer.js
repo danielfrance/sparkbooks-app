@@ -16,9 +16,10 @@ import {
     Notification,
 } from 'grommet'
 
-import axios from '@/lib/axios'
+import { useAxios } from '@/hooks/use-axios'
 
 const NewClientLayer = ({ client, isOpen, onClose }) => {
+    const axios = useAxios()
     const router = useRouter()
     const [show, setShow] = useState(false)
     const [visible, setVisible] = useState(false)

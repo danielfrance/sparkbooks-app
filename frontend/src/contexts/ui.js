@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from 'react'
 
-const Context = createContext()
+const Context = createContext({ filterQuery: '' })
 
 export function UIProvider({ children }) {
     const [isSidebarNavCollapsed, setIsSidebarNavCollapsed] = useState(false)

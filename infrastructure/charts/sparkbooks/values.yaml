@@ -1,0 +1,62 @@
+# Default values for sparkbooks.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates
+
+frontend:
+  image: ghcr.io/danielfrance/sparkbooks-ui:sha-3c404fc
+  externalUrl: app.sparkbooks.io
+  ingress:
+    enabled: true
+    className: ""
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      kubernetes.io/ingress.class: nginx
+    hosts:
+      - host: app.sparkbooks.io
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: sparkbooks-frontend-tls
+        hosts:
+          - app.sparkbooks.io
+  resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+server:
+  image: ghcr.io/danielfrance/sparkbooks-server:sha-3403acf
+  externalUrl: api.sparkbooks.io
+  ingress:
+    enabled: true
+    className: ""
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      kubernetes.io/ingress.class: nginx
+    hosts:
+      - host: api.sparkbooks.io
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: sparkbooks-server-tls
+        hosts:
+          - api.sparkbooks.io
+  resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+serviceAccount:
+  annotations:
+    iam.gke.io/gcp-service-account: sparkbooks@sparkbooks-app.iam.gserviceaccount.com
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: "sparkbooks"

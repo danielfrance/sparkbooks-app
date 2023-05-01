@@ -5,10 +5,10 @@ import DataTable from '@/components/Layouts/DataTable'
 import { useEffect, useState } from 'react'
 import { useUIContext } from '@/contexts/ui'
 import { useRouter } from 'next/router'
-import axios from '@/lib/axios'
 import ErrorMessage from '@/components/ErrorMessage'
 import Plans from '@/components/Layouts/Plans'
 import Plan from '@/components/Plan'
+import { useAxios } from '@/hooks/use-axios'
 
 const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
 
@@ -225,6 +225,7 @@ export default function Dashboard({ data, status, statusText }) {
 }
 
 export async function getServerSideProps(context) {
+    const axios = useAxios()
     const cookie = context.req.headers.cookie
 
     if (!cookie)
@@ -239,13 +240,16 @@ export async function getServerSideProps(context) {
         const res = await axios.get('/dashboardData', {
             headers: {
                 cookie: cookie,
+                'X-Requested-With': 'XMLHttpRequest',
             },
+            withCredentials: true,
         })
 
         return {
             props: { status: 200, data: res.data },
         }
     } catch (error) {
+        console.log('HERE', error)
         const { status, statusText } = error.response
 
         return {

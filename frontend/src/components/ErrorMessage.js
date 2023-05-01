@@ -35,7 +35,7 @@ const ErrorMessage = ({ status, statusText }) => {
                         className="btn secondary"
                         style={{ marginTop: '2rem' }}
                         onClick={logout}>
-                        Try in again
+                        Try again
                     </button>
                 </>
             )}

@@ -13,7 +13,7 @@ import {
     Notification,
 } from 'grommet'
 
-import axios from '@/lib/axios'
+import { useAxios } from '@/hooks/use-axios'
 
 const InviteUser = ({
     action,
@@ -24,6 +24,7 @@ const InviteUser = ({
     oldEmail,
     oldRole,
 }) => {
+    const axios = useAxios()
     const [selectedRole, setSelectedRole] = useState(oldRole)
     const [name, setName] = useState(oldName)
     const [email, setEmail] = useState(oldEmail)

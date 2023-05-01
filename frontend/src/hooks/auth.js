@@ -1,10 +1,11 @@
 import useSWR from 'swr'
-import axios from '@/lib/axios'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
+import { useAxios } from './use-axios'
 
 export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
     const router = useRouter()
+    const axios = useAxios()
 
     const { data: user, error, mutate } = useSWR('/api/user', () =>
         axios
@@ -29,15 +30,12 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
             .post('/register', props)
             .then(() => mutate())
             .catch(error => {
-                console.log(error.response)
-                // if (error.response.status !== 422) throw error
-
-                // setErrors(error.response.data.errors)
+                if (error.response.status !== 422) throw error
+                setErrors(error.response.data.errors)
             })
     }
 
     const registerNewUser = async ({ setErrors, ...props }) => {
-        console.log(props)
         await csrf()
 
         setErrors([])
@@ -46,10 +44,9 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
             .post('/register/invite', props)
             .then(() => mutate())
             .catch(error => {
-                console.log(error.response)
-                // if (error.response.status !== 422) throw error
+                if (error.response.status !== 422) throw error
 
-                // setErrors(error.response.data.errors)
+                setErrors(error.response.data.errors)
             })
     }
 
