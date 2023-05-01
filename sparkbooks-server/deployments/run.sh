@@ -1,7 +1,5 @@
 #!/bin/sh
 
-# cd /var/www
-
 echo "🚀 Clearing Cache/Views/Configs"
 php artisan view:clear
 php artisan config:clear
