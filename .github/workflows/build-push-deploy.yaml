@@ -68,8 +68,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           tags: |
-            TAG=$(git rev-parse --short=7 "$GITHUB_SHA")
-            type=raw,value=$TAG
+            type=raw,value=$(git rev-parse --short=7 "$GITHUB_SHA")
             type=sha
             type=ref,event=branch
           images: |
