@@ -4,6 +4,11 @@ cd /var/www
 
 /usr/bin/supervisord -c /etc/supervisord.conf
 
+# load secrets that are mounted via deployment and fetched from secret manager
+if [ -e "/secrets/env" ]; then
+    source /secrets/env
+fi
+
 # php artisan migrate:fresh --seed
 echo "🚀 Dump Autoloader & Install Dependencies"
 composer dumpautoload
