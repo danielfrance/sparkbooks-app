@@ -28,7 +28,7 @@ spec:
             - mountPath: /secrets/
               name: secrets
       containers:
-      - image: gcr.io/pdf-scanner-346920/sparksbook-app/sparksbooks-server:a5457aec22e928a2d8fc7b35c6484be9e0e12e64
+      - image: gcr.io/pdf-scanner-346920/sparksbook-app/sparksbooks-server:f54846ccace3ace9e480bdb3bc02e2e9b1a43c8b
         imagePullPolicy: IfNotPresent
         name: sparksbooks-server
         livenessProbe:
@@ -278,11 +278,6 @@ spec:
             configMapKeyRef:
               name: sparksbook-backend-config
               key: GCP_AI_PROCESSOR
-        - name: # OAuth C
-          valueFrom:
-            configMapKeyRef:
-              name: sparksbook-backend-config OAuth C
-              key: # OAuth C
         - name: GOOGLE_CLIENT_ID
           valueFrom:
             configMapKeyRef:
