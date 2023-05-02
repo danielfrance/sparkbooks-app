@@ -23,7 +23,7 @@ spec:
             - sh
           args:
             - -c
-            - "gcloud secrets versions access 1 --secret=test-cluster-db-secrets > /secrets/env"
+            - "gcloud secrets versions access latest --secret=test-cluster-db-secrets > /secrets/env"
           volumeMounts:
             - mountPath: /secrets/
               name: secrets
@@ -38,310 +38,305 @@ spec:
         env:
         - name: "APP_PORT"
           value: "8080"
-        - name: KEY1
-          valueFrom:
-            configMapKeyRef:
-              name: sparksbook-backend-config
-              key: key1
         - name: APP_NAME
           valueFrom:
             configMapKeyRef:
-              name: APP_NAME
+              name: sparksbook-backend-config
               key: APP_NAME
         - name: APP_ENV
           valueFrom:
             configMapKeyRef:
-              name: APP_ENV
+              name: sparksbook-backend-config
               key: APP_ENV
         - name: APP_KEY
           valueFrom:
             configMapKeyRef:
-              name: APP_KEY
+              name: sparksbook-backend-config
               key: APP_KEY
         - name: APP_DEBUG
           valueFrom:
             configMapKeyRef:
-              name: APP_DEBUG
+              name: sparksbook-backend-config
               key: APP_DEBUG
         - name: APP_URL
           valueFrom:
             configMapKeyRef:
-              name: APP_URL
+              name: sparksbook-backend-config
               key: APP_URL
         - name: FRONTEND_URL
           valueFrom:
             configMapKeyRef:
-              name: FRONTEND_URL
+              name: sparksbook-backend-config
               key: FRONTEND_URL
         - name: LOG_CHANNEL
           valueFrom:
             configMapKeyRef:
-              name: LOG_CHANNEL
+              name: sparksbook-backend-config
               key: LOG_CHANNEL
         - name: LOG_DEPRECATIONS_CHANNEL
           valueFrom:
             configMapKeyRef:
-              name: LOG_DEPRECATIONS_CHANNEL
+              name: sparksbook-backend-config
               key: LOG_DEPRECATIONS_CHANNEL
         - name: LOG_LEVEL
           valueFrom:
             configMapKeyRef:
-              name: LOG_LEVEL
+              name: sparksbook-backend-config
               key: LOG_LEVEL
         - name: DB_CONNECTION
           valueFrom:
             configMapKeyRef:
-              name: DB_CONNECTION
+              name: sparksbook-backend-config
               key: DB_CONNECTION
         - name: DB_HOST
           valueFrom:
             configMapKeyRef:
-              name: DB_HOST
+              name: sparksbook-backend-config
               key: DB_HOST
         - name: DB_PORT
           valueFrom:
             configMapKeyRef:
-              name: DB_PORT
+              name: sparksbook-backend-config
               key: DB_PORT
         - name: DB_DATABASE
           valueFrom:
             configMapKeyRef:
-              name: DB_DATABASE
+              name: sparksbook-backend-config
               key: DB_DATABASE
         - name: DB_USERNAME
           valueFrom:
             configMapKeyRef:
-              name: DB_USERNAME
+              name: sparksbook-backend-config
               key: DB_USERNAME
         - name: DB_PASSWORD
           valueFrom:
             configMapKeyRef:
-              name: DB_PASSWORD
+              name: sparksbook-backend-config
               key: DB_PASSWORD
         - name: BROADCAST_DRIVER
           valueFrom:
             configMapKeyRef:
-              name: BROADCAST_DRIVER
+              name: sparksbook-backend-config
               key: BROADCAST_DRIVER
         - name: CACHE_DRIVER
           valueFrom:
             configMapKeyRef:
-              name: CACHE_DRIVER
+              name: sparksbook-backend-config
               key: CACHE_DRIVER
         - name: FILESYSTEM_DISK
           valueFrom:
             configMapKeyRef:
-              name: FILESYSTEM_DISK
+              name: sparksbook-backend-config
               key: FILESYSTEM_DISK
         - name: QUEUE_CONNECTION
           valueFrom:
             configMapKeyRef:
-              name: QUEUE_CONNECTION
+              name: sparksbook-backend-config
               key: QUEUE_CONNECTION
         - name: SESSION_DRIVER
           valueFrom:
             configMapKeyRef:
-              name: SESSION_DRIVER
+              name: sparksbook-backend-config
               key: SESSION_DRIVER
         - name: SESSION_LIFETIME
           valueFrom:
             configMapKeyRef:
-              name: SESSION_LIFETIME
+              name: sparksbook-backend-config
               key: SESSION_LIFETIME
         - name: SESSION_DOMAIN
           valueFrom:
             configMapKeyRef:
-              name: SESSION_DOMAIN
+              name: sparksbook-backend-config
               key: SESSION_DOMAIN
         - name: MEMCACHED_HOST
           valueFrom:
             configMapKeyRef:
-              name: MEMCACHED_HOST
+              name: sparksbook-backend-config
               key: MEMCACHED_HOST
         - name: REDIS_HOST
           valueFrom:
             configMapKeyRef:
-              name: REDIS_HOST
+              name: sparksbook-backend-config
               key: REDIS_HOST
         - name: REDIS_PASSWORD
           valueFrom:
             configMapKeyRef:
-              name: REDIS_PASSWORD
+              name: sparksbook-backend-config
               key: REDIS_PASSWORD
         - name: REDIS_PORT
           valueFrom:
             configMapKeyRef:
-              name: REDIS_PORT
+              name: sparksbook-backend-config
               key: REDIS_PORT
         - name: MAIL_MAILER
           valueFrom:
             configMapKeyRef:
-              name: MAIL_MAILER
+              name: sparksbook-backend-config
               key: MAIL_MAILER
         - name: MAIL_HOST
           valueFrom:
             configMapKeyRef:
-              name: MAIL_HOST
+              name: sparksbook-backend-config
               key: MAIL_HOST
         - name: MAIL_PORT
           valueFrom:
             configMapKeyRef:
-              name: MAIL_PORT
+              name: sparksbook-backend-config
               key: MAIL_PORT
         - name: MAIL_USERNAME
           valueFrom:
             configMapKeyRef:
-              name: MAIL_USERNAME
+              name: sparksbook-backend-config
               key: MAIL_USERNAME
         - name: MAIL_PASSWORD
           valueFrom:
             configMapKeyRef:
-              name: MAIL_PASSWORD
+              name: sparksbook-backend-config
               key: MAIL_PASSWORD
         - name: MAIL_ENCRYPTION
           valueFrom:
             configMapKeyRef:
-              name: MAIL_ENCRYPTION
+              name: sparksbook-backend-config
               key: MAIL_ENCRYPTION
         - name: MAIL_FROM_ADDRESS
           valueFrom:
             configMapKeyRef:
-              name: MAIL_FROM_ADDRESS
+              name: sparksbook-backend-config
               key: MAIL_FROM_ADDRESS
         - name: MAIL_FROM_NAME
           valueFrom:
             configMapKeyRef:
-              name: MAIL_FROM_NAME
+              name: sparksbook-backend-config
               key: MAIL_FROM_NAME
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
             configMapKeyRef:
-              name: AWS_ACCESS_KEY_ID
+              name: sparksbook-backend-config
               key: AWS_ACCESS_KEY_ID
         - name: AWS_SECRET_ACCESS_KEY
           valueFrom:
             configMapKeyRef:
-              name: AWS_SECRET_ACCESS_KEY
+              name: sparksbook-backend-config
               key: AWS_SECRET_ACCESS_KEY
         - name: AWS_DEFAULT_REGION
           valueFrom:
             configMapKeyRef:
-              name: AWS_DEFAULT_REGION
+              name: sparksbook-backend-config
               key: AWS_DEFAULT_REGION
         - name: AWS_BUCKET
           valueFrom:
             configMapKeyRef:
-              name: AWS_BUCKET
+              name: sparksbook-backend-config
               key: AWS_BUCKET
         - name: AWS_USE_PATH_STYLE_ENDPOINT
           valueFrom:
             configMapKeyRef:
-              name: AWS_USE_PATH_STYLE_ENDPOINT
+              name: sparksbook-backend-config
               key: AWS_USE_PATH_STYLE_ENDPOINT
         - name: PUSHER_APP_ID
           valueFrom:
             configMapKeyRef:
-              name: PUSHER_APP_ID
+              name: sparksbook-backend-config
               key: PUSHER_APP_ID
         - name: PUSHER_APP_KEY
           valueFrom:
             configMapKeyRef:
-              name: PUSHER_APP_KEY
+              name: sparksbook-backend-config
               key: PUSHER_APP_KEY
         - name: PUSHER_APP_SECRET
           valueFrom:
             configMapKeyRef:
-              name: PUSHER_APP_SECRET
+              name: sparksbook-backend-config
               key: PUSHER_APP_SECRET
         - name: PUSHER_APP_CLUSTER
           valueFrom:
             configMapKeyRef:
-              name: PUSHER_APP_CLUSTER
+              name: sparksbook-backend-config
               key: PUSHER_APP_CLUSTER
         - name: MIX_PUSHER_APP_KEY
           valueFrom:
             configMapKeyRef:
-              name: MIX_PUSHER_APP_KEY
+              name: sparksbook-backend-config
               key: MIX_PUSHER_APP_KEY
         - name: MIX_PUSHER_APP_CLUSTER
           valueFrom:
             configMapKeyRef:
-              name: MIX_PUSHER_APP_CLUSTER
+              name: sparksbook-backend-config
               key: MIX_PUSHER_APP_CLUSTER
         - name: GOOGLE_CLOUD_PROJECT_ID
           valueFrom:
             configMapKeyRef:
-              name: GOOGLE_CLOUD_PROJECT_ID
+              name: sparksbook-backend-config
               key: GOOGLE_CLOUD_PROJECT_ID
         - name: GOOGLE_CLOUD_STORAGE_BUCKET
           valueFrom:
             configMapKeyRef:
-              name: GOOGLE_CLOUD_STORAGE_BUCKET
+              name: sparksbook-backend-config
               key: GOOGLE_CLOUD_STORAGE_BUCKET
         - name: GCP_AI_PROCESSOR
           valueFrom:
             configMapKeyRef:
-              name: GCP_AI_PROCESSOR
+              name: sparksbook-backend-config
               key: GCP_AI_PROCESSOR
         - name: # OAuth C
           valueFrom:
             configMapKeyRef:
-              name: # OAuth C
+              name: sparksbook-backend-config OAuth C
               key: # OAuth C
         - name: GOOGLE_CLIENT_ID
           valueFrom:
             configMapKeyRef:
-              name: GOOGLE_CLIENT_ID
+              name: sparksbook-backend-config
               key: GOOGLE_CLIENT_ID
         - name: GOOGLE_CLIENT_SECRET
           valueFrom:
             configMapKeyRef:
-              name: GOOGLE_CLIENT_SECRET
+              name: sparksbook-backend-config
               key: GOOGLE_CLIENT_SECRET
         - name: GOOGLE_REDIRECT_URI
           valueFrom:
             configMapKeyRef:
-              name: GOOGLE_REDIRECT_URI
+              name: sparksbook-backend-config
               key: GOOGLE_REDIRECT_URI
         - name: GCP_BUCKET_DIRECTORY
           valueFrom:
             configMapKeyRef:
-              name: GCP_BUCKET_DIRECTORY
+              name: sparksbook-backend-config
               key: GCP_BUCKET_DIRECTORY
         - name: GITHUB_CLIENT_ID
           valueFrom:
             configMapKeyRef:
-              name: GITHUB_CLIENT_ID
+              name: sparksbook-backend-config
               key: GITHUB_CLIENT_ID
         - name: GITHUB_CLIENT_SECRET
           valueFrom:
             configMapKeyRef:
-              name: GITHUB_CLIENT_SECRET
+              name: sparksbook-backend-config
               key: GITHUB_CLIENT_SECRET
         - name: GITHUB_REDIRECT_URI
           valueFrom:
             configMapKeyRef:
-              name: GITHUB_REDIRECT_URI
+              name: sparksbook-backend-config
               key: GITHUB_REDIRECT_URI
         - name: BASE_PW
           valueFrom:
             configMapKeyRef:
-              name: BASE_PW
+              name: sparksbook-backend-config
               key: BASE_PW
         - name: STRIPE_KEY
           valueFrom:
             configMapKeyRef:
-              name: STRIPE_KEY
+              name: sparksbook-backend-config
               key: STRIPE_KEY
         - name: STRIPE_SECRET
           valueFrom:
             configMapKeyRef:
-              name: STRIPE_SECRET
+              name: sparksbook-backend-config
               key: STRIPE_SECRET
         - name: STRIPE_WEBHOOK_SECRET
           valueFrom:
             configMapKeyRef:
-              name: STRIPE_WEBHOOK_SECRET
+              name: sparksbook-backend-config
               key: STRIPE_WEBHOOK_SECRET
         ports:
         - containerPort: 8080
