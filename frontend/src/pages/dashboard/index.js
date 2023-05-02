@@ -94,9 +94,11 @@ const columns = [
 ]
 
 export default function Dashboard({ data, status, statusText }) {
+    console.log(data)
     const router = useRouter()
     const { filterQuery, workSpace, setWorkSpace } = useUIContext()
     const [uploads, setUploads] = useState([])
+    const [plans, setPlans] = useState([])
 
     const [selected, setSelected] = useState()
     const [processedFiles, setProcessedFiles] = useState(0)
@@ -142,8 +144,9 @@ export default function Dashboard({ data, status, statusText }) {
         if (status === 200) {
             setProcessedFiles(0)
             setRemainingFiles(0)
-            extractUploads(data.clients)
-            setWorkSpace(data)
+            extractUploads(data.workspace.clients)
+            setWorkSpace(data.workspace)
+            setPlans(data.plans)
         }
     }, [data])
 
@@ -164,10 +167,11 @@ export default function Dashboard({ data, status, statusText }) {
                     <AppBar />
                     {!workSpace?.subscription && (
                         <Plans>
-                            <Plan name="starter" />
-                            <Plan name="basic" />
-                            <Plan name="standard" />
-                            <Plan name="premium" />
+                            {plans
+                                .filter(el => el.name !== 'Enterprise')
+                                .map(plan => (
+                                    <Plan plan={plan} key={plan.id} />
+                                ))}
                         </Plans>
                     )}
                     {workSpace?.subscription && (

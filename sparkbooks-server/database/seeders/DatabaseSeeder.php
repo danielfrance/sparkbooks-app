@@ -55,6 +55,7 @@ class DatabaseSeeder extends Seeder
 
                 $this->call(DevSeeder::class);
             }
+            $this->call(DevStripePlanSeeder::class);
         }
     }
 }
