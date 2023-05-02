@@ -77,7 +77,8 @@ export default function Login() {
                         minWidth: '700px',
                     }}>
                     <Grid
-                        columns={['2/3', '1/3']}
+                        // columns={['2/3', '1/3']}
+
                         gap="small"
                         animation="fadeIn"
                         pad="medium">
@@ -86,11 +87,12 @@ export default function Login() {
                             justifyContent="center"
                             background={{ color: '#EBF1F3' }}
                             pad="small"
-                            border={{
-                                color: 'brand',
-                                size: 'xsmall',
-                                side: 'right',
-                            }}>
+                            // border={{
+                            //     color: 'brand',
+                            //     size: 'xsmall',
+                            //     side: 'right',
+                            // }}>
+                        >
                             <Form onSubmit={submitForm}>
                                 <FormField
                                     name="email"
@@ -137,7 +139,7 @@ export default function Login() {
                                 </Box>
                             </Form>
                         </Box>
-                        <Box
+                        {/* <Box
                             background={{ color: '#EBF1F3' }}
                             fill
                             alignItems="center"
@@ -147,7 +149,7 @@ export default function Login() {
                                 href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/login/google`}>
                                 Sign in with Google
                             </a>
-                        </Box>
+                        </Box> */}
                     </Grid>
                     <Box alignSelf="center">
                         <Anchor size="small" href="/register">
