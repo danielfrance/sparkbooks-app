@@ -43,6 +43,12 @@ resource "google_project_iam_member" "cloud-sql-client" {
   member  = "serviceAccount:${module.workload-identity-cloud-sql.gcp_service_account_email}"
 }
 
+resource "google_project_iam_member" "cloud-storage" {
+  project = var.project_id
+  role    = "roles/storage.objectAdmin"
+  member  = "serviceAccount:${module.workload-identity-cloud-sql.gcp_service_account_email}"
+}
+
 resource "google_service_account" "gke_helm_deploy" {
   account_id   = "gh-gke-helm-deploy"
   display_name = "GH Actions GKE Helm Deploy"
