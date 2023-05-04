@@ -79,7 +79,7 @@ const InviteUser = ({
                     },
                 })
                 // TODO/FIXME: Editing/updating an account
-                console.log(res.data)
+                // console.log(res.data)
 
                 setShow(false)
                 onClose()

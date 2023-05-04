@@ -94,7 +94,6 @@ const columns = [
 ]
 
 export default function Dashboard({ data, status, statusText }) {
-    console.log(data)
     const router = useRouter()
     const { filterQuery, workSpace, setWorkSpace } = useUIContext()
     const [uploads, setUploads] = useState([])
@@ -253,7 +252,6 @@ export async function getServerSideProps(context) {
             props: { status: 200, data: res.data },
         }
     } catch (error) {
-        console.log('HERE', error)
         const { status, statusText } = error.response
 
         return {

@@ -71,7 +71,6 @@ export async function getServerSideProps(context) {
         }
     } catch (error) {
         const { status, statusText } = error.response
-        console.log(status, statusText)
         return {
             props: { status, statusText },
         }

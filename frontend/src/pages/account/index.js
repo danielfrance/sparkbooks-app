@@ -31,6 +31,7 @@ import {
     Organization,
     Trash,
 } from 'grommet-icons'
+import { useAxios } from '@/hooks/use-axios'
 
 export default function Account({ data }) {
     const axios = useAxios()
@@ -314,6 +315,8 @@ export default function Account({ data }) {
 
 export async function getServerSideProps(context) {
     const cookie = context.req.headers.cookie
+    const axios = useAxios()
+
     const res = await axios.get(`/account`, {
         headers: {
             cookie: cookie,

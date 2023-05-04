@@ -12,9 +12,7 @@ export default function WorkSpaceRegistrationLayer({ onClose }) {
             .then(() => {
                 onClose()
             })
-            .catch(error => {
-                console.log(error)
-            })
+            .catch(error => {})
     }
 
     return (

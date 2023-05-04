@@ -126,9 +126,33 @@ class ExtractResultsJob implements ShouldQueue
 
             $itemArray = ['type' => 'line_item'];
             foreach ($item->properties as $property) {
-                ($property->type === 'line_item/description') ? $itemArray['item'] =  $property->normalizedValue->text : $property->mentionText ?? 'unknown';
-                ($property->type === 'line_item/amount') ? $itemArray['amount'] =  $property->normalizedValue->text : $property->mentionText ?? null;
-                ($property->type === 'line_item/product_code') ? $itemArray['sku'] = $property->normalizedValue->text : $property->mentionText ?? null;
+                if ($property->type === 'line_item/description') {
+                    if (isset($property->normalizedValue->text)) {
+                        $itemArray['item'] = $property->normalizedValue->text;
+                    } elseif (isset($property->mentionText)) {
+                        $itemArray['item'] = $property->mentionText;
+                    } else {
+                        $itemArray['item'] = null;
+                    }
+                }
+                if ($property->type === 'line_item/amount') {
+                    if (isset($property->normalizedValue->text)) {
+                        $itemArray['amount'] = $property->normalizedValue->text;
+                    } elseif (isset($property->mentionText)) {
+                        $itemArray['amount'] = $property->mentionText;
+                    } else {
+                        $itemArray['amount'] = null;
+                    }
+                }
+                if ($property->type === 'line_item/product_code') {
+                    if (isset($property->normalizedValue->text)) {
+                        $itemArray['sku'] = $property->normalizedValue->text;
+                    } elseif (isset($property->mentionText)) {
+                        $itemArray['sku'] = $property->mentionText;
+                    } else {
+                        $itemArray['sku'] = null;
+                    }
+                }
             }
 
 

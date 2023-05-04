@@ -54,8 +54,8 @@ class ProcessUploadsCommand extends Command
     public function processUpload()
     {
         //change these to the correct values as needed
-        $upload = Upload::find(131);
-        $client = Client::find(65);
+        $upload = Upload::find(1);
+        $client = Client::find(1);
   
         $this->info('starting job');
 
@@ -72,7 +72,7 @@ class ProcessUploadsCommand extends Command
 
 
             $documentProcessorServiceClient = new DocumentProcessorServiceClient([
-                'credentials' => json_decode(file_get_contents(app_path("../.config/gcloud-processor.json")), true)
+                'credentials' => json_decode(env('GCP_KEY_FILE'), true)
             ]);
 
 
@@ -127,8 +127,8 @@ class ProcessUploadsCommand extends Command
 
     public function saveResults($resultFolder)
     {
-        $upload = Upload::find(131);
-        $client = Client::find(65);
+        $upload = Upload::find(1);
+        $client = Client::find(1);
 
         $disk = Storage::disk('gcs');
         $this->info('saving results');

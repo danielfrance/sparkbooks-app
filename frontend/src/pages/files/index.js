@@ -106,7 +106,7 @@ function Files({ status, statusText, data }) {
     const [selected, setSelected] = useState()
 
     const actions = [
-        { label: 'Download selected', onClick: e => console.log(e) },
+        { label: 'Download selected', onClick: e => console.log('') },
     ]
 
     const { filterQuery, workSpace } = useUIContext()

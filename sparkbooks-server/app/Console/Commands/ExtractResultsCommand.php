@@ -7,6 +7,7 @@ use App\Models\Result;
 use App\Models\ResultDetail;
 use App\Models\ResultItem;
 use App\Models\Upload;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -41,6 +42,8 @@ class ExtractResultsCommand extends Command
         } catch (\Throwable $th) {
             throw $th;
         }
+
+
     }
 
 }

@@ -186,7 +186,8 @@ export default function ClientEdit({ data, status, statusText }) {
             setAdd(false)
             router.replace(router.asPath)
         } catch (error) {
-            console.log({ error })
+            // TODO: handle error
+            // console.log({ error })
         }
     }
 
@@ -230,9 +231,7 @@ export default function ClientEdit({ data, status, statusText }) {
         try {
             const res = await axios.delete(`/clients/${id}`)
             router.push('/clients')
-        } catch (error) {
-            console.log(error)
-        }
+        } catch (error) {}
     }
 
     useEffect(() => {
@@ -275,7 +274,7 @@ export default function ClientEdit({ data, status, statusText }) {
                         </Box>
                         <div className="flex client-details">
                             <div className="panel contact-form">
-                                <Form>
+                                <Form onSubmit={submitClientData}>
                                     <Box margin={{ bottom: '1em' }}>
                                         <FormField name="name" label="Name">
                                             <TextInput
@@ -567,6 +566,7 @@ export default function ClientEdit({ data, status, statusText }) {
 }
 
 export async function getServerSideProps(context) {
+    const axios = useAxios()
     const cookie = context.req.headers.cookie
 
     if (!cookie)
@@ -582,6 +582,7 @@ export async function getServerSideProps(context) {
             headers: {
                 cookie: cookie,
             },
+            withCredentials: true,
         })
         const { data } = res
 

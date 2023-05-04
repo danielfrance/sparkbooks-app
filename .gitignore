@@ -41,3 +41,5 @@
 .terraform
 
 frontend/public/__ENV.js
+sparkbooks-server/supervisord.log
+sparkbooks-server/supervisord.pid

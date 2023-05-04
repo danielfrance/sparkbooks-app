@@ -34,7 +34,6 @@ export default function Clients({ data, status, statusText }) {
                 current.filter(client => client.id !== clientId),
             )
         } catch (error) {
-            console.log({ error })
             setRemoveError("Couldn't remove the client, try again")
         }
     }

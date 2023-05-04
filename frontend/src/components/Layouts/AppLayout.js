@@ -29,14 +29,8 @@ const AppLayout = ({ header, children }) => {
         setUserContext(user)
     }, [userContext, user])
 
-    // TODO: this isn't working properly.  If the user does not have a workspace_id then the layer should be open to prompt them to create one. what's currently happening is the prompt to create a workspace is displaying randomly as if the data is not being loaded properly.
-
     return (
         <Grommet theme={theme}>
-            {/* {isWorkspacePromptOpen && (
-                <WorkSpaceRegistrationLayer onClose={onClose} />
-            )} */}
-
             <SideBarNav />
             <Box
                 className={[

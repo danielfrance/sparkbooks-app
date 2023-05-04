@@ -49,7 +49,6 @@ const NewClientLayer = ({ client, isOpen, onClose }) => {
                 setShow(false)
                 onClose()
             } catch (error) {
-                console.log(error)
                 setShow(false)
                 setError('Something went wrong, try again later.')
                 setVisible(true)

@@ -49,7 +49,6 @@ const AppBar = () => {
     }
 
     useEffect(() => {
-        console.log({ workSpace })
         if (!workSpace) loadWorkSpace()
     }, [workSpace])
 

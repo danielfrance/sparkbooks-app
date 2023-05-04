@@ -94,16 +94,12 @@ export default function UploadResultContainer({ data, index }) {
             formData.append(key, value)
         }
         timer = setTimeout(async () => {
-            console.log("let's update details...")
             try {
                 const res = await axios.post(
                     `/results/${details.upload_id}/details/${details.result_id}`,
                     formData,
                 )
-
-                // console.log({ data: res.data })
             } catch (error) {
-                // console.log({ error })
                 setErrorMessage(
                     `We couldn't update receipt details (name, subtotal, tax and total), try again.`,
                 )
@@ -138,8 +134,6 @@ export default function UploadResultContainer({ data, index }) {
         if (action === 'remove') {
             if (!item.isNew) {
                 timer = setTimeout(async () => {
-                    console.log('Delete exisiting item...')
-
                     try {
                         await axios.delete(
                             `/results/${item.upload_id}/lineitem/${item.id}`,
@@ -149,7 +143,6 @@ export default function UploadResultContainer({ data, index }) {
                             items.filter(el => el.id != item.id),
                         )
                     } catch (error) {
-                        console.log({ error })
                         setErrorMessage(
                             `We couldn't remove the item, try again.`,
                         )
@@ -176,7 +169,6 @@ export default function UploadResultContainer({ data, index }) {
                     const res = await axios.post(url, formData)
                     lineItems[index] = res.data.resultLineItem
                 } catch (error) {
-                    console.log({ error })
                     setErrorMessage(
                         `We couldn't ${
                             item.isNew ? 'add' : 'update'

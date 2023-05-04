@@ -32,6 +32,8 @@ services:
       - sparkbooks
     volumes:
       - "./sparkbooks-server:/var/www/html"
+    environment:
+      - APP_ENV=${APP_ENV:-local}
   pgsql:
     image: "postgres:14"
     ports:

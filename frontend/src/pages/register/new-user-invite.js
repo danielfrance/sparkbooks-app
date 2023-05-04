@@ -38,7 +38,6 @@ export default function RegisterNewInvite({ invite }) {
 
     const submitForm = event => {
         event.preventDefault()
-        console.log('registratio invitee form submitted')
 
         registerNewUser({
             name,

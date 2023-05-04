@@ -16,6 +16,7 @@ import {
 } from 'grommet'
 
 import { useAxios } from '@/hooks/use-axios'
+import { useUIContext } from '@/contexts/ui'
 
 const UploadFilesLayer = ({ onClose }) => {
     const axios = useAxios()
@@ -26,7 +27,7 @@ const UploadFilesLayer = ({ onClose }) => {
     const [error, setError] = useState()
     const [clients, setClients] = useState([])
 
-    // const { workSpace, setWorkSpace } = useUIContext()
+    const { workSpace, setWorkSpace } = useUIContext()
 
     // const { clients } = workSpace
 
@@ -65,7 +66,6 @@ const UploadFilesLayer = ({ onClose }) => {
                 onClose()
                 setVisible(true)
             } catch (error) {
-                // console.log(error)
                 setShow(false)
                 setError("We couldn't save files, try again")
                 setVisible(true)
@@ -137,7 +137,8 @@ const UploadFilesLayer = ({ onClose }) => {
                                 onChange={({ option }) =>
                                     setSelectedClient(option)
                                 }
-                                onSearch={text => console.log(text)}
+                                // TODO: add search functionality
+                                // onSearch={}
                             />
                         </FormField>
                         <FormField

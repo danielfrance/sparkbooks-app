@@ -75,7 +75,7 @@ class ProcessUploadedFiles implements ShouldQueue
 
 
             $documentProcessorServiceClient = new DocumentProcessorServiceClient([
-                'credentials' => json_decode(file_get_contents(app_path("../.config/gcloud-processor.json")), true)
+                'credentials' => json_decode(env('GCP_KEY_FILE'), true)
             ]);
 
 

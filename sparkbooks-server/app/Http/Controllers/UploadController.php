@@ -10,10 +10,12 @@ use App\Models\Result;
 use App\Models\ResultDetail;
 use App\Models\Upload;
 use Carbon\Carbon;
+use Illuminate\Console\Command;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
@@ -52,8 +54,7 @@ class UploadController extends Controller
 
                 // TODO: create better way of naming uploads
 
-                $upload = Upload::create([
-                    'name' => $client->name . '-' . Carbon::now()->format('Y-m-d'),
+                $upload = Upload::create(['name' => $client->name . '-' . Carbon::now()->format('Y-m-d-h:i'),
                     'client_id' => $client->id,
                 ]);
 
@@ -71,6 +72,7 @@ class UploadController extends Controller
             });
             return ['status' => 'Files uploaded & processing. Check your email shortly'];
         } catch (\Throwable $th) {
+            Log::alert($th->getMessage());          
             return
                 response()->json(['status' => 'Something went wrong. Try uploading your files again'], 200);
         }
@@ -93,7 +95,6 @@ class UploadController extends Controller
             $results = $upload->results;
 
 
-            // TODO: !!! update this!!!
             $results = Result::where('upload_id', $id)
                 ->select('id', 'name', 'directory', 'upload_id')
                 ->with(['resultDetails'])
