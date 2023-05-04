@@ -19,12 +19,6 @@ class ProductionSeeder extends Seeder
      */
     public function run()
     {
-        // laratrust seeder
-        //create sparkbooks workspace
-        // create super admin user -> assign roles
-        // create stripe plans
-        // add plan to sparkbooks workspace
-        // 
 
         if (env('APP_ENV') === 'prod') {
             $this->command->info('Seeding production data...');
