@@ -5,16 +5,6 @@ metadata:
   labels:
     {{- include "sparkbooks.labels" . | nindent 4 }}
 spec:
-  corsPolicy:
-      allowOrigins:
-      - "api.sparkbooks.io"
-      allowMethods:
-      - GET
-      - POST
-      - PUT
-      - DELETE
-      allowHeaders:
-      - "*"
   selector:
     matchLabels:
       app: server

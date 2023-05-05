@@ -30,4 +30,11 @@ class DashboardController extends Controller
         return ["workspace" => $data, "plans" => $plans];
     }
 
+    public function welcome()
+    {
+        $json = app_path(env('GOOGLE_CLOUD_KEY_FILE'));
+
+        dd(json_decode(file_get_contents($json), true));
+    }
+
 }

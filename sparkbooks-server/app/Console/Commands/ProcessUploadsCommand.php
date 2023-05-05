@@ -47,14 +47,14 @@ class ProcessUploadsCommand extends Command
     public function handle()
     {
 
-        $this->processUpload();
-        // $this->saveResults('5818806092699961950');
+        // $this->processUpload();
+        $this->saveResults('14935044233440293990');
     }
 
     public function processUpload()
     {
         //change these to the correct values as needed
-        $upload = Upload::find(1);
+        $upload = Upload::find(58);
         $client = Client::find(1);
   
         $this->info('starting job');
@@ -72,7 +72,7 @@ class ProcessUploadsCommand extends Command
 
 
             $documentProcessorServiceClient = new DocumentProcessorServiceClient([
-                'credentials' => json_decode(env('GCP_KEY_FILE'), true)
+                'credentials' => json_decode(file_get_contents(app_path("../.config/demo-credentials.json")), true)
             ]);
 
 
@@ -127,8 +127,8 @@ class ProcessUploadsCommand extends Command
 
     public function saveResults($resultFolder)
     {
-        $upload = Upload::find(1);
-        $client = Client::find(1);
+        $upload = Upload::find(59);
+        $client = Client::find(2);
 
         $disk = Storage::disk('gcs');
         $this->info('saving results');
@@ -140,7 +140,6 @@ class ProcessUploadsCommand extends Command
         //for ($i = 0; $i < count($files); $i++) {
         // $file[$i] 
         // $upload-files
-
         
 
         for ($i = 0; $i < count($files); $i++) {

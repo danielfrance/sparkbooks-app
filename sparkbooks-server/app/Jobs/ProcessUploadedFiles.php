@@ -74,8 +74,7 @@ class ProcessUploadedFiles implements ShouldQueue
             }, $upload->files->toArray());
 
 
-            $documentProcessorServiceClient = new DocumentProcessorServiceClient([
-                'credentials' => json_decode(env('GCP_KEY_FILE'), true)
+            $documentProcessorServiceClient = new DocumentProcessorServiceClient(['credentials' => json_decode(file_get_contents(app_path("../.config/demo-credentials.json")), true)
             ]);
 
 
@@ -129,17 +128,17 @@ class ProcessUploadedFiles implements ShouldQueue
         $client = $this->client;
         $upload = $this->upload;
         $disk = Storage::disk('gcs');
-        // Log::info('saving results');
+        Log::info('saving results');
         // $id = substr($string, strrpos($string, '/') + 1);
         //check if folder exists
         // check each subfolder for each file that was uploaded
         // if returns, create a new array
         $files = $disk->allFiles($client->gcs_directory . "/results/" . $resultFolder);
-    
 
 
+        Log::info('files found');
         for ($i = 0; $i < count($files); $i++) {
-
+            Log::info('saving file ' . $files[$i]);
             try {
                 $contents = $disk->get($files[$i]);
                 $directory = Str::beforeLast($files[$i], '/');

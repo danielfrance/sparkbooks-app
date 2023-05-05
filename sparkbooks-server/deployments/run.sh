@@ -1,7 +1,6 @@
 #!/bin/sh
 
 echo "Application environment: $APP_ENV"
-php artisan key:generate
 
 echo "🚀 Clearing Cache/Views/Configs"
 php artisan view:clear
