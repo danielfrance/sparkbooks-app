@@ -7,6 +7,7 @@ php artisan view:clear
 php artisan config:clear
 php artisan cache:clear
 
+echo "🚀 Running migrations"
 php artisan migrate --force
 
 
