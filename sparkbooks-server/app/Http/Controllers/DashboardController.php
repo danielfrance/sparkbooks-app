@@ -8,6 +8,7 @@ use App\Models\Upload;
 use App\Models\Workspace;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Spatie\SlackAlerts\Facades\SlackAlert;
 
 class DashboardController extends Controller
 {
@@ -30,11 +31,6 @@ class DashboardController extends Controller
         return ["workspace" => $data, "plans" => $plans];
     }
 
-    public function welcome()
-    {
-        $json = app_path(env('GOOGLE_CLOUD_KEY_FILE'));
-
-        dd(json_decode(file_get_contents($json), true));
-    }
+    
 
 }

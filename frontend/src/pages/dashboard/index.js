@@ -101,7 +101,9 @@ export default function Dashboard({ data, status, statusText }) {
 
     const [selected, setSelected] = useState()
     const [processedFiles, setProcessedFiles] = useState(0)
-    const [remainingFiles, setRemainingFiles] = useState(0)
+    const [remainingFiles, setRemainingFiles] = useState(
+        data.workspace.remaining_monthly_pages,
+    )
     const [isUnvailable, setIsUnvailable] = useState(false)
 
     const onClickRow = ({ datum }) => {
@@ -127,7 +129,6 @@ export default function Dashboard({ data, status, statusText }) {
                 ...currentUploads,
                 ...client.uploads.map(upload => {
                     if (upload.processed) setProcessedFiles(count => count + 1)
-                    if (!upload.processed) setRemainingFiles(count => count + 1)
                     return {
                         id: upload.id,
                         client: client.name || '',
@@ -142,7 +143,7 @@ export default function Dashboard({ data, status, statusText }) {
     useEffect(() => {
         if (status === 200) {
             setProcessedFiles(0)
-            setRemainingFiles(0)
+            setRemainingFiles(data.workspace.remaining_monthly_pages)
             extractUploads(data.workspace.clients)
             setWorkSpace(data.workspace)
             setPlans(data.plans)

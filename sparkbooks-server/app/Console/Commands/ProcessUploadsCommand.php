@@ -7,6 +7,7 @@ use Illuminate\Console\Command;
 use App\Models\Client;
 use App\Models\Result;
 use App\Models\Upload;
+use App\Models\Workspace;
 use Carbon\Carbon;
 use Google\Cloud\DocumentAI\V1\BatchDocumentsInputConfig;
 use Illuminate\Http\Request;
@@ -21,6 +22,8 @@ use Google\Cloud\Storage\Connection\Rest;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Smalot\PdfParser\Parser;
+
 
 class ProcessUploadsCommand extends Command
 {
@@ -46,16 +49,16 @@ class ProcessUploadsCommand extends Command
 
     public function handle()
     {
-
-        // $this->processUpload();
-        $this->saveResults('14935044233440293990');
+        // dispatch(new ProcessUploadedFiles(3, 109));
+        $this->processUpload();
+        // $this->saveResults('14935044233440293990');
     }
 
     public function processUpload()
     {
         //change these to the correct values as needed
-        $upload = Upload::find(58);
-        $client = Client::find(1);
+        $upload = Upload::find(109);
+        $client = Client::find(3);
   
         $this->info('starting job');
 
@@ -117,6 +120,7 @@ class ProcessUploadsCommand extends Command
                 $this->saveResults($resultFolder);
             } else {
                 $error = $operationResponse->getError();
+                Log::error(json_encode($error));
                 // $this->error($error, ['context' => 'operationResponse did not succeed']);
             }
         } catch (\Exception $e) {
@@ -127,8 +131,8 @@ class ProcessUploadsCommand extends Command
 
     public function saveResults($resultFolder)
     {
-        $upload = Upload::find(59);
-        $client = Client::find(2);
+        $upload = Upload::find(109);
+        $client = Client::find(3);
 
         $disk = Storage::disk('gcs');
         $this->info('saving results');
@@ -136,32 +140,45 @@ class ProcessUploadsCommand extends Command
         //check if folder exists
         // check each subfolder for each file that was uploaded
         // if returns, create a new array
-        $files = $disk->allFiles($client->gcs_directory . "/results/" . $resultFolder);
+        // $files = $disk->allFiles($client->gcs_directory . "/results/" . $resultFolder);
         //for ($i = 0; $i < count($files); $i++) {
         // $file[$i] 
         // $upload-files
-        
 
-        for ($i = 0; $i < count($files); $i++) {
-            $this->info("saving each file");
-            try {
-                $contents = $disk->get($files[$i]);
-                $directory = Str::beforeLast($files[$i], '/');
-                $name = Str::afterLast($files[$i], '/');
-                $this->info("saving file " . $name);
 
-                Result::create([
-                    'name' => $name,
-                    'upload_id' => $upload->id,
-                    'directory' => $directory,
-                    'contents' => $contents,
-                    'file_id' => $upload->files[$i]->id,
-                    'client_id' => $upload->client_id,
-                    'workspace_id' => $upload->client->workspace_id
-                ]);
-            } catch (\Throwable $th) {
-                throw $th;
-            }
+        // for ($i = 0; $i < count($files); $i++) {
+        //     $this->info("saving each file");
+        //     try {
+
+        //         $contents = $disk->get($files[$i]);
+        //         $directory = Str::beforeLast($files[$i], '/');
+        //         $name = Str::afterLast($files[$i], '/');
+        //         $this->info("saving file " . $name);
+
+        //         Result::create([
+        //             'name' => $name,
+        //             'upload_id' => $upload->id,
+        //             'directory' => $directory,
+        //             'contents' => $contents,
+        //             'file_id' => $upload->files[$i]->id,
+        //             'client_id' => $upload->client_id,
+        //             'workspace_id' => $upload->client->workspace_id
+        //         ]);
+        //     } catch (\Throwable $th) {
+        //         throw $th;
+        //     }
+        // }
+
+        $localFiles = $upload->files;
+        $workspace = Workspace::find($client->workspace_id);
+        $monthlyPages = $workspace->remaining_monthly_pages;
+
+        foreach ($localFiles as $localFile) {
+
+            $monthlyPages = $monthlyPages - $localFile->page_count;
         }
+
+        // dd($monthlyPages);
+        $workspace->update(['remaining_monthly_pages' => $monthlyPages]);
     }
 }

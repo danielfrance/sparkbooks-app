@@ -15,6 +15,8 @@ use Stripe\Customer;
 use Stripe\PaymentIntent;
 use Stripe\Subscription;
 use Stripe\Product;
+use Spatie\SlackAlerts\Facades\SlackAlert;
+
 
 class StripeController extends Controller
 {
@@ -69,6 +71,9 @@ class StripeController extends Controller
                 // Get the subscription ID
                 $subscription = Subscription::retrieve($session->subscription);
 
+       
+
+
                 $subscriptionPlan = Product::retrieve($session->lines->data[0]->plan->product);
 
                 $charge = Charge::retrieve($session->charge);
@@ -100,7 +105,8 @@ class StripeController extends Controller
 
                     Log::info('updating workspace details');
 
-                    $workspace->update(['stripe_id' => $subscription->id,
+                    $workspace->update([
+                        'stripe_id' => $customerId,
                         'pm_type' => $charge->payment_method_details->type,
                         'pm_last_four' => $charge->payment_method_details->card->last4,
                         'remaining_monthly_pages' => $workspaceDetails['pages']
@@ -109,6 +115,16 @@ class StripeController extends Controller
                     Log::info('creating workspace subscription details');
 
                     $workspace->subscriptionDetails()->create($workspaceDetails);
+
+
+                    //TODO: this doesnt work
+                    // Subscription::update($subscription->id, [
+                    //     'metadata' => [
+                    //         'workspace_id' => $session->metadata->workspace_id
+                    //     ],
+                    //     "enable_incomplete_payments" => "false",
+                    //     "proration_behavior" => "always_invoice",
+                    // ]);
 
                     return ['message' => 'Workspace subscription created'];
 
@@ -141,7 +157,8 @@ class StripeController extends Controller
         // Retrieve the user associated with the customer ID
         $workspace = Workspace::where('stripe_id', $customerId)->first();
 
-        //TODO: Stripe handles most of this. So maybe we just notify ourselves.
+        SlackAlert::message('Subscription renewal failed for ' . $workspace->name . ' - ' . $workspace->email . ' - ' . $workspace->stripe_id . ' - ' . $workspace->pm_last_four . ' - ' . $workspace->pm_type . ' - ' . $workspace->remaining_monthly_pages . ' pages remaining');
+
     }
 
     public function handleRenewalSuccess($event)
@@ -245,6 +262,7 @@ class StripeController extends Controller
                 // TODO: Send email to user
 
             }
+            SlackAlert::message('Subscription cancelled for ' . $workspace->name . ' - ' . $workspace->email . ' - ' . $workspace->stripe_id);
         }
 
         return response('Webhook Handled', 200);

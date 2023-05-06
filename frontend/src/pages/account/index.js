@@ -177,117 +177,121 @@ export default function Account({ data }) {
             )}
             <AppLayout>
                 <AppBar />
-                <div className="card">
+                <div>
                     <Box direction="row" pad="medium" justify="between">
                         <div className="title">Account Details</div>
                     </Box>
-                    <div className="grid account-info">
-                        <div className="grid user-info">
-                            <Box margin="0" pad="0">
-                                <Stack
-                                    alignSelf="center"
-                                    align="center"
-                                    anchor="bottom-right"
-                                    pad="large">
-                                    <Avatar
-                                        src="//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80"
+                    <Grid
+                        columns={{
+                            count: 2,
+                            size: 'auto',
+                        }}
+                        gap="medium"
+                        pad="small">
+                        {/* <Box margin="0" pad="0">
+                            <Stack
+                                alignSelf="center"
+                                align="center"
+                                anchor="bottom-right"
+                                pad="large">
+                                <Avatar
+                                    src="//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80"
+                                    size="xlarge"
+                                />
+                                <Box
+                                    pad="xsmall"
+                                    background={{
+                                        color: 'brand',
+                                        opacity: 'strong',
+                                    }}
+                                    round="small">
+                                    <FormEdit size="medium" color="white" />
+                                </Box>
+                            </Stack>
+                        </Box> */}
+                        <Box className="card" pad="small">
+                            <FormField
+                                label="Names"
+                                // required
+                                // margin={{ top: 'medium', bottom: 'medium' }}
+                            >
+                                <TextInput
+                                    name="names"
+                                    icon={
+                                        <User size="medium" color="#3396F2" />
+                                    }
+                                    value={names}
+                                    onChange={handleChange}
+                                    aria-label="user names"
+                                />
+                            </FormField>
+
+                            <FormField label="Names">
+                                <TextInput
+                                    name="user-email"
+                                    icon={
+                                        <Mail size="medium" color="#3396F2" />
+                                    }
+                                    value={userEmail}
+                                    onChange={handleChange}
+                                    aria-label="user names"
+                                />
+                            </FormField>
+
+                            {edit && (
+                                <>
+                                    <Box></Box>
+                                    <button
+                                        className="btn secondary inverse"
+                                        onClick={() => save()}>
+                                        Save
+                                    </button>
+                                </>
+                            )}
+                        </Box>
+                        <Card
+                            background="brand"
+                            elevation="medium"
+                            className="card">
+                            <CardBody pad="medium">
+                                <Box>
+                                    <Text
+                                        color="white"
                                         size="xlarge"
+                                        weight="bold">
+                                        {data.subscriptionPlan.name} Plan
+                                    </Text>
+                                    <List
+                                        align="start"
+                                        data={[
+                                            {
+                                                users: `${data.subscriptionPlan.seats} users`,
+                                            },
+                                            {
+                                                files: `${data.subscriptionPlan.pages} pages`,
+                                            },
+                                            {
+                                                clients: `${data.subscriptionPlan.clients} clients`,
+                                            },
+                                            {
+                                                support: data.subscriptionPlan
+                                                    .support_access
+                                                    ? 'support access'
+                                                    : 'no support access',
+                                            },
+                                        ]}
                                     />
-                                    <Box
-                                        pad="xsmall"
-                                        background={{
-                                            color: 'brand',
-                                            opacity: 'strong',
-                                        }}
-                                        round="small">
-                                        <FormEdit size="medium" color="white" />
-                                    </Box>
-                                </Stack>
-                            </Box>
-                            <div className="grid contacts">
-                                <FormField
-                                    label="Names"
-                                    // required
-                                    // margin={{ top: 'medium', bottom: 'medium' }}
-                                >
-                                    <TextInput
-                                        name="names"
-                                        icon={
-                                            <User
-                                                size="medium"
-                                                color="#3396F2"
-                                            />
-                                        }
-                                        value={names}
-                                        onChange={handleChange}
-                                        aria-label="user names"
-                                    />
-                                </FormField>
-
-                                <FormField label="Names">
-                                    <TextInput
-                                        name="user-email"
-                                        icon={
-                                            <Mail
-                                                size="medium"
-                                                color="#3396F2"
-                                            />
-                                        }
-                                        value={userEmail}
-                                        onChange={handleChange}
-                                        aria-label="user names"
-                                    />
-                                </FormField>
-
-                                {edit && (
-                                    <>
-                                        <Box></Box>
-                                        <button
-                                            className="btn secondary inverse"
-                                            onClick={() => save()}>
-                                            Save
-                                        </button>
-                                    </>
-                                )}
-                            </div>
-                        </div>
-                        <Card background="brand" elevation="medium">
-                            <CardBody pad="small">
-                                <Grid pad="none" columns={['xsmall', 'large']}>
-                                    <Box>
-                                        <Achievement
-                                            color="white"
-                                            size="large"
-                                        />
-                                    </Box>
-                                    <Box margin={{ left: '-1em' }}>
-                                        <Text
-                                            color="white"
-                                            size="xlarge"
-                                            weight="bold">
-                                            Gold Plan
-                                        </Text>
-                                        <List
-                                            align="start"
-                                            data={[
-                                                { users: '5 Users' },
-                                                { storage: '5GB Storage' },
-                                                { support: '24/7 Support' },
-                                                { files: '1000 Files' },
-                                            ]}
-                                        />
-                                    </Box>
-                                </Grid>
+                                </Box>
                             </CardBody>
                             <CardFooter justify="center" pad="small">
                                 <Button
                                     label="Change Plan"
                                     color="white"
-                                    href="https://stripe.com"
+                                    href={data.portalLink}
                                 />
                             </CardFooter>
                         </Card>
-                    </div>
+                    </Grid>
                 </div>
                 {is_admin && team?.length > 0 && (
                     <DataTable

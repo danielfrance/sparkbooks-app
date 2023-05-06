@@ -11,3 +11,4 @@ export const downloader = async (url, filename) => {
     link.download = filename
     link.click()
 }
+

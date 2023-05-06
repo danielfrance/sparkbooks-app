@@ -1,5 +1,13 @@
 import { useState } from 'react'
-import { Grommet, Box, DataTable, Card, CardHeader, CardBody } from 'grommet'
+import {
+    Grommet,
+    Box,
+    DataTable,
+    Card,
+    CardHeader,
+    CardBody,
+    Spinner,
+} from 'grommet'
 import { Blank } from 'grommet-icons'
 
 const SortableIcon = () => (
@@ -48,6 +56,7 @@ export default function Table({
     setSelected,
     onClickRow,
     actions = [],
+    isBusy,
 }) {
     const [sort, setSort] = useState({
         property: 'name',
@@ -58,14 +67,18 @@ export default function Table({
             <CardHeader>
                 <span className="title">{title}</span>
                 <div className="actions">
-                    {actions.map(action => (
-                        <button
-                            className="btn secondary inverse small"
-                            key={`${title}${action.label}`}
-                            onClick={e => action.onClick(e)}>
-                            {action.label}
-                        </button>
-                    ))}
+                    {!isBusy ? (
+                        actions.map(action => (
+                            <button
+                                className="btn secondary inverse small"
+                                key={`${title}${action.label}`}
+                                onClick={e => action.onClick(e)}>
+                                {action.label}
+                            </button>
+                        ))
+                    ) : (
+                        <Spinner />
+                    )}
                 </div>
             </CardHeader>
             <CardBody>

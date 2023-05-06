@@ -6,6 +6,7 @@ import {
     FormField,
     Grid,
     Heading,
+    Spinner,
     TextInput,
 } from 'grommet'
 import Link from 'next/link'
@@ -33,12 +34,12 @@ export default function RegisterNewInvite({ invite }) {
     const [email, setEmail] = useState(invite.email)
     const [password, setPassword] = useState('')
     const [passwordConfirmation, setPasswordConfirmation] = useState('')
-
+    const [isBusy, setIsBusy] = useState(false)
     const [errors, setErrors] = useState([])
 
     const submitForm = event => {
         event.preventDefault()
-
+        setIsBusy(true)
         registerNewUser({
             name,
             email,
@@ -126,7 +127,11 @@ export default function RegisterNewInvite({ invite }) {
                             />
                         </FormField>
                         <Box direction="row" justify="between">
-                            <Button type="submit" primary label="Submit" />
+                            {!isBusy ? (
+                                <Button type="submit" primary label="Submit" />
+                            ) : (
+                                <Spinner />
+                            )}
                             <Anchor
                                 size="small"
                                 weight="small"

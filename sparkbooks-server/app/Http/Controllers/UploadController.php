@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
+use Smalot\PdfParser\Parser;
 
 
 class UploadController extends Controller
@@ -43,8 +44,10 @@ class UploadController extends Controller
 
         $files = $request->file('files');
 
+        
+
         try {
-            DB::transaction(function () use ($request) {
+            $test = DB::transaction(function () use ($request) {
 
                 $disk = Storage::disk('gcs');
 
@@ -52,22 +55,34 @@ class UploadController extends Controller
 
                 $client = Client::find($request->client_id);
 
+                
+
+
+
                 // TODO: create better way of naming uploads
 
                 $upload = Upload::create(['name' => $client->name . '-' . Carbon::now()->format('Y-m-d-h:i'),
                     'client_id' => $client->id,
                 ]);
 
+
+                $parser = new Parser();
+
                 foreach ($files as $file) {
                     $pdf = Carbon::now()->timestamp . "-" . $file->getClientOriginalName();
 
                     $disk->put($client->gcs_directory . "/" . $pdf, file_get_contents($file));
 
+                    $parsedFile    = $parser->parseFile($file);
+                    $pages  = count($parsedFile->getPages());
+                    
                     File::create([
                         'name' => $pdf,
-                        'upload_id' => $upload->id
+                        'upload_id' => $upload->id,
+                        'page_count' => $pages,
                     ]);
                 }
+
                 $this->dispatch(new ProcessUploadedFiles($client->id, $upload->id));
             });
             return ['status' => 'Files uploaded & processing. Check your email shortly'];

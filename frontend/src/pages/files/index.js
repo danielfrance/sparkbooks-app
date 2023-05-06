@@ -10,6 +10,7 @@ import ErrorMessage from '@/components/ErrorMessage'
 
 import { useUIContext } from '@/contexts/ui'
 import { useAxios } from '@/hooks/use-axios'
+import { downloader } from '@/lib/download'
 
 const src = '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80'
 
@@ -32,7 +33,7 @@ function Files({ status, statusText, data }) {
             key={datum.id}
             //  checked={checked.includes(item)}
             label={<Text>{datum.fileName}</Text>}
-            onChange={e => console.log(e, datum)}
+            onChange={e => setSelectedFiles([...selectedFiles, datum.id])}
         />
     )
 
@@ -104,9 +105,11 @@ function Files({ status, statusText, data }) {
 
     const [files, setFiles] = useState([])
     const [selected, setSelected] = useState()
+    const [selectedFiles, setSelectedFiles] = useState([])
+    const [isBusy, setIsBusy] = useState(false)
 
     const actions = [
-        { label: 'Download selected', onClick: e => console.log('') },
+        { label: 'Download selected', onClick: e => downloadFiles() },
     ]
 
     const { filterQuery, workSpace } = useUIContext()
@@ -142,6 +145,13 @@ function Files({ status, statusText, data }) {
         })
     }
 
+    const downloadFiles = async () => {
+        setIsBusy(true)
+        const url = `/file/download?ids=${selectedFiles}`
+        await downloader(url, 'sparkbook-files.zip')
+        setIsBusy(false)
+    }
+
     useEffect(() => {
         if (data.length) extractFiles(data)
     }, [data])
@@ -160,6 +170,7 @@ function Files({ status, statusText, data }) {
                         data={filtered}
                         setSelected={setSelected}
                         actions={actions}
+                        isBusy={isBusy}
                     />
                 </AppLayout>
             )}

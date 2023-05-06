@@ -10,7 +10,7 @@ class File extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['name', 'upload_id'];
+    protected $fillable = ['name', 'upload_id', 'page_count'];
 
     public function upload()
     {

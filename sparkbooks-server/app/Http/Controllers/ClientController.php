@@ -128,13 +128,13 @@ class ClientController extends Controller
         ]);
 
         $client = Client::find($id);
-        $client->name = $request->name;
-        $client->email = $request->email;
-        $client->phone = $request->phone;
-        $client->point_of_contact = $request->point_of_contact;
-        $client->state = $request->state;
-        $client->city = $request->city;
-        $client->address = $request->address;
+        $input = $request->except([
+            'gcs_directory',
+            'workspace_id',
+            'created_at',
+        ]);
+
+        $client->update($input);
 
         $client->save();
 

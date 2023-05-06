@@ -25,9 +25,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/welcome', [DashboardController::class, 'welcome']);
-
-
 Route::get('invite/{invite_token}', [InviteController::class, 'show']);
 
 Route::post('/webhooks/subscription', [StripeController::class, 'handleSubscription']);
@@ -68,6 +65,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('files', [FileController::class, 'index']);
     Route::get('files/{file}', [FileController::class, 'show']);
+    Route::get('file/download', [FileController::class, 'downloadFiles']);
 
 
     //Chart of Accounts

@@ -12,6 +12,7 @@ use Illuminate\Queue\SerializesModels;
 use App\Models\Client;
 use App\Models\Result;
 use App\Models\Upload;
+use App\Models\Workspace;
 use Carbon\Carbon;
 use Google\Cloud\DocumentAI\V1\BatchDocumentsInputConfig;
 use Illuminate\Http\Request;
@@ -27,6 +28,8 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Spatie\SlackAlerts\Facades\SlackAlert;
+
 
 class ProcessUploadedFiles implements ShouldQueue
 {
@@ -35,8 +38,6 @@ class ProcessUploadedFiles implements ShouldQueue
     protected $client;
     protected $upload;
     protected $disk;
-
-    public $timeout = 120;
     /**
      * Create a new job instance.
      *
@@ -115,10 +116,12 @@ class ProcessUploadedFiles implements ShouldQueue
                 $this->saveResults($resultFolder);
             } else {
                 $error = $operationResponse->getError();
-                Log::error($error, ['context' => 'operationResponse did not succeed']);
+                Log::error('operationResponse did not succeed');
+                Log::error(json_encode($error));
             }
         } catch (\Exception $e) {
-
+            SlackAlert::message('Error processing files for ', $client->name . ' - uploadID: ' . $upload->id);
+            SlackAlert::message($e->getMessage());
             Log::error($e, ['context' => 'error processing files']);
         }
     }
@@ -153,11 +156,44 @@ class ProcessUploadedFiles implements ShouldQueue
                     'client_id' => $upload->client_id,
                     'workspace_id' => $upload->client->workspace_id
                 ]);
+
             } catch (\Throwable $th) {
                 Log::error($th, ['context' => 'error saving result']);
             }
         }
 
+
+
+        $localFiles = $upload->files;
+        $workspace = Workspace::find($client->workspace_id);
+        $monthlyPages = $workspace->remaining_monthly_pages;
+
+        foreach ($localFiles as $localFile) {
+
+            $monthlyPages = $monthlyPages - $localFile->page_count;
+        }
+
+        // dd($monthlyPages);
+        $workspace->update(['remaining_monthly_pages' => $monthlyPages]);
+
         dispatch(new ExtractResultsJob);
+    }
+
+    public function saveWorkSpaceRemainingPages($upload, $client)
+    {
+        try {
+            $localFiles = $upload->files;
+            $workspace = Workspace::find($client->workspace_id);
+            $monthlyPages = $workspace->remaining_monthly_pages;
+
+            foreach ($localFiles as $localFile) {
+
+                $monthlyPages = $monthlyPages - $localFile->page_count;
+            }
+
+            $workspace->update(['remaining_monthly_pages' => $monthlyPages]);
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
     }
 }

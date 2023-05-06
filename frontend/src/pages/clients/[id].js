@@ -19,6 +19,7 @@ import {
     Menu,
     Notification,
     Layer,
+    Spinner,
 } from 'grommet'
 import { More, Trash, Edit } from 'grommet-icons'
 
@@ -29,6 +30,7 @@ import ChartOfAccountsImport from './chartOfAccountsModal'
 import { useAxios } from '@/hooks/use-axios'
 import { useRouter } from 'next/router'
 import ErrorMessage from '@/components/ErrorMessage'
+import { US_STATES } from '@/lib/states'
 
 const clientRender = property => datum => (
     <Box pad={{ vertical: 'xsmall' }} gap="small" direction="row">
@@ -109,6 +111,8 @@ const columns = [
     },
 ]
 
+const states = ['AL', 'CA', 'NY']
+
 export default function ClientEdit({ data, status, statusText }) {
     const axios = useAxios()
     const router = useRouter()
@@ -127,6 +131,8 @@ export default function ClientEdit({ data, status, statusText }) {
     const [uploads, setUploads] = useState([])
     const { filterQuery } = useUIContext()
     const [isUnvailable, setIsUnvailable] = useState(false)
+    const [notificationInfo, setNotificationInfo] = useState(false)
+    const [isBusy, setIsBusy] = useState(false)
 
     const addAccount = () => {
         setAccount({
@@ -184,6 +190,7 @@ export default function ClientEdit({ data, status, statusText }) {
 
             setAccount(null)
             setAdd(false)
+
             router.replace(router.asPath)
         } catch (error) {
             // TODO: handle error
@@ -201,6 +208,7 @@ export default function ClientEdit({ data, status, statusText }) {
         if (!id || !name || !email) return
 
         try {
+            setIsBusy(true)
             const data = new FormData()
 
             for (const [key, value] of Object.entries(client))
@@ -208,14 +216,27 @@ export default function ClientEdit({ data, status, statusText }) {
                     data.append(key, value)
 
             await axios.post(`clients/${id}`, data)
-
+            setNotificationInfo({
+                status: 'normal',
+                title: 'Success',
+                message: 'Account updated',
+            })
+            setIsUnvailable(true)
+            setIsBusy(false)
             router.replace(router.asPath)
         } catch (error) {}
     }
 
     const onClickRow = ({ datum }) => {
         if (datum.processed) router.push(`/uploads/${datum.id}`)
-        else setIsUnvailable(true)
+        else {
+            setNotificationInfo({
+                status: 'warning',
+                title: 'Not Ready',
+                message: 'This upload is still processing. Please wait a bit.',
+            })
+            setIsUnvailable(true)
+        }
     }
 
     const filtered = uploads
@@ -229,8 +250,10 @@ export default function ClientEdit({ data, status, statusText }) {
 
     const submitClientDelete = async id => {
         try {
+            setIsBusy(true)
             const res = await axios.delete(`/clients/${id}`)
             router.push('/clients')
+            setIsBusy(false)
         } catch (error) {}
     }
 
@@ -251,9 +274,9 @@ export default function ClientEdit({ data, status, statusText }) {
             {isUnvailable && (
                 <Notification
                     toast
-                    status="warning"
-                    title="Not ready"
-                    message="Still processing"
+                    status={notificationInfo.status}
+                    title={notificationInfo.title}
+                    message={notificationInfo.message}
                     onClose={() => setIsUnvailable(false)}
                 />
             )}
@@ -269,7 +292,7 @@ export default function ClientEdit({ data, status, statusText }) {
                                 level="3"
                                 color="brand"
                                 className="ff-sans-serif">
-                                Edit Client
+                                Edit {client?.name}
                             </Heading>
                         </Box>
                         <div className="flex client-details">
@@ -279,7 +302,12 @@ export default function ClientEdit({ data, status, statusText }) {
                                         <FormField name="name" label="Name">
                                             <TextInput
                                                 name="name"
-                                                value={client?.name || ''}
+                                                value={
+                                                    client?.name !== null &&
+                                                    client?.name !== undefined
+                                                        ? client?.name
+                                                        : ''
+                                                }
                                                 onChange={handleClientInput}
                                             />
                                         </FormField>
@@ -295,7 +323,14 @@ export default function ClientEdit({ data, status, statusText }) {
                                                 label="Email">
                                                 <TextInput
                                                     name="email"
-                                                    value={client?.email || ''}
+                                                    value={
+                                                        client?.email !==
+                                                            null &&
+                                                        client?.email !==
+                                                            undefined
+                                                            ? client?.email
+                                                            : ''
+                                                    }
                                                     onChange={handleClientInput}
                                                 />
                                             </FormField>
@@ -305,7 +340,7 @@ export default function ClientEdit({ data, status, statusText }) {
                                                 <TextInput
                                                     name="address"
                                                     value={
-                                                        client?.address || ''
+                                                        client?.address ?? ''
                                                     }
                                                     onChange={handleClientInput}
                                                 />
@@ -316,8 +351,12 @@ export default function ClientEdit({ data, status, statusText }) {
                                                 <TextInput
                                                     name="point_of_contact"
                                                     value={
-                                                        client?.point_of_contact ||
-                                                        ''
+                                                        client?.point_of_contact !==
+                                                            null &&
+                                                        client?.point_of_contact !==
+                                                            undefined
+                                                            ? client?.point_of_contact
+                                                            : ''
                                                     }
                                                     onChange={handleClientInput}
                                                 />
@@ -329,14 +368,27 @@ export default function ClientEdit({ data, status, statusText }) {
                                                 label="Phone">
                                                 <TextInput
                                                     name="phone"
-                                                    value={client?.phone || ''}
+                                                    value={
+                                                        client?.phone !==
+                                                            null &&
+                                                        client?.phone !==
+                                                            undefined
+                                                            ? client?.phone
+                                                            : ''
+                                                    }
                                                     onChange={handleClientInput}
                                                 />
                                             </FormField>
                                             <FormField name="city" label="City">
                                                 <TextInput
                                                     name="city"
-                                                    value={client?.city || ''}
+                                                    value={
+                                                        client?.city !== null &&
+                                                        client?.city !==
+                                                            undefined
+                                                            ? client?.city
+                                                            : ''
+                                                    }
                                                     onChange={handleClientInput}
                                                 />
                                             </FormField>
@@ -344,14 +396,7 @@ export default function ClientEdit({ data, status, statusText }) {
                                                 name="state"
                                                 label="State">
                                                 <Select
-                                                    options={[
-                                                        'AL',
-                                                        'CA',
-                                                        'NY',
-                                                        'OK',
-                                                        'TX',
-                                                        'WY',
-                                                    ]}
+                                                    options={US_STATES}
                                                     value={client?.state}
                                                     onChange={({ option }) =>
                                                         handleClientCitySelection(
@@ -372,11 +417,15 @@ export default function ClientEdit({ data, status, statusText }) {
                                             label="Delete"
                                             onClick={onLayerOpen}
                                         />
-                                        <Button
-                                            type="submit"
-                                            label="Save"
-                                            secondary
-                                        />
+                                        {!isBusy ? (
+                                            <Button
+                                                type="submit"
+                                                label="Save"
+                                                secondary
+                                            />
+                                        ) : (
+                                            <Spinner />
+                                        )}
                                     </Box>
                                 </Form>
                             </div>
@@ -551,12 +600,18 @@ export default function ClientEdit({ data, status, statusText }) {
                             justify="between"
                             pad={{ top: 'medium', bottom: 'small' }}>
                             <Button label="Cancel" onClick={onLayerClose} />
-                            <Button
-                                primary
-                                label="Delete"
-                                color="status-critical"
-                                onClick={() => submitClientDelete(client.id)}
-                            />
+                            {!isBusy ? (
+                                <Button
+                                    primary
+                                    label="Delete"
+                                    color="status-critical"
+                                    onClick={() =>
+                                        submitClientDelete(client.id)
+                                    }
+                                />
+                            ) : (
+                                <Spinner color="red" />
+                            )}
                         </Box>
                     </Box>
                 </Layer>

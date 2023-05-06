@@ -8,6 +8,7 @@ import {
     TextInput,
     CheckBox,
     Text,
+    Spinner,
 } from 'grommet'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/auth'
@@ -37,10 +38,11 @@ export default function Login() {
 
     const [errors, setErrors] = useState([])
     const [termsAccepted, setTermsAccepted] = useState(false)
+    const [isBusy, setIsBusy] = useState(false)
 
     const submitForm = event => {
         event.preventDefault()
-
+        setIsBusy(true)
         register({
             name,
             email,
@@ -158,12 +160,16 @@ export default function Login() {
                             }
                         />
                         <Box direction="row" justify="between">
-                            <Button
-                                type="submit"
-                                primary
-                                label="Submit"
-                                disabled={!termsAccepted}
-                            />
+                            {!isBusy ? (
+                                <Button
+                                    type="submit"
+                                    primary
+                                    label="Submit"
+                                    disabled={!termsAccepted}
+                                />
+                            ) : (
+                                <Spinner />
+                            )}
                             <Anchor
                                 size="small"
                                 weight="small"

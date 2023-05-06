@@ -8,7 +8,8 @@ import {
     FormField,
     Heading,
     TextInput,
-    Text
+    Text,
+    Spinner,
 } from 'grommet'
 import styled from 'styled-components'
 import AuthSessionStatus from '@/components/AuthSessionStatus'
@@ -27,11 +28,13 @@ export default function ForgotPassword() {
     const [email, setEmail] = useState('')
     const [errors, setErrors] = useState([])
     const [status, setStatus] = useState(null)
+    const [isBusy, setIsBusy] = useState(false)
 
-    const submitForm = event => {
+    const submitForm = async event => {
         event.preventDefault()
-
-        forgotPassword({ email, setErrors, setStatus })
+        setIsBusy(true)
+        await forgotPassword({ email, setErrors, setStatus })
+        setIsBusy(false)
     }
 
     return (
@@ -67,7 +70,10 @@ export default function ForgotPassword() {
                     <Box>
                         <AuthSessionStatus status={status} />
                         <Form onSubmit={submitForm}>
-                            <FormField name="email" label="Email" error={errors.email}>
+                            <FormField
+                                name="email"
+                                label="Email"
+                                error={errors.email}>
                                 <TextInput
                                     id="email"
                                     type="email"
@@ -81,7 +87,15 @@ export default function ForgotPassword() {
                                 />
                             </FormField>
                             <Box direction="row" justify="between">
-                                <Button type="submit" primary label="Submit" />
+                                {!isBusy ? (
+                                    <Button
+                                        type="submit"
+                                        primary
+                                        label="Submit"
+                                    />
+                                ) : (
+                                    <Spinner />
+                                )}
                                 <Anchor label="Cancel" href="/login" />
                             </Box>
                         </Form>

@@ -40,39 +40,48 @@ const UploadFilesLayer = ({ onClose }) => {
     const submit = async event => {
         event.preventDefault()
 
-        if (selectedClient.id && selectedFiles?.length) {
-            setShow(true)
-
-            const formData = new FormData()
-
-            formData.append('client_id', selectedClient.id)
-            selectedFiles.forEach(file => {
-                formData.append('files[]', file)
-            })
-
-            try {
-                const uploadFiles = await axios.post('/upload/new', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-                })
-
-                //  refresh work space data after upload
-                const res = await axios.get('/dashboardData')
-
-                setWorkSpace(res.data.workSpace)
-
-                setShow(false)
-                onClose()
-                setVisible(true)
-            } catch (error) {
-                setShow(false)
-                setError("We couldn't save files, try again")
-                setVisible(true)
-            }
-        } else {
+        if (!selectedClient && !selectedFiles) {
             setError('Please select both the client and files')
             setVisible(true)
+        } else {
+            if (selectedClient.id && selectedFiles?.length) {
+                setShow(true)
+
+                const formData = new FormData()
+
+                formData.append('client_id', selectedClient.id)
+                selectedFiles.forEach(file => {
+                    formData.append('files[]', file)
+                })
+
+                try {
+                    const uploadFiles = await axios.post(
+                        '/upload/new',
+                        formData,
+                        {
+                            headers: {
+                                'Content-Type': 'multipart/form-data',
+                            },
+                        },
+                    )
+
+                    //  refresh work space data after upload
+                    const res = await axios.get('/dashboardData')
+
+                    setWorkSpace(res.data.workSpace)
+
+                    setShow(false)
+                    onClose()
+                    setVisible(true)
+                } catch (error) {
+                    setShow(false)
+                    setError("We couldn't save files, try again")
+                    setVisible(true)
+                }
+            } else {
+                setError('Please select both the client and files')
+                setVisible(true)
+            }
         }
     }
 

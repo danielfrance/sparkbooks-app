@@ -27,7 +27,7 @@ RUN apt-get update && apt-get install -y \
     nginx \
     && apt-get install -y postgresql-client libpq-dev \
     && docker-php-ext-install pdo pdo_pgsql \
-    && docker-php-ext-install bcmath 
+    && docker-php-ext-install bcmath  
 
 COPY . .
 COPY composer.json composer.lock ./

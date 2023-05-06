@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Plan;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Workspace;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Stripe\Stripe;
 
 class AccountController extends Controller
 {
@@ -33,6 +35,9 @@ class AccountController extends Controller
             ];
         });
 
+        $subPlan = Plan::select('clients', 'name', 'pages', 'seats', 'vault_access', 'reports_access', 'integrations_access', 'support_access')->where('name', $workspace->subscription->name)->first();
+
+        $portalLink = $this->getCustomerPortalLink($workspace->stripe_id);
 
         $accountInfo = [
             'id' => $user->id,
@@ -41,7 +46,8 @@ class AccountController extends Controller
             'is_admin' => $isAdmin,
             'workspaceInfo' => ($isAdmin) ? $workspace->info() : null,
             'team' => ($isAdmin) ? $teamInfo : null,
-
+            'subscriptionPlan' => ($isAdmin) ? $subPlan : null,
+            'portalLink' => $portalLink
         ];
 
         // TODO: current view doesn't have way to update workspace info.  Need to add that.
@@ -132,5 +138,17 @@ class AccountController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function getCustomerPortalLink($customerId)
+    {
+        Stripe::setApiKey(env('STRIPE_SECRET'));
+
+        $session = \Stripe\BillingPortal\Session::create([
+            'customer' => $customerId,
+            'return_url' => env('FRONTEND_URL') . '/account',
+        ]);
+
+        return $session->url;
     }
 }
