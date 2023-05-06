@@ -47,14 +47,32 @@ return [
             'throw' => false,
         ],
 
-
+        's3' => [
+            'driver' => 's3',
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'region' => env('AWS_DEFAULT_REGION'),
+            'bucket' => env('AWS_BUCKET'),
+            'url' => env('AWS_URL'),
+            'endpoint' => env('AWS_ENDPOINT'),
+            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+            'throw' => false,
+        ],
         'gcs' => [
             'driver' => 'gcs',
             'throw' => true,
-            'key_file_path' => app_path(
-                env('GOOGLE_CLOUD_KEY_FILE')
-            ), // optional: /path/to/service-account.json
-            'key_file' => [], // optional: Array of data that substitutes the .json file (see below)
+            'key_file_path' => '', // optional: /path/to/service-account.json
+            'key_file' => [
+                'type' => env('GOOGLE_CLOUD_ACCOUNT_TYPE'),
+                'private_key_id' => env('GOOGLE_CLOUD_PRIVATE_KEY_ID'),
+                'private_key' => env('GOOGLE_CLOUD_PRIVATE_KEY'),
+                'client_email' => env('GOOGLE_CLOUD_CLIENT_EMAIL'),
+                'client_id' => env('GOOGLE_CLOUD_CLIENT_ID'),
+                'auth_uri' => env('GOOGLE_CLOUD_AUTH_URI'),
+                'token_uri' => env('GOOGLE_CLOUD_TOKEN_URI'),
+                'auth_provider_x509_cert_url' => env('GOOGLE_CLOUD_AUTH_PROVIDER_CERT_URL'),
+                'client_x509_cert_url' => env('GOOGLE_CLOUD_CLIENT_CERT_URL'),
+            ], // optional: Array of data that substitutes the .json file (see below)
             'project_id' => env('GOOGLE_CLOUD_PROJECT_ID', 'your-project-id'), // optional: is included in key file
             'bucket' => env('GOOGLE_CLOUD_STORAGE_BUCKET', 'your-bucket'),
             'path_prefix' => env('GOOGLE_CLOUD_STORAGE_PATH_PREFIX', ''), // optional: /default/path/to/apply/in/bucket
