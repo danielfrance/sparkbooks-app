@@ -57,7 +57,7 @@ COPY ./deployments/php.ini /usr/local/etc/php/conf.d/app.ini
 COPY ./deployments/nginx.conf /etc/nginx/sites-enabled/default
 
 # Deployment steps
-RUN composer install --optimize-autoloader --no-dev
+RUN composer install --optimize-autoloader
 RUN chmod +x ./deployments/run.sh
 
 EXPOSE 80
