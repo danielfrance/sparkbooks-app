@@ -7,7 +7,6 @@ php artisan view:clear
 php artisan config:clear
 php artisan cache:clear
 
-php artisan migrate --force
 
 
 if [ "$APP_ENV" = "local" ] || [ "$APP_ENV" = "demo" ]; then

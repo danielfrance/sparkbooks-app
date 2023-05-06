@@ -63,6 +63,7 @@ RUN chmod +x ./deployments/run.sh
 EXPOSE 80
 RUN echo "APP_KEY=setme" >> .env
 RUN php artisan key:generate --force
+RUN php artisan migrate --force
 
 
 ENTRYPOINT ["./deployments/run.sh"]
