@@ -20,7 +20,7 @@ fi
 
 if [ "$APP_ENV" = "prod" ]; then
     echo "🔥 Running Production Seeder"
-    php artisan db:seed --class=ProductionSeeder
+    php artisan db:seed --class=ProductionSeeder --force
     echo "🔥 Dump Autoloader & Install Dependencies"
     composer dumpautoload
     composer install
