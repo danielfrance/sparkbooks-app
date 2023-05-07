@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Plan;
 use App\Models\SubscriptionDetails;
 use App\Models\User;
 use App\Models\Workspace;
@@ -71,9 +72,6 @@ class StripeController extends Controller
                 // Get the subscription ID
                 $subscription = Subscription::retrieve($session->subscription);
 
-       
-
-
                 $subscriptionPlan = Product::retrieve($session->lines->data[0]->plan->product);
 
                 $charge = Charge::retrieve($session->charge);
@@ -117,15 +115,6 @@ class StripeController extends Controller
                     $workspace->subscriptionDetails()->create($workspaceDetails);
 
 
-                    //TODO: this doesnt work
-                    // Subscription::update($subscription->id, [
-                    //     'metadata' => [
-                    //         'workspace_id' => $session->metadata->workspace_id
-                    //     ],
-                    //     "enable_incomplete_payments" => "false",
-                    //     "proration_behavior" => "always_invoice",
-                    // ]);
-
                     return ['message' => 'Workspace subscription created'];
 
                     // You can update the user's role or any other attributes if necessary
@@ -137,6 +126,9 @@ class StripeController extends Controller
         }
         if ($event->type == 'invoice.payment_succeeded' && $event->data->object->billing_reason == 'subscription_cycle') {
             $this->handleRenewalSuccess($event);
+        }
+        if ($event->type == 'customer.subscription.updated') {
+            $this->handleSubscriptionUpdated($event);
         }
 
         return response('Webhook received', 200);
@@ -268,10 +260,57 @@ class StripeController extends Controller
         return response('Webhook Handled', 200);
     }
 
-    public function handleSubscriptionUpdated(Request $request)
+    public function handleSubscriptionUpdated($event)
     {
-        // handle subscription updated
+        $session = $event->data->object;
 
+        // Get the customer ID
+        $customerId = $session->customer;
+
+        // Retrieve the customer object
+        $customer = Customer::retrieve($customerId);
+
+        // Get the customer's email
+        $customerEmail = $customer->email;
+
+        // Get the subscription ID
+        $subscription = Subscription::retrieve($session->id);
+
+        $subscriptionPlan = Product::retrieve($session->plan->product);
+
+        // Find the user by email
+        $workspace = Workspace::where('email', $customerEmail)->first();
+
+        Log::info('computing workspace details');
+
+        $workspaceDetails = $this->computeWorkSpaceDetails($subscriptionPlan->name, 0, $subscription->id);
+
+        $prevPlan = Plan::where('stripe_id', $event->data->previous_attributes->plan->product)->get()->first();
+
+        if ($workspace) {
+            // Save the workspace's subscription in the database
+            Log::info('saving workspace updated subscription');
+            $workspace->subscriptions()->update([
+                'name' => $subscriptionPlan->name,
+                'stripe_status' => $subscription->status,
+                'stripe_price' => $session->plan->amount,
+                'quantity' => 1,
+            ]);
+
+            Log::info('updating workspace details');
+
+            $workspace->update([
+                'remaining_monthly_pages' => $workspaceDetails['pages'] + $workspace->remaining_monthly_pages
+            ]);
+
+            Log::info('creating workspace subscription details');
+
+            $workspace->subscriptionDetails()->update($workspaceDetails);
+
+            return ['message' => 'Workspace subscription updated'];
+
+            // You can update the user's role or any other attributes if necessary
+        }
 
     }
 

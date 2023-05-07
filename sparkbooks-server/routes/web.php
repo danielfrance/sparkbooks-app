@@ -25,6 +25,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Route::get('/welcome', [DashboardController::class, 'welcome']);
+
 Route::get('invite/{invite_token}', [InviteController::class, 'show']);
 
 Route::post('/webhooks/subscription', [StripeController::class, 'handleSubscription']);

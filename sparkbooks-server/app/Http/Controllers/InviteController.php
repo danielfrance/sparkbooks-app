@@ -24,11 +24,12 @@ class InviteController extends Controller
 
 
         try {
-            if ($request->role === 'admin' || $request->role === 'editor') {
+            if ($request->role === 'admin' || $request->role === 'editor' || $request->role === 'superadmin') {
 
                 //TODO: update this when we create Plans and Plan Details
 
-                $workspace = Auth::user()->workspace;
+                $user = Auth::user();
+                $workspace = $user->workspace;
 
                 $invite = Invite::create([
                     'name' => $request->name,

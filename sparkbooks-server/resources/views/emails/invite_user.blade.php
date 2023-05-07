@@ -89,7 +89,7 @@
                                                                             <a style="max-width:100%;color:#fff !important;font-family:Inter;font-size:18px;font-weight:normal;line-height:100%;text-align:center;text-decoration:none;word-wrap:break-word;display:inline-block;letter-spacing:0;padding-top:20px;padding-bottom:20px;padding-left:155px;padding-right:155px"
                                                                                 title="" target="_blank"
                                                                                 data-saferedirecturl=""
-                                                                                href="{{env('APP_URL')}}/register/new-user-invite?token={{$invite->invite_token}}">Accept Invitation
+                                                                                href="{{env('FRONTEND_URL')}}/register/new-user-invite?token={{$invite->invite_token}}">Accept Invitation
                                                                             </a>
                                                                         </span>
                                                                     </td>

@@ -2,13 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\InviteUserMailable;
 use App\Models\Client;
+use App\Models\Invite;
 use App\Models\Plan;
 use App\Models\Upload;
 use App\Models\Workspace;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Spatie\SlackAlerts\Facades\SlackAlert;
+use Stripe\Product;
+use Stripe\Stripe;
 
 class DashboardController extends Controller
 {
@@ -31,6 +36,6 @@ class DashboardController extends Controller
         return ["workspace" => $data, "plans" => $plans];
     }
 
-    
+
 
 }
