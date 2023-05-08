@@ -67,6 +67,17 @@ class ProcessUploadedFiles implements ShouldQueue
         try {
             $GCP_BUCKET_DIRECTORY = env('GOOGLE_CLOUD_STORAGE_BUCKET');
 
+            $key_file = [
+                'type' => env('GOOGLE_CLOUD_ACCOUNT_TYPE'),
+                'private_key_id' => env('GOOGLE_CLOUD_PRIVATE_KEY_ID'),
+                'private_key' => env('GOOGLE_CLOUD_PRIVATE_KEY'),
+                'client_email' => env('GOOGLE_CLOUD_CLIENT_EMAIL'),
+                'client_id' => env('GOOGLE_CLOUD_CLIENT_ID'),
+                'auth_uri' => env('GOOGLE_CLOUD_AUTH_URI'),
+                'token_uri' => env('GOOGLE_CLOUD_TOKEN_URI'),
+                'auth_provider_x509_cert_url' => env('GOOGLE_CLOUD_AUTH_PROVIDER_CERT_URL'),
+                'client_x509_cert_url' => env('GOOGLE_CLOUD_CLIENT_CERT_URL'),
+            ];
 
             $documents = array_map(function ($file) use ($client, $GCP_BUCKET_DIRECTORY) {
                 return new GcsDocument([
@@ -76,9 +87,12 @@ class ProcessUploadedFiles implements ShouldQueue
             }, $upload->files->toArray());
 
 
-            $documentProcessorServiceClient = new DocumentProcessorServiceClient(['credentials' => json_decode(file_get_contents(app_path("../.config/demo-credentials.json")), true)
-            ]);
+            // $documentProcessorServiceClient = new DocumentProcessorServiceClient(['credentials' => json_decode(file_get_contents(app_path("../.config/demo-credentials.json")), true)
+            // ]);
 
+            $documentProcessorServiceClient = new DocumentProcessorServiceClient([
+                'credentials' => $key_file
+            ]);
 
             $inputConfig = new BatchDocumentsInputConfig(["gcs_prefix" => new GcsPrefix([
                     "gcs_uri_prefix" => "gs://" . $GCP_BUCKET_DIRECTORY

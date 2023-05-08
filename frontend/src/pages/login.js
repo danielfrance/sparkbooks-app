@@ -67,13 +67,14 @@ export default function Login() {
     const submitForm = async event => {
         event.preventDefault()
         setIsBusy(true)
-        login({
+        await login({
             email,
             password,
             remember: shouldRemember,
             setErrors,
             setStatus,
         })
+        setIsBusy(false)
     }
 
     return (
