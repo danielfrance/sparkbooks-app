@@ -130,19 +130,20 @@ class StripeController extends Controller
         if ($event->type == 'customer.subscription.updated') {
             $this->handleSubscriptionUpdated($event);
         }
+        if ($event->type == 'invoice.payment_failed') {
+            $this->handleRenewalFailure($event);
+        }
+        if ($event->type == 'customer.subscription.deleted' || $event->type == 'customer.subscription.paused') {
+            $this->handleSubscriptionDeleted($event);
+        }
 
         return response('Webhook received', 200);
     }
 
-    public function handleRenewalFailure(Request $request)
+    public function handleRenewalFailure($event)
     {
         Log::info('handleRenewalFailure');
-        Stripe::setApiKey(env('STRIPE_SECRET'));
-
-        $event = \Stripe\Event::constructFrom(
-            $request->all()
-        );
-
+        
         // Get the customer ID from the event data
         $customerId = $event->data->object->customer;
 
@@ -221,15 +222,10 @@ class StripeController extends Controller
         return ["event" => $event, "hook" => "handleRenewalSuccess"];
     }
 
-    public function handleSubscriptionDeleted(Request $request)
+    public function handleSubscriptionDeleted($event)
     {
         Log::info('handleRenewalFailure');
-        Stripe::setApiKey(env('STRIPE_SECRET'));
-
-        $event = \Stripe\Event::constructFrom(
-            $request->all()
-        );
-
+        
         if ($event->type === 'customer.subscription.deleted') {
             // Get the customer ID and subscription ID from the event data
             $customerId = $event->data->object->customer;

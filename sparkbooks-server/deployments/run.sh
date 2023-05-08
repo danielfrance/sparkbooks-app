@@ -8,7 +8,7 @@ php artisan config:clear
 php artisan cache:clear
 
 echo "🚀 Running migrations"
-php artisan migrate --force
+php artisan migrate
 
 
 if [ "$APP_ENV" = "local" ] || [ "$APP_ENV" = "demo" ]; then

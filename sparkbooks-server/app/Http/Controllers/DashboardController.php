@@ -10,6 +10,7 @@ use App\Models\Upload;
 use App\Models\Workspace;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Spatie\SlackAlerts\Facades\SlackAlert;
 use Stripe\Product;
@@ -37,5 +38,8 @@ class DashboardController extends Controller
     }
 
 
-
+    public function welcome()
+    {
+        Log::info("Welcome");
+    }
 }
