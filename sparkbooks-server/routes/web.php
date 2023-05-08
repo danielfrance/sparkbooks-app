@@ -31,10 +31,6 @@ Route::get('invite/{invite_token}', [InviteController::class, 'show']);
 
 Route::post('/webhooks/subscription', [StripeController::class, 'handleSubscription']);
 
-Route::post('/webhooks/renewal-failure', [StripeController::class, 'handleRenewalFailure']);
-
-Route::post('/webhooks/subscription-deleted', [StripeController::class, 'handleSubscriptionDeleted']);
-
 
 Route::middleware(["auth:sanctum"])->post('/workspace', [WorkspaceController::class, 'store']);
 

@@ -21,11 +21,7 @@ use Spatie\SlackAlerts\Facades\SlackAlert;
 
 class StripeController extends Controller
 {
-
-    public function test()
-    {
-
-    }
+    
     public function handleSubscription(Request $request)
     {
         Log::info('handleWebhook');
@@ -48,6 +44,7 @@ class StripeController extends Controller
         } catch (\Stripe\Exception\SignatureVerificationException $e) {
             // Invalid signature
             Log::info('Invalid signature');
+            Log::info(env('STRIPE_WEBHOOK_SECRET'));
             return response()->json(['message' => 'Invalid signature'], 400);
         }
 
