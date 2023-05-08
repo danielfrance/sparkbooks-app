@@ -37,7 +37,7 @@ class InviteUserMailable extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'Invite User Mailable',
+            subject: 'You have been invited to join ' . $this->workspace->name . ' on SparkBooks',
         );
     }
 

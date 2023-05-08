@@ -45,6 +45,7 @@ class ProcessUploadedFiles implements ShouldQueue
      */
     public function __construct($client, $upload)
     {
+        Log::info('constructing in ProcessUploaded Files job');
         $this->upload = Upload::find($upload);
         $this->client = Client::find($client);
     }
@@ -120,9 +121,10 @@ class ProcessUploadedFiles implements ShouldQueue
                 Log::error(json_encode($error));
             }
         } catch (\Exception $e) {
-            SlackAlert::message('Error processing files for ', $client->name . ' - uploadID: ' . $upload->id);
-            SlackAlert::message($e->getMessage());
-            Log::error($e, ['context' => 'error processing files']);
+            // SlackAlert::message('Error processing files for ', $client->name . ' - uploadID: ' . $upload->id);
+            // SlackAlert::message($e->getMessage());
+            Log::error('error processing files');
+            Log::error($e->getMessage());
         }
     }
 
