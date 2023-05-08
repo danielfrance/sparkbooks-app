@@ -83,6 +83,7 @@ class UploadController extends Controller
                     ]);
                 }
 
+                Log::info('Dispatching processing job');
                 $this->dispatch(new ProcessUploadedFiles($client->id, $upload->id));
             });
             return ['status' => 'Files uploaded & processing. Check your email shortly'];
