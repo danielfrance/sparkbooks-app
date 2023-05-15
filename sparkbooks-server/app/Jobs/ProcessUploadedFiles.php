@@ -45,7 +45,6 @@ class ProcessUploadedFiles implements ShouldQueue
      */
     public function __construct($client, $upload)
     {
-        Log::info('constructing in ProcessUploaded Files job');
         $this->upload = Upload::find($upload);
         $this->client = Client::find($client);
     }
@@ -60,8 +59,6 @@ class ProcessUploadedFiles implements ShouldQueue
         $client = $this->client;
         $upload = $this->upload;
         Log::info('starting job');
-        $GCP_BUCKET_DIRECTORY = env('GOOGLE_CLOUD_STORAGE_BUCKET');
-
         // Log::info($GCP_BUCKET_DIRECTORY);
 
         try {
@@ -80,40 +77,46 @@ class ProcessUploadedFiles implements ShouldQueue
             ];
 
             $documents = array_map(function ($file) use ($client, $GCP_BUCKET_DIRECTORY) {
+                $mimeType = Storage::disk('gcs')->mimeType($client->gcs_directory . '/' . $file['unique_name']);
+
                 return new GcsDocument([
-                    "gcs_uri" => "gs://" . $GCP_BUCKET_DIRECTORY . "/" . $client->gcs_directory . '/' . $file['name'],
-                    "mime_type" => "application/pdf"
+                    "gcs_uri" => "gs://" . $GCP_BUCKET_DIRECTORY . "/" . $client->gcs_directory . '/' . $file['unique_name'],
+                    "mime_type" => $mimeType ?? "application/pdf"
                 ]);
             }, $upload->files->toArray());
 
 
-            // $documentProcessorServiceClient = new DocumentProcessorServiceClient(['credentials' => json_decode(file_get_contents(app_path("../.config/demo-credentials.json")), true)
-            // ]);
 
             $documentProcessorServiceClient = new DocumentProcessorServiceClient([
                 'credentials' => $key_file
             ]);
 
-            $inputConfig = new BatchDocumentsInputConfig(["gcs_prefix" => new GcsPrefix([
+
+            $inputConfig = new BatchDocumentsInputConfig([
+                "gcs_prefix" => new GcsPrefix([
                     "gcs_uri_prefix" => "gs://" . $GCP_BUCKET_DIRECTORY
                 ]),
                 "gcs_documents" => new GcsDocuments([
                     "documents" => $documents
                 ])
             ]);
-            $outputConfig = new DocumentOutputConfig(["gcs_output_config" => new GcsOutputConfig([
+            $outputConfig = new DocumentOutputConfig([
+                "gcs_output_config" => new GcsOutputConfig([
                     "gcs_uri" => "gs://" . $GCP_BUCKET_DIRECTORY . "/" . $client->gcs_directory . "/results"
                 ])
             ]);
 
+
             $formattedName = $documentProcessorServiceClient->processorName(env('GOOGLE_CLOUD_PROJECT_ID'), 'us', env('GCP_AI_PROCESSOR'));
 
-            Log::info("formattedName: " . $formattedName);
+            // dd($formattedName);
 
             $operationResponse = $documentProcessorServiceClient->batchProcessDocuments($formattedName, [
                 "inputDocuments" => $inputConfig,
                 "documentOutputConfig" => $outputConfig
             ]);
+
+            // dd($operationResponse);
 
             $operationResponse->pollUntilComplete();
 
@@ -126,13 +129,13 @@ class ProcessUploadedFiles implements ShouldQueue
                 $upload->processed = Carbon::now();
                 $upload->results_directory = $resultFolder;
                 $upload->save();
-                // $this->info("processed files. saved to $resultFolder");
+                Log::info("processed files. saved to $resultFolder");
 
                 $this->saveResults($resultFolder);
             } else {
                 $error = $operationResponse->getError();
                 Log::error('operationResponse did not succeed');
-                Log::error(json_encode($error));
+                Log::error(printf('Operation failed with error data: %s' . PHP_EOL, $error->serializeToJsonString()));
             }
         } catch (\Exception $e) {
             // SlackAlert::message('Error processing files for ', $client->name . ' - uploadID: ' . $upload->id);
@@ -195,21 +198,21 @@ class ProcessUploadedFiles implements ShouldQueue
         dispatch(new ExtractResultsJob);
     }
 
-    public function saveWorkSpaceRemainingPages($upload, $client)
-    {
-        try {
-            $localFiles = $upload->files;
-            $workspace = Workspace::find($client->workspace_id);
-            $monthlyPages = $workspace->remaining_monthly_pages;
+    // public function saveWorkSpaceRemainingPages($upload, $client)
+    // {
+    //     try {
+    //         $localFiles = $upload->files;
+    //         $workspace = Workspace::find($client->workspace_id);
+    //         $monthlyPages = $workspace->remaining_monthly_pages;
 
-            foreach ($localFiles as $localFile) {
+    //         foreach ($localFiles as $localFile) {
 
-                $monthlyPages = $monthlyPages - $localFile->page_count;
-            }
+    //             $monthlyPages = $monthlyPages - $localFile->page_count;
+    //         }
 
-            $workspace->update(['remaining_monthly_pages' => $monthlyPages]);
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
-    }
+    //         $workspace->update(['remaining_monthly_pages' => $monthlyPages]);
+    //     } catch (\Throwable $th) {
+    //         //throw $th;
+    //     }
+    // }
 }

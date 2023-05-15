@@ -60,6 +60,7 @@ class ExtractResultsJob implements ShouldQueue
                 $this->saveResultLineItems($lineItems, $result, $clientID, $workspaceID);
                 $result->extracted = true;
                 $result->save();
+                Log::info('Extracted result: ' . $result->id);
             });
         } catch (\Throwable $th) {
             throw $th;

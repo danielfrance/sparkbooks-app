@@ -167,12 +167,16 @@ class Result extends Model
 
     public function getResultImageURL()
     {
-        $filename = Str::before($this->name, '-0.json');
+        $resultsFilename = Str::before($this->name, '-0.json');
+
+        $file = File::where('unique_name', 'LIKE', '%' . $resultsFilename . '%')
+            ->where('upload_id', $this->upload_id)
+            ->first();
 
         $directory = $this->upload->client->gcs_directory;
         $disk = Storage::disk('gcs');
 
-        $path = $directory . "/" . $filename . ".pdf";
+        $path = $directory . "/" . $file->name;
         // dd($disk->exists($directory . "/" . $filename . ".pdf"));
 
 

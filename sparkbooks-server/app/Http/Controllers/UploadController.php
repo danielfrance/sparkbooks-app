@@ -44,8 +44,7 @@ class UploadController extends Controller
 
         $files = $request->file('files');
 
-        
-
+    
         try {
             $test = DB::transaction(function () use ($request) {
 
@@ -54,10 +53,6 @@ class UploadController extends Controller
                 $files = $request->file('files');
 
                 $client = Client::find($request->client_id);
-
-                
-
-
 
                 // TODO: create better way of naming uploads
 
@@ -69,15 +64,24 @@ class UploadController extends Controller
                 $parser = new Parser();
 
                 foreach ($files as $file) {
-                    $pdf = Carbon::now()->timestamp . "-" . $file->getClientOriginalName();
+                    $extension = $file->getClientOriginalExtension();
 
-                    $disk->put($client->gcs_directory . "/" . $pdf, file_get_contents($file));
+                    $pdf = $file->getClientOriginalName();
+                    $uniqueName = uniqid($extension . "_", true) . '-' . $pdf;
 
-                    $parsedFile    = $parser->parseFile($file);
-                    $pages  = count($parsedFile->getPages());
+                    if (Str::of($extension)->contains('pdf')) {
+                        $parsedFile    = $parser->parseFile($file);
+                        $pages  = count($parsedFile->getPages());
+                    } else {
+                        $pages = 1;
+                    }
+
+                    $disk->put($client->gcs_directory . "/" . $uniqueName, file_get_contents($file));
+
                     
                     File::create([
                         'name' => $pdf,
+                        'unique_name' => $uniqueName,
                         'upload_id' => $upload->id,
                         'page_count' => $pages,
                     ]);
@@ -88,7 +92,7 @@ class UploadController extends Controller
             });
             return ['status' => 'Files uploaded & processing. Check your email shortly'];
         } catch (\Throwable $th) {
-            Log::alert($th->getMessage());          
+            Log::alert($th);          
             return
                 response()->json(['status' => 'Something went wrong. Try uploading your files again'], 200);
         }
@@ -142,7 +146,6 @@ class UploadController extends Controller
         $files = $disk->allFiles($upload->client->gcs_directory . "/results/" . $upload->results_directory);
 
         foreach ($files as $file) {
-
 
             $contents = $disk->get($file);
             $directory = Str::beforeLast($file, '/');
