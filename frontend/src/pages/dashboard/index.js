@@ -19,6 +19,12 @@ const clientRender = datum => (
     </Box>
 )
 
+const dateRender = property => datum => (
+    <Box pad={{ vertical: 'xsmall' }} direction="row">
+        <Text>{new Date(datum[property]).toLocaleString('en-us')}</Text>
+    </Box>
+)
+
 const numberRender = property => datum => (
     <Box
         pad={{ vertical: 'xsmall', horizontal: 'medium' }}
@@ -91,6 +97,13 @@ const columns = [
         header: <Text>Processing</Text>,
         render: processingDataRender('percent'),
     },
+    {
+        property: 'createdAt',
+        align: 'end',
+        size: 'medium',
+        header: <Text>Uploaded At</Text>,
+        render: dateRender('createdAt'),
+    },
 ]
 
 export default function Dashboard({ data, status, statusText }) {
@@ -134,6 +147,7 @@ export default function Dashboard({ data, status, statusText }) {
                         client: client.name || '',
                         files: upload.files.length,
                         percent: upload.processed,
+                        createdAt: upload.created_at,
                     }
                 }),
             ])
@@ -150,6 +164,7 @@ export default function Dashboard({ data, status, statusText }) {
         }
     }, [data])
 
+    console.log(filtered)
     return (
         <>
             {isUnvailable && (
