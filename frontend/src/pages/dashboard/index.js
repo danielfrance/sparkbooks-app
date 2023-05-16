@@ -164,7 +164,6 @@ export default function Dashboard({ data, status, statusText }) {
         }
     }, [data])
 
-    console.log(filtered)
     return (
         <>
             {isUnvailable && (
