@@ -71,11 +71,13 @@ const UploadFilesLayer = ({ onClose }) => {
                     setWorkSpace(res.data.workSpace)
 
                     setShow(false)
+                    setError(res.data.status)
                     onClose()
                     setVisible(true)
                 } catch (error) {
                     setShow(false)
-                    setError("We couldn't save files, try again")
+                    console.log(error)
+                    setError(error.response.data.status)
                     setVisible(true)
                 }
             } else {

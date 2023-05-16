@@ -176,7 +176,7 @@ class Result extends Model
         $directory = $this->upload->client->gcs_directory;
         $disk = Storage::disk('gcs');
 
-        $path = $directory . "/" . $file->name;
+        $path = $directory . "/" . $file->unique_name;
         // dd($disk->exists($directory . "/" . $filename . ".pdf"));
 
 

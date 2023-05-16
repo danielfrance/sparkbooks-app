@@ -69,6 +69,11 @@ class UploadController extends Controller
                     $pdf = $file->getClientOriginalName();
                     $uniqueName = uniqid($extension . "_", true) . '-' . $pdf;
 
+                    if ($extension == 'HEIC') {
+                        // return ['status' => 'HEIC file types are not supported'];
+                        throw new \Exception('HEIC files are not supported');
+                    }
+
                     if (Str::of($extension)->contains('pdf')) {
                         $parsedFile    = $parser->parseFile($file);
                         $pages  = count($parsedFile->getPages());
@@ -90,11 +95,10 @@ class UploadController extends Controller
                 Log::info('Dispatching processing job');
                 $this->dispatch(new ProcessUploadedFiles($client->id, $upload->id));
             });
-            return ['status' => 'Files uploaded & processing. Check your email shortly'];
-        } catch (\Throwable $th) {
-            Log::alert($th);          
-            return
-                response()->json(['status' => 'Something went wrong. Try uploading your files again'], 200);
+            return response()->json(['status' => 'Files uploaded & processing. Check your email shortly']);
+        } catch (\Exception $th) {
+            Log::alert($th);
+            return response()->json(['status' => 'Something went wrong. Try uploading your files again. Acceptable file types are PDF, JPEG, JPG, and PNG.'], 500);
         }
     }
 

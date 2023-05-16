@@ -33,7 +33,6 @@ let timer
 const timeout = 2 * 1000
 
 export default function UploadResultContainer({ data, index }) {
-    console.log(data)
     const axios = useAxios()
     const router = useRouter()
     const { result_items, result_details, imageURL } = data

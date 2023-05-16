@@ -6,6 +6,7 @@ use App\Mail\InviteUserMailable;
 use App\Models\Client;
 use App\Models\Invite;
 use App\Models\Plan;
+use App\Models\Result;
 use App\Models\Upload;
 use App\Models\Workspace;
 use Illuminate\Http\Request;
@@ -38,8 +39,4 @@ class DashboardController extends Controller
     }
 
 
-    public function welcome()
-    {
-        Log::info("Welcome");
-    }
 }
